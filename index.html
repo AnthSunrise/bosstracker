@@ -121,7 +121,7 @@
         .char-info h3 { margin: 0; color: var(--light-blue); font-size: 1.3rem; }
         .char-info p { margin: 4px 0 0 0; font-size: 0.9rem; color: var(--text-muted); }
 
-        /* NUEVOS ACCIONES DE TARJETA: Limpios, planos y sutiles */
+        /* ACCIONES DE TARJETA */
         .char-actions-header {
             display: flex;
             gap: 12px;
@@ -361,13 +361,39 @@
         .rental-item-left { display: flex; align-items: center; gap: 8px; }
         .rental-item img { width: 18px; height: 18px; object-fit: contain; }
 
+        /* FOOTER CAMBIADO: Organiza elementos en extremos opuestos */
         .modal-footer {
             padding: 15px 20px;
             border-top: 1px solid var(--border-color);
             display: flex;
-            justify-content: flex-end;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
             background-color: #111;
+        }
+
+        .modal-footer-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-footer-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Estilo para el Selector de Presets */
+        .preset-select {
+            background-color: #222;
+            color: var(--light-blue);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .preset-select:hover {
+            border-color: var(--light-blue);
         }
 
         .counter-badge {
@@ -439,7 +465,7 @@
                     </div>
 
                     <div class="image-upload-box" onclick="document.getElementById('modal-image-file').click()">
-                        <span id="upload-text" style="font-size:0.85rem; color:var(--text-muted);">📁 Click to upload character picture.</span>
+                        <span id="upload-text" style="font-size:0.85rem; color:var(--text-muted);">📁 Click to upload.</span>
                         <input type="file" id="modal-image-file" accept="image/*" style="display:none;" onchange="handleImageUpload(this)">
                         <img id="modal-preview-img" src="" alt="Preview">
                     </div>
@@ -448,9 +474,23 @@
                     <div class="rentals-list" id="modal-rentals-list"></div>
                 </div>
             </div>
+            <!-- MODAL FOOTER MODIFICADO -->
             <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
-                <button id="btn-modal-save" onclick="saveModalData()">Save</button>
+                <div class="modal-footer-left">
+                    <select id="modal-presets" class="preset-select" onchange="applyBossPreset(this.value)">
+                        <option value="" selected disabled>Load Boss Preset...</option>
+                        <option value="A">A) E. Lucid</option>
+                        <option value="B">B) N. Lomien</option>
+                        <option value="C">C) N. Tenebris</option>
+                        <option value="D">D) C. Tenebris</option>
+                        <option value="E">E) Easy Grandis</option>
+                        <option value="F">F) C. Tenebris Trade</option>
+                    </select>
+                </div>
+                <div class="modal-footer-right">
+                    <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button id="btn-modal-save" onclick="saveModalData()">Save</button>
+                </div>
             </div>
         </div>
     </div>
@@ -518,6 +558,52 @@
             "Chaos Pink Bean": "pinkbean.png", "Hard Hilla": "hilla.png"
         };
 
+        // PRESETS CONFIGURADOS CON SUS RESPECTIVOS JEFES Y PT SIZES
+        const BOSS_PRESETS = {
+            "A": [
+                { name: "Easy Lucid", partySize: 1 }, { name: "Normal Slime", partySize: 1 }, { name: "Normal Lotus", partySize: 1 },
+                { name: "Normal Damien", partySize: 1 }, { name: "Normal Cygnus", partySize: 1 }, { name: "Akechi", partySize: 1 },
+                { name: "Princess No", partySize: 1 }, { name: "Chaos Papulatus", partySize: 1 }, { name: "Hard Magnus", partySize: 1 },
+                { name: "Chaos Zakum", partySize: 1 }, { name: "Chaos Pierre", partySize: 1 }, { name: "Chaos Von Bon", partySize: 1 },
+                { name: "Chaos Queen", partySize: 1 }, { name: "Chaos Vellum", partySize: 1 }
+            ],
+            "B": [
+                { name: "Normal Damien", partySize: 1 }, { name: "Normal Lotus", partySize: 1 }, { name: "Akechi", partySize: 1 },
+                { name: "Princess No", partySize: 1 }, { name: "Chaos Zakum", partySize: 1 }, { name: "Hard Magnus", partySize: 1 },
+                { name: "Hard Hilla", partySize: 1 }, { name: "Chaos Pink Bean", partySize: 1 }, { name: "Chaos Vellum", partySize: 1 },
+                { name: "Chaos Von Bon", partySize: 1 }, { name: "Chaos Pierre", partySize: 1 }, { name: "Chaos Queen", partySize: 1 },
+                { name: "Normal Cygnus", partySize: 1 }, { name: "Chaos Papulatus", partySize: 1 }
+            ],
+            "C": [
+                { name: "Normal Darknell", partySize: 1 }, { name: "Normal Verus Hilla", partySize: 1 }, { name: "Normal Gloom", partySize: 1 },
+                { name: "Normal Will", partySize: 1 }, { name: "Normal Lucid", partySize: 1 }, { name: "Normal Slime", partySize: 1 },
+                { name: "Hard Lotus", partySize: 1 }, { name: "Hard Damien", partySize: 1 }, { name: "Akechi", partySize: 1 },
+                { name: "Chaos Vellum", partySize: 1 }, { name: "Hard Magnus", partySize: 1 }, { name: "Chaos Papulatus", partySize: 1 },
+                { name: "Chaos Queen", partySize: 1 }, { name: "Princess No", partySize: 1 }
+            ],
+            "D": [
+                { name: "Hard Darknell", partySize: 1 }, { name: "Hard Verus Hilla", partySize: 1 }, { name: "Chaos Gloom", partySize: 1 },
+                { name: "Hard Will", partySize: 1 }, { name: "Hard Lucid", partySize: 1 }, { name: "Chaos Slime", partySize: 1 },
+                { name: "Hard Lotus", partySize: 1 }, { name: "Hard Damien", partySize: 1 }, { name: "Akechi", partySize: 1 },
+                { name: "Chaos Vellum", partySize: 1 }, { name: "Hard Magnus", partySize: 1 }, { name: "Chaos Papulatus", partySize: 1 },
+                { name: "Chaos Queen", partySize: 1 }, { name: "Princess No", partySize: 1 }
+            ],
+            "E": [
+                { name: "Easy Kaling", partySize: 1 }, { name: "Easy First Adversary", partySize: 1 }, { name: "Easy Kalos", partySize: 1 },
+                { name: "Normal Seren", partySize: 1 }, { name: "Hard Darknell", partySize: 1 }, { name: "Hard Verus Hilla", partySize: 1 },
+                { name: "Chaos Gloom", partySize: 1 }, { name: "Hard Will", partySize: 1 }, { name: "Hard Lucid", partySize: 1 },
+                { name: "Chaos Slime", partySize: 1 }, { name: "Hard Lotus", partySize: 1 }, { name: "Hard Damien", partySize: 1 },
+                { name: "Akechi", partySize: 1 }, { name: "Chaos Papulatus", partySize: 1 }
+            ],
+            "F": [
+                { name: "Hard Darknell", partySize: 2 }, { name: "Hard Verus Hilla", partySize: 2 }, { name: "Chaos Gloom", partySize: 2 },
+                { name: "Hard Will", partySize: 2 }, { name: "Hard Lucid", partySize: 2 }, { name: "Chaos Slime", partySize: 2 },
+                { name: "Hard Lotus", partySize: 1 }, { name: "Hard Damien", partySize: 1 }, { name: "Akechi", partySize: 1 },
+                { name: "Chaos Vellum", partySize: 1 }, { name: "Hard Magnus", partySize: 1 }, { name: "Chaos Papulatus", partySize: 1 },
+                { name: "Chaos Queen", partySize: 1 }, { name: "Princess No", partySize: 1 }
+            ]
+        };
+
         function getBossIcon(fullBossName) {
             for (let key in BOSS_ICON_MAP) {
                 if (fullBossName.includes(key)) return `Icons/${BOSS_ICON_MAP[key]}`;
@@ -548,6 +634,8 @@
 
         function openModal(index = null) {
             currentEditingIndex = index;
+            document.getElementById('modal-presets').value = ""; // Resetea el dropdown de presets
+
             if (index !== null) {
                 const char = characters[index];
                 document.getElementById('modal-title').innerText = `Edit ${char.name}`;
@@ -602,6 +690,17 @@
                 img.style.display = "none";
                 txt.style.display = "inline-block";
             }
+        }
+
+        // FUNCIÓN NUEVA: Aplica los presets directamente al arreglo temporal
+        function applyBossPreset(presetKey) {
+            if (!BOSS_PRESETS[presetKey]) return;
+            
+            // Copia profunda del preset seleccionado para no alterar la database global
+            tempModalBosses = JSON.parse(JSON.stringify(BOSS_PRESETS[presetKey]));
+            
+            renderModalBossGrid();
+            updateModalBossCounter();
         }
 
         function renderModalBossGrid() {
@@ -708,7 +807,7 @@
             const charClass = document.getElementById('modal-class').value.trim();
 
             if (!name) {
-                alert("Por favor ingresa un nombre para el personaje.");
+                alert("Please add the character name.");
                 return;
             }
 
@@ -803,7 +902,6 @@
                             <div class="boss-list-container">
                 `;
 
-                // LOGICA DE ORDENADO: Mayor a menor según el meso real que recibe el jugador (Base / Party)
                 const sortedBosses = [...char.bosses].sort((a, b) => {
                     const mesoA = Math.floor((KRONOS_BOSS_DATA[a.name] || 0) / (a.partySize || 1));
                     const mesoB = Math.floor((KRONOS_BOSS_DATA[b.name] || 0) / (b.partySize || 1));
