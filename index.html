@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapleStory Boss Tracker - Kronos</title>
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --card-bg: #101419;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+            --primary-blue: #004a77;
+            --light-blue: #81b2d1;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --border-color: #43748c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        h1 { margin: 0; color: var(--light-blue); }
+        
+        .global-summary {
+            background-color: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 8px;
+            display: inline-flex;
+            gap: 40px;
+            margin-top: 15px;
+            border: 1px solid var(--primary-blue);
+            font-size: 1.1rem;
+        }
+
+        .summary-item span {
+            font-weight: bold;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .top-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        /* Botones Globales */
+        button {
+            background-color: var(--primary-blue);
+            color: white;
+            border: 1px solid var(--light-blue);
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button:hover { 
+            background-color: #0063a1; 
+            box-shadow: 0 0 8px var(--light-blue);
+        }
+        button.btn-delete { background-color: var(--danger-color); border-color: #ff6b6b; }
+        button.btn-delete:hover { background-color: #c0392b; box-shadow: none; }
+        button.btn-secondary { background-color: #444; border-color: #666; }
+        button.btn-secondary:hover { background-color: #555; box-shadow: none; }
+
+        /* Grid de Personajes */
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+            gap: 20px;
+        }
+
+        .char-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .char-card:hover { border-color: var(--primary-blue); }
+
+        .char-header {
+            display: flex;
+            gap: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .char-avatar {
+            width: 70px;
+            height: 70px;
+            background-color: #222;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            object-fit: contain;
+        }
+
+        .char-info { flex-grow: 1; }
+        .char-info h3 { margin: 0; color: var(--light-blue); font-size: 1.3rem; }
+        .char-info p { margin: 4px 0 0 0; font-size: 0.9rem; color: var(--text-muted); }
+
+        /* NUEVOS ACCIONES DE TARJETA: Limpios, planos y sutiles */
+        .char-actions-header {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .char-actions-header button.btn-inline-action {
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            line-height: 1;
+        }
+
+        .char-actions-header button.btn-inline-action:hover {
+            box-shadow: none !important;
+        }
+
+        .char-actions-header button.btn-inline-edit:hover {
+            color: var(--light-blue);
+        }
+
+        .char-actions-header button.btn-inline-delete:hover {
+            color: #ff6b6b;
+        }
+
+        /* Lista de jefes en la tarjeta */
+        .boss-list-container {
+            max-height: 220px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding-right: 5px;
+        }
+
+        .boss-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #43748c;
+        }
+
+        .boss-row-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .boss-icon {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            background-color: #111;
+            border-radius: 4px;
+        }
+
+        /* Rentals en la tarjeta */
+        .card-rentals-summary {
+            font-size: 0.85rem;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 10px;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+        }
+        .rental-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #1c1c1c;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin: 2px;
+            border: 1px solid #292929;
+            font-size: 0.8rem;
+        }
+        .rental-badge img { width: 14px; height: 14px; object-fit: contain; }
+
+        .char-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .meso-total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--success-color);
+        }
+
+        /* MODAL INTERACTIVO AMPLADO */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            border: 2px solid var(--primary-blue);
+            border-radius: 12px;
+            width: 95%;
+            max-width: 1250px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #111;
+        }
+        .modal-header h2 { margin: 0; color: var(--light-blue); }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 25px;
+        }
+
+        .modal-bosses-section h3, .modal-side-section h3 {
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            color: var(--light-blue);
+        }
+
+        /* GRID DE JEFES EN 4 COLUMNAS */
+        .boss-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-height: 62vh;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .boss-select-card {
+            background: #1f1f1f;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            font-size: 0.8rem;
+            user-select: none;
+        }
+        .boss-select-card:hover { border-color: var(--light-blue); }
+        .boss-select-card.selected {
+            background-color: rgba(0, 74, 119, 0.4);
+            border-color: var(--light-blue);
+        }
+
+        .boss-select-left { display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; }
+        .boss-select-left span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .party-select {
+            padding: 2px 4px;
+            font-size: 0.75rem;
+            background-color: #222;
+            color: white;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Panel Lateral */
+        .modal-side-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #111111;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .modal-form-group label { font-size: 0.85rem; color: var(--text-muted); }
+        .modal-form-group input { background: #222; border: 1px solid var(--border-color); padding: 8px; color: white; border-radius: 4px; width: 100%; box-sizing: border-box; }
+
+        /* Estructura asimétrica para Nivel y Clase */
+        .modal-grid-row {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 10px;
+        }
+
+        .image-upload-box {
+            border: 2px dashed var(--border-color);
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 6px;
+            background: #1a1a1a;
+        }
+        .image-upload-box:hover { border-color: var(--light-blue); }
+        .image-upload-box img { max-height: 90px; max-width: 100%; object-fit: contain; margin-top: 8px; display: none; }
+
+        /* Lista de Rentals */
+        .rentals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .rental-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            background: #1c1c1c;
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid #252525;
+        }
+        .rental-item-left { display: flex; align-items: center; gap: 8px; }
+        .rental-item img { width: 18px; height: 18px; object-fit: contain; }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background-color: #111;
+        }
+
+        .counter-badge {
+            font-size: 0.85rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #333;
+        }
+        .counter-badge.warning { background: var(--danger-color); font-weight: bold; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-blue); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>MapleStory Boss Tracker</h1>
+        <div class="global-summary">
+            <div class="summary-item">Weekly Meso: <span id="global-meso-total" style="color: var(--success-color);">0</span></div>
+            <div class="summary-item">Bosses: <span id="global-boss-count">0 / 180</span></div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="top-actions">
+            <button onclick="openModal()">+ Add Character</button>
+        </div>
+
+        <div class="characters-grid" id="characters-grid"></div>
+    </div>
+
+    <!-- MODAL UI -->
+    <div class="modal-overlay" id="char-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add Character</h2>
+                <div class="modal-header-right" style="display:flex; gap:15px; align-items:center;">
+                    <span id="modal-boss-counter" class="counter-badge">Bosses: 0/14</span>
+                    <button class="btn-delete" style="padding: 5px 10px; font-size: 0.8rem;" onclick="closeModal()">X</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <!-- Zona izquierda: Todos los Bosses -->
+                <div class="modal-bosses-section">
+                    <h3>Pick your weekly bosses</h3>
+                    <div class="boss-selection-grid" id="modal-boss-grid"></div>
+                </div>
+
+                <!-- Zona derecha: Atributos, Imagen y Rentals -->
+                <div class="modal-side-section">
+                    <h3>Character Data</h3>
+                    <div class="modal-form-group">
+                        <label>Name</label>
+                        <input type="text" id="modal-name" placeholder="Ej: Baldir">
+                    </div>
+                    <div class="modal-grid-row">
+                        <div class="modal-form-group">
+                            <label>Level</label>
+                            <input type="number" id="modal-level" value="220" min="1" max="300">
+                        </div>
+                        <div class="modal-form-group">
+                            <label>Class</label>
+                            <input type="text" id="modal-class" placeholder="Ej: Hero">
+                        </div>
+                    </div>
+
+                    <div class="image-upload-box" onclick="document.getElementById('modal-image-file').click()">
+                        <span id="upload-text" style="font-size:0.85rem; color:var(--text-muted);">📁 Click to upload.</span>
+                        <input type="file" id="modal-image-file" accept="image/*" style="display:none;" onchange="handleImageUpload(this)">
+                        <img id="modal-preview-img" src="" alt="Preview">
+                    </div>
+
+                    <h3>Rentals</h3>
+                    <div class="rentals-list" id="modal-rentals-list"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button id="btn-modal-save" onclick="saveModalData()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database de Mesos de Kronos[cite: 1]
+        const KRONOS_BOSS_DATA = {
+            "Hard Jupiter": 4845000000, "Normal Jupiter": 1615000000,
+            "Extreme Kaling": 6026000000, "Extreme First Adversary": 5880000000, "Extreme Kalos": 5200000000,
+            "Extreme Seren": 4235000000, "Hard Baldrix": 4200000000, "Hard Limbo": 3745000000,
+            "Hard Kaling": 2990000000, "Hard First Adversary": 2940000000, "Normal Baldrix": 2800000000,
+            "Hard Malefic Star": 3990000000, "Normal Malefic Star": 1452000000,
+            "Chaos Kalos": 2600000000, "Normal Limbo": 2100000000, "Normal Kaling": 1506500000,
+            "Extreme Lotus": 1397500000, "Normal First Adversary": 1365000000, "Normal Kalos": 1300000000,
+            "Hard Seren": 1096562500, "Easy Kaling": 1031250000, "Easy First Adversary": 985000000,
+            "Easy Kalos": 937500000, "Normal Seren": 889021875, "Hard Verus Hilla": 762105000,
+            "Hard Darknell": 667920000, "Hard Will": 621810000, "Chaos Slime": 600578125,
+            "Normal Verus Hilla": 581880000, "Chaos Gloom": 563945000, "Hard Lucid": 504000000,
+            "Hard Lotus": 444675000, "Hard Damien": 421875000, "Normal Darknell": 316875000,
+            "Normal Gloom": 297675000, "Normal Will": 279075000, "Normal Lucid": 253828125,
+            "Easy Will": 246744750, "Easy Lucid": 237009375, "Normal Slime": 231673500,
+            "Normal Damien": 169000000, "Normal Lotus": 162562500, "Akechi": 144000000,
+            "Chaos Papulatus": 132250000, "Chaos Vellum": 105062500, "Hard Magnus": 95062500,
+            "Princess No": 81000000, "Chaos Queen": 81000000, "Chaos Zakum": 81000000,
+            "Chaos Pierre": 81000000, "Chaos Von Bon": 81000000, "Normal Cygnus": 72250000,
+            "Chaos Pink Bean": 64000000, "Hard Hilla": 56250000, "Easy Cygnus": 45562500
+        };
+
+        const BOSS_SELECTION_ORDER = [
+            "Jupiter", "Baldrix", "Limbo", "Malefic Star", "Kaling", "First Adversary", "Kalos", "Seren", "Darknell", "Verus Hilla",
+            "Gloom", "Will", "Lucid", "Slime", "Damien", "Lotus", "Akechi", "Chaos Papulatus", "Chaos Vellum",
+            "Hard Magnus", "Princess No", "Chaos Queen", "Chaos Von Bon", "Chaos Pierre", "Chaos Zakum",
+            "Cygnus", "Chaos Pink Bean", "Hard Hilla"
+        ];
+
+        const BOSS_VARIANTS = {
+            "Jupiter": ["Hard Jupiter", "Normal Jupiter"],
+            "Kaling": ["Extreme Kaling", "Hard Kaling", "Normal Kaling", "Easy Kaling"],
+            "Baldrix": ["Hard Baldrix", "Normal Baldrix"],
+            "Malefic Star": ["Hard Malefic Star", "Normal Malefic Star"],
+            "First Adversary": ["Extreme First Adversary", "Hard First Adversary", "Normal First Adversary", "Easy First Adversary"],
+            "Kalos": ["Extreme Kalos", "Chaos Kalos", "Normal Kalos", "Easy Kalos"],
+            "Seren": ["Extreme Seren", "Hard Seren", "Normal Seren"],
+            "Darknell": ["Hard Darknell", "Normal Darknell"],
+            "Will": ["Hard Will", "Normal Will", "Easy Will"],
+            "Lucid": ["Hard Lucid", "Normal Lucid", "Easy Lucid"],
+            "Limbo": ["Hard Limbo", "Normal Limbo"],
+            "Lotus": ["Extreme Lotus", "Hard Lotus", "Normal Lotus"],
+            "Slime": ["Chaos Slime", "Normal Slime"],
+            "Verus Hilla": ["Hard Verus Hilla", "Normal Verus Hilla"],
+            "Gloom": ["Chaos Gloom", "Normal Gloom"],
+            "Damien": ["Hard Damien", "Normal Damien"],
+            "Cygnus": ["Normal Cygnus", "Easy Cygnus"]
+        };
+
+        const BOSS_ICON_MAP = {
+            "Kaling": "kaling.png", "Baldrix": "baldrix.png", "First Adversary": "adversary.png",
+            "Malefic Star": "malefic.png", "Jupiter": "jupiter.png",
+            "Kalos": "kalos.png", "Seren": "seren.png", "Darknell": "darknell.png", "Will": "will.png",
+            "Lucid": "lucid.png", "Limbo": "limbo.png", "Lotus": "lotus.png", "Slime": "slime.png",
+            "Verus Hilla": "vhilla.png", "Gloom": "gloom.png", "Damien": "damien.png", "Cygnus": "cygnus.png",
+            "Akechi": "akechi.png", "Chaos Papulatus": "papulatus.png", "Chaos Vellum": "vellum.png",
+            "Hard Magnus": "magnus.png", "Princess No": "pno.png", "Chaos Queen": "queen.png",
+            "Chaos Zakum": "zakum.png", "Chaos Pierre": "pierre.png", "Chaos Von Bon": "vonbon.png",
+            "Chaos Pink Bean": "pinkbean.png", "Hard Hilla": "hilla.png"
+        };
+
+        function getBossIcon(fullBossName) {
+            for (let key in BOSS_ICON_MAP) {
+                if (fullBossName.includes(key)) return `Icons/${BOSS_ICON_MAP[key]}`;
+            }
+            return 'Icons/default.png';
+        }
+
+        const RENTALS_DATA = [
+            { id: "rb_face", name: "Red Beryl Face", cost: 200000000, icon: "Icons/rental_rb_face.png" },
+            { id: "rb_eye", name: "Red Beryl Eye", cost: 200000000, icon: "Icons/rental_rb_eye.png" },
+            { id: "rb_earring", name: "Red Beryl Earring", cost: 300000000, icon: "Icons/rental_rb_earring.png" },
+            { id: "rb_pendant", name: "Red Beryl Pendant", cost: 300000000, icon: "Icons/rental_rb_pendant.png" },
+            { id: "rb_belt", name: "Red Beryl Belt", cost: 300000000, icon: "Icons/rental_rb_belt.png" },
+            { id: "contror", name: "Rental Ring", cost: 100000000, icon: "Icons/rental_contror.png" },
+            { id: "totem", name: "Totem Set", cost: 600000000, icon: "Icons/rental_totem.png" }
+        ];
+
+        let characters = JSON.parse(localStorage.getItem('maple_boss_tracker_v2')) || [];
+        let currentEditingIndex = null; 
+        let tempModalBosses = []; 
+        let tempModalRentals = []; 
+        let tempBase64Image = "";
+
+        function saveToStorage() {
+            localStorage.setItem('maple_boss_tracker_v2', JSON.stringify(characters));
+            renderCharacters();
+        }
+
+        function openModal(index = null) {
+            currentEditingIndex = index;
+            if (index !== null) {
+                const char = characters[index];
+                document.getElementById('modal-title').innerText = `Edit ${char.name}`;
+                document.getElementById('modal-name').value = char.name;
+                document.getElementById('modal-level').value = char.level;
+                document.getElementById('modal-class').value = char.class;
+                tempModalBosses = JSON.parse(JSON.stringify(char.bosses));
+                tempModalRentals = JSON.parse(JSON.stringify(char.rentals || []));
+                tempBase64Image = char.image || "";
+            } else {
+                document.getElementById('modal-title').innerText = "Add Character";
+                document.getElementById('modal-name').value = "";
+                document.getElementById('modal-level').value = "220";
+                document.getElementById('modal-class').value = "";
+                tempModalBosses = [];
+                tempModalRentals = [];
+                tempBase64Image = "";
+            }
+
+            renderModalBossGrid();
+            renderModalRentals();
+            updateModalBossCounter();
+            updateImagePreview();
+            document.getElementById('char-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('char-modal').style.display = 'none';
+        }
+
+        function handleImageUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempBase64Image = e.target.result;
+                    updateImagePreview();
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateImagePreview() {
+            const img = document.getElementById('modal-preview-img');
+            const txt = document.getElementById('upload-text');
+            if (tempBase64Image) {
+                img.src = tempBase64Image;
+                img.style.display = "inline-block";
+                txt.style.display = "none";
+            } else {
+                img.src = "";
+                img.style.display = "none";
+                txt.style.display = "inline-block";
+            }
+        }
+
+        function renderModalBossGrid() {
+            const container = document.getElementById('modal-boss-grid');
+            container.innerHTML = '';
+
+            let allAvailableBosses = [];
+            BOSS_SELECTION_ORDER.forEach(groupName => {
+                if (BOSS_VARIANTS[groupName]) {
+                    BOSS_VARIANTS[groupName].forEach(variant => allAvailableBosses.push(variant));
+                } else {
+                    allAvailableBosses.push(groupName);
+                }
+            });
+
+            allAvailableBosses.forEach(bossName => {
+                const activeBossIndex = tempModalBosses.findIndex(b => b.name === bossName);
+                const isSelected = activeBossIndex !== -1;
+                
+                const card = document.createElement('div');
+                card.className = `boss-select-card ${isSelected ? 'selected' : ''}`;
+                
+                let partyControlsHTML = '';
+                if (isSelected) {
+                    const currentPartySize = tempModalBosses[activeBossIndex].partySize || 1;
+                    partyControlsHTML = `
+                        <select class="party-select" onclick="event.stopPropagation()" onchange="changeModalBossParty('${bossName}', this.value)">
+                            ${[1,2,3,4,5,6].map(num => `<option value="${num}" ${currentPartySize === num ? 'selected' : ''}>PT:${num}</option>`).join('')}
+                        </select>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="boss-select-left">
+                        <img class="boss-icon" src="${getBossIcon(bossName)}" alt="">
+                        <span title="${bossName}">${bossName}</span>
+                    </div>
+                    ${partyControlsHTML}
+                `;
+
+                card.onclick = () => toggleBossInModal(bossName);
+                container.appendChild(card);
+            });
+        }
+
+        function toggleBossInModal(bossName) {
+            const index = tempModalBosses.findIndex(b => b.name === bossName);
+            if (index !== -1) {
+                tempModalBosses.splice(index, 1);
+            } else {
+                if (tempModalBosses.length >= 14) {
+                    alert("Has llegado al límite de 14 bosses para este personaje.");
+                    return;
+                }
+                tempModalBosses.push({ name: bossName, partySize: 1 });
+            }
+            renderModalBossGrid();
+            updateModalBossCounter();
+        }
+
+        function changeModalBossParty(bossName, size) {
+            const index = tempModalBosses.findIndex(b => b.name === bossName);
+            if (index !== -1) {
+                tempModalBosses[index].partySize = parseInt(size);
+            }
+        }
+
+        function updateModalBossCounter() {
+            const counter = document.getElementById('modal-boss-counter');
+            counter.innerText = `Bosses: ${tempModalBosses.length}/14`;
+            if (tempModalBosses.length >= 14) counter.classList.add('warning');
+            else counter.classList.remove('warning');
+        }
+
+        function renderModalRentals() {
+            const container = document.getElementById('modal-rentals-list');
+            container.innerHTML = '';
+
+            RENTALS_DATA.forEach(rental => {
+                const isChecked = tempModalRentals.includes(rental.id);
+                const div = document.createElement('div');
+                div.className = 'rental-item';
+                div.innerHTML = `
+                    <div class="rental-item-left">
+                        <input type="checkbox" id="chk-${rental.id}" ${isChecked ? 'checked' : ''} onchange="toggleRentalInModal('${rental.id}')">
+                        <img src="${rental.icon}" onerror="this.style.display='none'" alt="">
+                        <label for="chk-${rental.id}">${rental.name}</label>
+                    </div>
+                    <span style="color:var(--danger-color); font-size:0.8rem;">-${(rental.cost / 1000000)}M</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleRentalInModal(id) {
+            const idx = tempModalRentals.indexOf(id);
+            if (idx !== -1) tempModalRentals.splice(idx, 1);
+            else tempModalRentals.push(id);
+        }
+
+        function saveModalData() {
+            const name = document.getElementById('modal-name').value.trim();
+            const level = parseInt(document.getElementById('modal-level').value) || 200;
+            const charClass = document.getElementById('modal-class').value.trim();
+
+            if (!name) {
+                alert("Por favor ingresa un nombre para el personaje.");
+                return;
+            }
+
+            const charData = {
+                name: name,
+                level: level,
+                class: charClass,
+                image: tempBase64Image,
+                bosses: tempModalBosses,
+                rentals: tempModalRentals
+            };
+
+            if (currentEditingIndex !== null) {
+                characters[currentEditingIndex] = charData;
+            } else {
+                characters.push(charData);
+            }
+
+            closeModal();
+            saveToStorage();
+        }
+
+        function deleteCharacter(index) {
+            if (confirm(`¿Seguro que quieres eliminar a ${characters[index].name}?`)) {
+                characters.splice(index, 1);
+                saveToStorage();
+            }
+        }
+
+        function calculateCharacterNetMeso(char) {
+            let bossMeso = char.bosses.reduce((total, boss) => {
+                const base = KRONOS_BOSS_DATA[boss.name] || 0;
+                return total + Math.floor(base / boss.partySize);
+            }, 0);
+
+            let rentalsCost = (char.rentals || []).reduce((total, rentalId) => {
+                const rData = RENTALS_DATA.find(r => r.id === rentalId);
+                return total + (rData ? rData.cost : 0);
+            }, 0);
+
+            return bossMeso - rentalsCost;
+        }
+
+        function renderCharacters() {
+            const grid = document.getElementById('characters-grid');
+            grid.innerHTML = '';
+
+            let globalMesoTotal = 0;
+            let globalBossCount = 0;
+
+            characters.forEach((char, charIndex) => {
+                const netMeso = calculateCharacterNetMeso(char);
+                globalMesoTotal += netMeso;
+                globalBossCount += char.bosses.length;
+
+                let avatarHTML = `<div class="char-avatar">No Img</div>`;
+                if (char.image) {
+                    avatarHTML = `<img class="char-avatar" src="${char.image}" alt="avatar">`;
+                }
+
+                let rentalsSummaryHTML = '';
+                if (char.rentals && char.rentals.length > 0) {
+                    rentalsSummaryHTML = `<div class="card-rentals-summary">`;
+                    char.rentals.forEach(rId => {
+                        const rData = RENTALS_DATA.find(r => r.id === rId);
+                        if (rData) {
+                            rentalsSummaryHTML += `
+                                <span class="rental-badge">
+                                    <img src="${rData.icon}" onerror="this.style.display='none'">
+                                    ${rData.name}
+                                </span>`;
+                        }
+                    });
+                    rentalsSummaryHTML += `</div>`;
+                }
+
+                let cardHTML = `
+                    <div class="char-card">
+                        <div>
+                            <div class="char-header">
+                                ${avatarHTML}
+                                <div class="char-info">
+                                    <h3>${char.name}</h3>
+                                    <p>Lv. ${char.level} | ${char.class || 'Sin Clase'}</p>
+                                </div>
+                                <div class="char-actions-header">
+                                    <button class="btn-inline-action btn-inline-edit" title="Edit" onclick="openModal(${charIndex})">✎</button>
+                                    <button class="btn-inline-action btn-inline-delete" title="Delete" onclick="deleteCharacter(${charIndex})">×</button>
+                                </div>
+                            </div>
+
+                            <div class="boss-list-container">
+                `;
+
+                // LOGICA DE ORDENADO: Mayor a menor según el meso real que recibe el jugador (Base / Party)
+                const sortedBosses = [...char.bosses].sort((a, b) => {
+                    const mesoA = Math.floor((KRONOS_BOSS_DATA[a.name] || 0) / (a.partySize || 1));
+                    const mesoB = Math.floor((KRONOS_BOSS_DATA[b.name] || 0) / (b.partySize || 1));
+                    return mesoB - mesoA;
+                });
+
+                sortedBosses.forEach(boss => {
+                    const base = KRONOS_BOSS_DATA[boss.name] || 0;
+                    const finalMeso = Math.floor(base / boss.partySize);
+                    cardHTML += `
+                        <div class="boss-row">
+                            <div class="boss-row-left">
+                                <img class="boss-icon" src="${getBossIcon(boss.name)}" alt="">
+                                <span style="font-size:0.9rem;">${boss.name}</span>
+                            </div>
+                            <span style="color:var(--text-muted); font-size:0.85rem;">
+                                ${boss.partySize > 1 ? `<span style="color:var(--light-blue)">PT:${boss.partySize}</span> | ` : ''} 
+                                ${finalMeso.toLocaleString()}
+                            </span>
+                        </div>
+                    `;
+                });
+
+                cardHTML += `
+                            </div>
+                            ${rentalsSummaryHTML}
+                        </div>
+                        <div class="char-footer">
+                            <span style="font-size:0.85rem; color:var(--text-muted); display: inline-flex; align-items: center; gap: 5px;">
+                                <img src="Icons/crystal.png" alt="Crystal" style="width: 16px; height: 16px; object-fit: contain;">
+                                Bosses: ${char.bosses.length}/14
+                            </span>
+                            <span class="meso-total">${netMeso.toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+
+                grid.innerHTML += cardHTML;
+            });
+
+            document.getElementById('global-meso-total').innerText = globalMesoTotal.toLocaleString() + " Meso";
+            
+            const bossCounterSpan = document.getElementById('global-boss-count');
+            bossCounterSpan.innerText = `${globalBossCount} / 180`;
+            if (globalBossCount > 180) {
+                bossCounterSpan.style.color = 'var(--danger-color)';
+                bossCounterSpan.style.fontWeight = 'bold';
+            } else {
+                bossCounterSpan.style.color = 'var(--light-blue)';
+                bossCounterSpan.style.fontWeight = 'normal';
+            }
+        }
+
+        renderCharacters();
+    </script>
+</body>
+</html>
