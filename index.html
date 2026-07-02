@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -451,7 +451,7 @@
                     <h3>Character Data</h3>
                     <div class="modal-form-group">
                         <label>Name</label>
-                        <input type="text" id="modal-name" placeholder="Ej: Baldir">
+                        <input type="text" id="modal-name" placeholder="Ex: Baldir">
                     </div>
                     <div class="modal-grid-row">
                         <div class="modal-form-group">
@@ -460,7 +460,7 @@
                         </div>
                         <div class="modal-form-group">
                             <label>Class</label>
-                            <input type="text" id="modal-class" placeholder="Ej: Hero">
+                            <input type="text" id="modal-class" placeholder="Ex: Hero">
                         </div>
                     </div>
 
@@ -752,7 +752,7 @@
                 tempModalBosses.splice(index, 1);
             } else {
                 if (tempModalBosses.length >= 14) {
-                    alert("Has llegado al límite de 14 bosses para este personaje.");
+                    alert("You have reached the 14 bosses limit on this character.");
                     return;
                 }
                 tempModalBosses.push({ name: bossName, partySize: 1 });
@@ -807,7 +807,7 @@
             const charClass = document.getElementById('modal-class').value.trim();
 
             if (!name) {
-                alert("Please add the character name.");
+                alert("Please enter a character name.");
                 return;
             }
 
@@ -831,7 +831,7 @@
         }
 
         function deleteCharacter(index) {
-            if (confirm(`¿Seguro que quieres eliminar a ${characters[index].name}?`)) {
+            if (confirm(`¿Are you sure you want to delete ${characters[index].name}?`)) {
                 characters.splice(index, 1);
                 saveToStorage();
             }
@@ -891,7 +891,7 @@
                                 ${avatarHTML}
                                 <div class="char-info">
                                     <h3>${char.name}</h3>
-                                    <p>Lv. ${char.level} | ${char.class || 'Sin Clase'}</p>
+                                    <p>Lv. ${char.level} | ${char.class || 'No Class'}</p>
                                 </div>
                                 <div class="char-actions-header">
                                     <button class="btn-inline-action btn-inline-edit" title="Edit" onclick="openModal(${charIndex})">✎</button>
