@@ -721,7 +721,7 @@
         let tempBase64Image = "";
         let selectedClassValue = MAPLE_CLASSES[0];
 
-        // CONSTRUIR EL DROPDOWN DE CLASES CUSTOM (FORZADO A MINÚSCULAS)
+        // CONSTRUIR EL DROPDOWN DE CLASES (Conserva el espacio y pasa a minúsculas)
         function initCustomClassDropdown() {
             const optionsBox = document.getElementById('dropdown-options-box');
             optionsBox.innerHTML = '';
@@ -729,7 +729,6 @@
             MAPLE_CLASSES.forEach(cls => {
                 const item = document.createElement('div');
                 item.className = 'custom-dropdown-item';
-                // Convertimos el nombre del archivo a minúsculas
                 const lowCaseCls = cls.toLowerCase();
                 item.innerHTML = `
                     <img class="dropdown-class-icon" src="Icons/classes/${lowCaseCls}.png" onerror="this.src='Icons/default.png'" alt="">
@@ -827,7 +826,6 @@
                 img.style.display = "inline-block";
                 txt.style.display = "none";
             } else {
-                // Forzamos avatar por defecto a minúsculas
                 const lowCaseAvatar = selectedClassValue.toLowerCase();
                 img.src = `Icons/avatars/${lowCaseAvatar}.png`;
                 img.style.display = "inline-block";
@@ -1011,7 +1009,6 @@
                 const charClassSafe = char.class || 'Hero';
                 const lowCaseClass = charClassSafe.toLowerCase();
 
-                // Forzamos avatares cargados por defecto a minúsculas
                 let finalAvatarSrc = char.image ? char.image : `Icons/avatars/${lowCaseClass}.png`;
                 let avatarHTML = `<img class="char-avatar" src="${finalAvatarSrc}" alt="avatar" onerror="this.src='Icons/default.png'">`;
 
