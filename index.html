@@ -119,7 +119,23 @@
 
         .char-info { flex-grow: 1; }
         .char-info h3 { margin: 0; color: var(--light-blue); font-size: 1.3rem; }
-        .char-info p { margin: 4px 0 0 0; font-size: 0.9rem; color: var(--text-muted); }
+        
+        /* Ajuste para alinear nivel, ícono y clase */
+        .char-info p { 
+            margin: 4px 0 0 0; 
+            font-size: 0.9rem; 
+            color: var(--text-muted); 
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .class-icon-inline {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+            vertical-align: middle;
+        }
 
         /* ACCIONES DE TARJETA */
         .char-actions-header {
@@ -322,13 +338,82 @@
             gap: 4px;
         }
         .modal-form-group label { font-size: 0.85rem; color: var(--text-muted); }
-        .modal-form-group input { background: #222; border: 1px solid var(--border-color); padding: 8px; color: white; border-radius: 4px; width: 100%; box-sizing: border-box; }
+        .modal-form-group input, .modal-form-group select { background: #222; border: 1px solid var(--border-color); padding: 8px; color: white; border-radius: 4px; width: 100%; box-sizing: border-box; }
 
         /* Estructura asimétrica para Nivel y Clase */
         .modal-grid-row {
             display: grid;
             grid-template-columns: 80px 1fr;
             gap: 10px;
+        }
+
+        /* ESTILOS PARA EL DROPDOWN DE CLASES PERSONALIZADO CON ICONOS */
+        .custom-dropdown {
+            position: relative;
+            width: 100%;
+            user-select: none;
+        }
+
+        .custom-dropdown-selected {
+            background: #222;
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            height: 35px;
+        }
+
+        .custom-dropdown-selected::after {
+            content: '▼';
+            margin-left: auto;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .custom-dropdown-options {
+            position: absolute;
+            top: 102%;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            max-height: 240px;
+            overflow-y: auto;
+            z-index: 1100;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .custom-dropdown-options.open {
+            display: block;
+        }
+
+        .custom-dropdown-item {
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: white;
+            transition: background 0.2s;
+        }
+
+        .custom-dropdown-item:hover {
+            background: var(--primary-blue);
+        }
+
+        .dropdown-class-icon {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
         }
 
         .image-upload-box {
@@ -361,7 +446,7 @@
         .rental-item-left { display: flex; align-items: center; gap: 8px; }
         .rental-item img { width: 18px; height: 18px; object-fit: contain; }
 
-        /* FOOTER CAMBIADO: Organiza elementos en extremos opuestos */
+        /* FOOTER */
         .modal-footer {
             padding: 15px 20px;
             border-top: 1px solid var(--border-color);
@@ -382,7 +467,6 @@
             gap: 10px;
         }
 
-        /* Estilo para el Selector de Presets */
         .preset-select {
             background-color: #222;
             color: var(--light-blue);
@@ -440,18 +524,16 @@
                 </div>
             </div>
             <div class="modal-body">
-                <!-- Zona izquierda: Todos los Bosses -->
                 <div class="modal-bosses-section">
                     <h3>Pick your weekly bosses</h3>
                     <div class="boss-selection-grid" id="modal-boss-grid"></div>
                 </div>
 
-                <!-- Zona derecha: Atributos, Imagen y Rentals -->
                 <div class="modal-side-section">
                     <h3>Character Data</h3>
                     <div class="modal-form-group">
                         <label>Name</label>
-                        <input type="text" id="modal-name" placeholder="Ex: Baldir">
+                        <input type="text" id="modal-name" placeholder="e.g., Balthir">
                     </div>
                     <div class="modal-grid-row">
                         <div class="modal-form-group">
@@ -460,12 +542,18 @@
                         </div>
                         <div class="modal-form-group">
                             <label>Class</label>
-                            <input type="text" id="modal-class" placeholder="Ex: Hero">
+                            <!-- Dropdown personalizado estructurado con soporte de imágenes -->
+                            <div class="custom-dropdown" id="class-dropdown-wrapper">
+                                <div class="custom-dropdown-selected" id="dropdown-selected-trigger" onclick="toggleDropdownOptions()">
+                                    <span>Select Class</span>
+                                </div>
+                                <div class="custom-dropdown-options" id="dropdown-options-box"></div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="image-upload-box" onclick="document.getElementById('modal-image-file').click()">
-                        <span id="upload-text" style="font-size:0.85rem; color:var(--text-muted);">📁 Click to upload.</span>
+                        <span id="upload-text" style="font-size:0.85rem; color:var(--text-muted);">📁 Click to upload custom img.</span>
                         <input type="file" id="modal-image-file" accept="image/*" style="display:none;" onchange="handleImageUpload(this)">
                         <img id="modal-preview-img" src="" alt="Preview">
                     </div>
@@ -474,7 +562,6 @@
                     <div class="rentals-list" id="modal-rentals-list"></div>
                 </div>
             </div>
-            <!-- MODAL FOOTER MODIFICADO -->
             <div class="modal-footer">
                 <div class="modal-footer-left">
                     <select id="modal-presets" class="preset-select" onchange="applyBossPreset(this.value)">
@@ -558,7 +645,17 @@
             "Chaos Pink Bean": "pinkbean.png", "Hard Hilla": "hilla.png"
         };
 
-        // PRESETS CONFIGURADOS CON SUS RESPECTIVOS JEFES Y PT SIZES
+        // LISTA DE CLASES EN ORDEN ALFABÉTICO[cite: 1]
+        const MAPLE_CLASSES = [
+            "Adele", "Angelic Buster", "Aran", "Ark", "Battle Mage", "Bishop", "Blaze Wizard", "Bowmaster", 
+            "Buccaneer", "Cadena", "Cannoneer", "Corsair", "Dark Knight", "Dawn Warrior", "Demon Avenger", 
+            "Demon Slayer", "Dual blade", "Erel Light", "Evan", "Fire Poison", "Hayato", "Hero", "Hoyoung", 
+            "Ice Lightning", "Iel", "Illium", "Kain", "Kaiser", "Kanna", "Khali", "Kinesis", "Lara", "Lethe", 
+            "Luminous", "Lynn", "Marksman", "Mechanic", "Mercedes", "Mihile", "Mo Xuan", "Night Lord", 
+            "Night Walker", "Paladin", "Pathfinder", "Phantom", "Ren", "Shadower", "Shade", 
+            "Sia Astelle", "Thunder Breaker", "Wild Hunter", "Wind Archer", "Xenon", "Zero"
+        ].sort((a, b) => a.localeCompare(b));
+
         const BOSS_PRESETS = {
             "A": [
                 { name: "Easy Lucid", partySize: 1 }, { name: "Normal Slime", partySize: 1 }, { name: "Normal Lotus", partySize: 1 },
@@ -626,6 +723,50 @@
         let tempModalBosses = []; 
         let tempModalRentals = []; 
         let tempBase64Image = "";
+        let selectedClassValue = MAPLE_CLASSES[0]; // Rastrear la clase seleccionada en el custom select
+
+        // CONSTRUIR EL DROPDOWN DE CLASES CUSTOM CON ICONOS INLINE
+        function initCustomClassDropdown() {
+            const optionsBox = document.getElementById('dropdown-options-box');
+            optionsBox.innerHTML = '';
+
+            MAPLE_CLASSES.forEach(cls => {
+                const item = document.createElement('div');
+                item.className = 'custom-dropdown-item';
+                item.innerHTML = `
+                    <img class="dropdown-class-icon" src="Icons/classes/${cls}.png" onerror="this.src='Icons/default.png'" alt="">
+                    <span>${cls}</span>
+                `;
+                item.onclick = (e) => {
+                    e.stopPropagation();
+                    selectDropdownClass(cls);
+                };
+                optionsBox.appendChild(item);
+            });
+        }
+
+        function toggleDropdownOptions() {
+            document.getElementById('dropdown-options-box').classList.toggle('open');
+        }
+
+        function selectDropdownClass(cls) {
+            selectedClassValue = cls;
+            const trigger = document.getElementById('dropdown-selected-trigger');
+            trigger.innerHTML = `
+                <img class="dropdown-class-icon" src="Icons/classes/${cls}.png" onerror="this.src='Icons/default.png'" alt="">
+                <span>${cls}</span>
+            `;
+            document.getElementById('dropdown-options-box').classList.remove('open');
+            updateDefaultAvatarPreview();
+        }
+
+        // Cerrar dropdown si se hace click afuera del mismo
+        window.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('class-dropdown-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                document.getElementById('dropdown-options-box').classList.remove('open');
+            }
+        });
 
         function saveToStorage() {
             localStorage.setItem('maple_boss_tracker_v2', JSON.stringify(characters));
@@ -634,14 +775,15 @@
 
         function openModal(index = null) {
             currentEditingIndex = index;
-            document.getElementById('modal-presets').value = ""; // Resetea el dropdown de presets
+            document.getElementById('modal-presets').value = ""; 
+            initCustomClassDropdown();
 
             if (index !== null) {
                 const char = characters[index];
                 document.getElementById('modal-title').innerText = `Edit ${char.name}`;
                 document.getElementById('modal-name').value = char.name;
                 document.getElementById('modal-level').value = char.level;
-                document.getElementById('modal-class').value = char.class;
+                selectDropdownClass(char.class || MAPLE_CLASSES[0]);
                 tempModalBosses = JSON.parse(JSON.stringify(char.bosses));
                 tempModalRentals = JSON.parse(JSON.stringify(char.rentals || []));
                 tempBase64Image = char.image || "";
@@ -649,7 +791,7 @@
                 document.getElementById('modal-title').innerText = "Add Character";
                 document.getElementById('modal-name').value = "";
                 document.getElementById('modal-level').value = "220";
-                document.getElementById('modal-class').value = "";
+                selectDropdownClass(MAPLE_CLASSES[0]);
                 tempModalBosses = [];
                 tempModalRentals = [];
                 tempBase64Image = "";
@@ -681,24 +823,27 @@
         function updateImagePreview() {
             const img = document.getElementById('modal-preview-img');
             const txt = document.getElementById('upload-text');
+            
             if (tempBase64Image) {
                 img.src = tempBase64Image;
                 img.style.display = "inline-block";
                 txt.style.display = "none";
             } else {
-                img.src = "";
-                img.style.display = "none";
-                txt.style.display = "inline-block";
+                img.src = `Icons/avatars/${selectedClassValue}.png`;
+                img.style.display = "inline-block";
+                txt.style.display = "none";
             }
         }
 
-        // FUNCIÓN NUEVA: Aplica los presets directamente al arreglo temporal
+        function updateDefaultAvatarPreview() {
+            if (!tempBase64Image) {
+                updateImagePreview();
+            }
+        }
+
         function applyBossPreset(presetKey) {
             if (!BOSS_PRESETS[presetKey]) return;
-            
-            // Copia profunda del preset seleccionado para no alterar la database global
             tempModalBosses = JSON.parse(JSON.stringify(BOSS_PRESETS[presetKey]));
-            
             renderModalBossGrid();
             updateModalBossCounter();
         }
@@ -752,7 +897,7 @@
                 tempModalBosses.splice(index, 1);
             } else {
                 if (tempModalBosses.length >= 14) {
-                    alert("You have reached the 14 bosses limit on this character.");
+                    alert("You have reached the limit of 14 bosses for this character.");
                     return;
                 }
                 tempModalBosses.push({ name: bossName, partySize: 1 });
@@ -804,7 +949,7 @@
         function saveModalData() {
             const name = document.getElementById('modal-name').value.trim();
             const level = parseInt(document.getElementById('modal-level').value) || 200;
-            const charClass = document.getElementById('modal-class').value.trim();
+            const charClass = selectedClassValue;
 
             if (!name) {
                 alert("Please enter a character name.");
@@ -815,7 +960,7 @@
                 name: name,
                 level: level,
                 class: charClass,
-                image: tempBase64Image,
+                image: tempBase64Image, 
                 bosses: tempModalBosses,
                 rentals: tempModalRentals
             };
@@ -831,7 +976,7 @@
         }
 
         function deleteCharacter(index) {
-            if (confirm(`¿Are you sure you want to delete ${characters[index].name}?`)) {
+            if (confirm(`Are you sure you want to delete ${characters[index].name}?`)) {
                 characters.splice(index, 1);
                 saveToStorage();
             }
@@ -863,10 +1008,8 @@
                 globalMesoTotal += netMeso;
                 globalBossCount += char.bosses.length;
 
-                let avatarHTML = `<div class="char-avatar">No Img</div>`;
-                if (char.image) {
-                    avatarHTML = `<img class="char-avatar" src="${char.image}" alt="avatar">`;
-                }
+                let finalAvatarSrc = char.image ? char.image : `Icons/avatars/${char.class || 'Hero'}.png`;
+                let avatarHTML = `<img class="char-avatar" src="${finalAvatarSrc}" alt="avatar" onerror="this.src='Icons/default.png'">`;
 
                 let rentalsSummaryHTML = '';
                 if (char.rentals && char.rentals.length > 0) {
@@ -890,8 +1033,10 @@
                             <div class="char-header">
                                 ${avatarHTML}
                                 <div class="char-info">
+                                    <!-- Nombre limpio sin el icono al lado -->
                                     <h3>${char.name}</h3>
-                                    <p>Lv. ${char.level} | ${char.class || 'No Class'}</p>
+                                    <!-- Ícono reposicionado al lado de la clase -->
+                                    <p>Lv. ${char.level} | <img class="class-icon-inline" src="Icons/classes/${char.class || 'Hero'}.png" alt="" onerror="this.style.display='none'"> ${char.class || 'No Class'}</p>
                                 </div>
                                 <div class="char-actions-header">
                                     <button class="btn-inline-action btn-inline-edit" title="Edit" onclick="openModal(${charIndex})">✎</button>
