@@ -513,7 +513,6 @@
         <div class="characters-grid" id="characters-grid"></div>
     </div>
 
-    <!-- MODAL UI -->
     <div class="modal-overlay" id="char-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -542,7 +541,6 @@
                         </div>
                         <div class="modal-form-group">
                             <label>Class</label>
-                            <!-- Dropdown personalizado estructurado con soporte de imágenes -->
                             <div class="custom-dropdown" id="class-dropdown-wrapper">
                                 <div class="custom-dropdown-selected" id="dropdown-selected-trigger" onclick="toggleDropdownOptions()">
                                     <span>Select Class</span>
@@ -553,7 +551,7 @@
                     </div>
 
                     <div class="image-upload-box" onclick="document.getElementById('modal-image-file').click()">
-                        <span id="upload-text" style="font-size:0.85rem; color:var(--text-muted);">📁 Click to upload custom img.</span>
+                        <span id="upload-text" style="font-size:0.85rem; color:var(--text-muted);;">📁 Click to upload custom img.</span>
                         <input type="file" id="modal-image-file" accept="image/*" style="display:none;" onchange="handleImageUpload(this)">
                         <img id="modal-preview-img" src="" alt="Preview">
                     </div>
@@ -568,7 +566,7 @@
                         <option value="" selected disabled>Load Boss Preset...</option>
                         <option value="A">A) E. Lucid</option>
                         <option value="B">B) N. Lomien</option>
-                        <option value="C">C) N. Tenebris</option>
+                        <option value="C) N. Tenebris">C) N. Tenebris</option>
                         <option value="D">D) C. Tenebris</option>
                         <option value="E">E) Easy Grandis</option>
                         <option value="F">F) C. Tenebris Trade</option>
@@ -583,7 +581,6 @@
     </div>
 
     <script>
-        // Database de Mesos de Kronos[cite: 1]
         const KRONOS_BOSS_DATA = {
             "Hard Jupiter": 4845000000, "Normal Jupiter": 1615000000,
             "Extreme Kaling": 6026000000, "Extreme First Adversary": 5880000000, "Extreme Kalos": 5200000000,
@@ -645,7 +642,6 @@
             "Chaos Pink Bean": "pinkbean.png", "Hard Hilla": "hilla.png"
         };
 
-        // LISTA DE CLASES EN ORDEN ALFABÉTICO[cite: 1]
         const MAPLE_CLASSES = [
             "Adele", "Angelic Buster", "Aran", "Ark", "Battle Mage", "Bishop", "Blaze Wizard", "Bowmaster", 
             "Buccaneer", "Cadena", "Cannoneer", "Corsair", "Dark Knight", "Dawn Warrior", "Demon Avenger", 
@@ -723,9 +719,9 @@
         let tempModalBosses = []; 
         let tempModalRentals = []; 
         let tempBase64Image = "";
-        let selectedClassValue = MAPLE_CLASSES[0]; // Rastrear la clase seleccionada en el custom select
+        let selectedClassValue = MAPLE_CLASSES[0];
 
-        // CONSTRUIR EL DROPDOWN DE CLASES CUSTOM CON ICONOS INLINE
+        // CONSTRUIR EL DROPDOWN DE CLASES CUSTOM (FORZADO A MINÚSCULAS)
         function initCustomClassDropdown() {
             const optionsBox = document.getElementById('dropdown-options-box');
             optionsBox.innerHTML = '';
@@ -733,8 +729,10 @@
             MAPLE_CLASSES.forEach(cls => {
                 const item = document.createElement('div');
                 item.className = 'custom-dropdown-item';
+                // Convertimos el nombre del archivo a minúsculas
+                const lowCaseCls = cls.toLowerCase();
                 item.innerHTML = `
-                    <img class="dropdown-class-icon" src="Icons/classes/${cls}.png" onerror="this.src='Icons/default.png'" alt="">
+                    <img class="dropdown-class-icon" src="Icons/classes/${lowCaseCls}.png" onerror="this.src='Icons/default.png'" alt="">
                     <span>${cls}</span>
                 `;
                 item.onclick = (e) => {
@@ -752,15 +750,15 @@
         function selectDropdownClass(cls) {
             selectedClassValue = cls;
             const trigger = document.getElementById('dropdown-selected-trigger');
+            const lowCaseCls = cls.toLowerCase();
             trigger.innerHTML = `
-                <img class="dropdown-class-icon" src="Icons/classes/${cls}.png" onerror="this.src='Icons/default.png'" alt="">
+                <img class="dropdown-class-icon" src="Icons/classes/${lowCaseCls}.png" onerror="this.src='Icons/default.png'" alt="">
                 <span>${cls}</span>
             `;
             document.getElementById('dropdown-options-box').classList.remove('open');
             updateDefaultAvatarPreview();
         }
 
-        // Cerrar dropdown si se hace click afuera del mismo
         window.addEventListener('click', function(e) {
             const wrapper = document.getElementById('class-dropdown-wrapper');
             if (wrapper && !wrapper.contains(e.target)) {
@@ -829,7 +827,9 @@
                 img.style.display = "inline-block";
                 txt.style.display = "none";
             } else {
-                img.src = `Icons/avatars/${selectedClassValue}.png`;
+                // Forzamos avatar por defecto a minúsculas
+                const lowCaseAvatar = selectedClassValue.toLowerCase();
+                img.src = `Icons/avatars/${lowCaseAvatar}.png`;
                 img.style.display = "inline-block";
                 txt.style.display = "none";
             }
@@ -1008,7 +1008,11 @@
                 globalMesoTotal += netMeso;
                 globalBossCount += char.bosses.length;
 
-                let finalAvatarSrc = char.image ? char.image : `Icons/avatars/${char.class || 'Hero'}.png`;
+                const charClassSafe = char.class || 'Hero';
+                const lowCaseClass = charClassSafe.toLowerCase();
+
+                // Forzamos avatares cargados por defecto a minúsculas
+                let finalAvatarSrc = char.image ? char.image : `Icons/avatars/${lowCaseClass}.png`;
                 let avatarHTML = `<img class="char-avatar" src="${finalAvatarSrc}" alt="avatar" onerror="this.src='Icons/default.png'">`;
 
                 let rentalsSummaryHTML = '';
@@ -1033,10 +1037,8 @@
                             <div class="char-header">
                                 ${avatarHTML}
                                 <div class="char-info">
-                                    <!-- Nombre limpio sin el icono al lado -->
                                     <h3>${char.name}</h3>
-                                    <!-- Ícono reposicionado al lado de la clase -->
-                                    <p>Lv. ${char.level} | <img class="class-icon-inline" src="Icons/classes/${char.class || 'Hero'}.png" alt="" onerror="this.style.display='none'"> ${char.class || 'No Class'}</p>
+                                    <p>Lv. ${char.level} | <img class="class-icon-inline" src="Icons/classes/${lowCaseClass}.png" alt="" onerror="this.style.display='none'"> ${charClassSafe}</p>
                                 </div>
                                 <div class="char-actions-header">
                                     <button class="btn-inline-action btn-inline-edit" title="Edit" onclick="openModal(${charIndex})">✎</button>
