@@ -222,7 +222,11 @@
         .char-actions-header button.btn-inline-delete:hover { color: #ff6b6b; }
 
         /* Listas Internas */
-        .boss-list-container, .drop-list-container { max-height: 220px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
+        .boss-list-container { max-height: 220px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
+        
+        /* Modificado max-height de 220px a 320px para ver aproximadamente 7 items en el Drop Tracker */
+        .drop-list-container { max-height: 305px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
+        
         .boss-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #43748c; }
         .boss-row-left { display: flex; align-items: center; gap: 10px; }
         .boss-icon { width: 24px; height: 24px; object-fit: contain; background: transparent; border-radius: 4px; }
@@ -230,6 +234,7 @@
         .card-rentals-summary { border-top: 1px dashed var(--border-color); padding-top: 10px; margin-bottom: 15px; color: var(--text-muted); }
         .rental-badge { display: inline-flex; align-items: center; gap: 5px; background: #1c1c1c; padding: 3px 8px; border-radius: 4px; margin: 2px; border: 1px solid #292929; font-size: 0.8rem; }
         .rental-badge img { width: 14px; height: 14px; object-fit: contain; background: transparent; }
+        .no-rentals-badge { font-size: 0.85rem; color: var(--text-muted); font-style: italic; padding: 4px 0; display: inline-block; }
 
         .char-footer { border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
         .meso-total { font-size: 1.2rem; font-weight: bold; color: var(--success-color); }
@@ -315,7 +320,6 @@
 </head>
 <body>
 
-    <!-- NAV HEADER PRINCIPAL -->
     <header>
         <div class="header-left">
             <button class="menu-toggle-btn" onclick="toggleMenuPanel(event)">☰</button>
@@ -327,17 +331,14 @@
             <div class="summary-item">Bosses: <span id="global-boss-count">0 / 180</span></div>
         </div>
 
-        <!-- PANEL DE MENÚ DESPLEGABLE DESDE EL BOTÓN -->
         <div class="dropdown-menu-panel" id="global-menu-panel">
             <button class="menu-panel-item active" id="menu-item-boss" onclick="switchView('boss')">Boss Tracker</button>
             <button class="menu-panel-item" id="menu-item-drop" onclick="switchView('drop')">Drop Tracker</button>
         </div>
     </header>
 
-    <!-- WRAPPER DEL CONTENIDO -->
     <div class="content-wrapper">
         <div class="main-container">
-            <!-- VISTA BOSS TRACKER -->
             <div id="view-boss-tracker" class="app-view active">
                 <div class="top-actions">
                     <button onclick="openCharacterModal('boss')">+ Add Character</button>
@@ -345,7 +346,6 @@
                 <div class="characters-grid" id="boss-characters-grid"></div>
             </div>
 
-            <!-- VISTA DROP TRACKER -->
             <div id="view-drop-tracker" class="app-view">
                 <div class="top-actions">
                     <button onclick="openCharacterModal('drop')">+ Add Character</button>
@@ -355,7 +355,6 @@
         </div>
     </div>
 
-    <!-- MODAL DINÁMICO: CONFIGURABLE SEGÚN MODO -->
     <div class="modal-overlay" id="char-modal">
         <div class="modal-content" id="modal-content-container">
             <div class="modal-header">
@@ -364,12 +363,10 @@
             </div>
             <div class="modal-body">
                 
-                <!-- SECCIÓN IZQUIERDA (SOLO SE MUESTRA EN MODO BOSS TRACKER) -->
                 <div class="modal-main-section" id="modal-left-boss-section">
                     <div class="modal-selection-scroll-area" id="modal-boss-sections-container"></div>
                 </div>
 
-                <!-- SECCIÓN DERECHA / PRINCIPAL (DATOS DEL PERSONAJE) -->
                 <div class="modal-side-section" id="modal-right-data-section">
                     <h3 id="side-section-header-title">Character Data</h3>
                     <div class="modal-form-group">
@@ -398,7 +395,6 @@
                         <img id="modal-preview-img" src="" alt="Preview">
                     </div>
 
-                    <!-- AREA DE CONTENIDO DINÁMICO (RENTAS EN BOSS TRACKER / IMPORTACIÓN EN DROP TRACKER) -->
                     <div id="modal-dynamic-bottom-area"></div>
                 </div>
             </div>
@@ -420,7 +416,6 @@
         </div>
     </div>
 
-    <!-- MODAL: DETALLES DE LOGS DE DROPS -->
     <div class="modal-overlay" id="drop-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -845,8 +840,8 @@
             }
         }
 
-        document.addEventListener('click', function() {
-            document.getElementById('global-menu-panel').classList.remove('open');
+        document.getElementById('global-menu-panel').addEventListener('click', function(e) {
+            e.stopPropagation();
         });
 
         // Escucha global para cerrar ventanas con la tecla ESC
@@ -1039,7 +1034,6 @@
                         </div>
                     `;
                     
-                    // Escapamos de forma segura los nombres con apóstrofes usando encodeURIComponent / string directo
                     card.onclick = () => {
                         handleDropSelectionToggle(drop.name);
                     };
@@ -1071,7 +1065,6 @@
                 const div = document.createElement('div');
                 div.className = 'side-selected-drop-item';
                 
-                // Agregados los iconos correctos usando getDropIcon(dropName)
                 div.innerHTML = `
                     <div class="side-drop-top">
                         <div class="side-drop-title-left">
@@ -1086,7 +1079,6 @@
                     ${itemData.split ? `<input type="text" class="split-name-input" placeholder="Who took it?" value="${itemData.owner}">` : ''}
                 `;
                 
-                // Asignamos los eventos de forma directa por JS en lugar de in-line para evitar problemas con comillas y apóstrofes
                 div.querySelector('.switch-input').onchange = (e) => {
                     toggleDropSplitSwitch(dropName, e.target.checked);
                 };
@@ -1114,15 +1106,25 @@
             if (!logDate || dropNames.length === 0) { alert("Please configure the date and select at least one item."); return; }
 
             const char = dropCharacters[currentDropCharIndex];
-            dropNames.forEach(name => {
+            
+            // Modificado: Se insertan los nuevos drops al revés o de forma cronológica estricta para asegurar estabilidad visual
+            dropNames.forEach((name, idx) => {
                 const item = tempSelectedDropsData[name];
                 char.logs.push({
                     date: logDate,
                     name: name,
-                    split: item.split ? item.owner.trim() || "Party Member" : " "
+                    split: item.split ? item.owner.trim() || "Party Member" : " ",
+                    timestamp: Date.now() + idx // Clave de desempate secundaria única para ordenar por inserción
                 });
             });
-            char.logs.sort((a,b) => new Date(b.date) - new Date(a.date));
+            
+            // Criterio de ordenación mejorado: Primero por Fecha descendente, si es igual desempata por orden de inserción (timestamp) más nuevo arriba
+            char.logs.sort((a, b) => {
+                const dateDiff = new Date(b.date) - new Date(a.date);
+                if (dateDiff !== 0) return dateDiff;
+                return (b.timestamp || 0) - (a.timestamp || 0);
+            });
+            
             closeDropModal();
             saveToStorage();
         }
@@ -1172,6 +1174,9 @@
                             if (rData) rentalsSummaryHTML += `<span class="rental-badge"><img src="${rData.icon}"> ${rData.name}</span>`;
                         });
                         rentalsSummaryHTML += `</div>`;
+                    } else {
+                        // Solución al espacio vacío: Añadir una etiqueta elegante de "No Rentals" si la lista está vacía
+                        rentalsSummaryHTML = `<div class="card-rentals-summary"><span class="no-rentals-badge">No Rentals</span></div>`;
                     }
 
                     let cardHTML = `
@@ -1252,7 +1257,7 @@
                                             <span>${log.name}</span>
                                         </div>
                                     </td>
-                                    <td style="color:${log.split === ' ' ? 'var(--success-color)' : 'var(--text-muted)'}; font-weight:bold;">${log.split}</td>
+                                    <td style="color:${log.split === ' ' ? 'var(--success-color)' : 'var(--text-muted)'}; font-weight:regular;">${log.split}</td>
                                     <td style="text-align:right;">
                                         <button class="btn-inline-action" style="background:none; border:none; color:var(--text-muted); cursor:pointer;" onclick="removeDropLog(${index}, ${logIdx})">×</button>
                                     </td>
