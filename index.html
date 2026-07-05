@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MapleStory Boss Tracker - Kronos</title>
+    <title>MapleStory Tracker - Kronos</title>
     <style>
         :root {
             --bg-color: #0f0f0f;
+            --menu-bg: #090c0f;
             --card-bg: #101419;
             --text-color: #ffffff;
             --text-muted: #aaaaaa;
@@ -22,45 +23,124 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
         }
 
+        /* HEADER & MENÚ HAMBURGUESA */
         header {
-            text-align: center;
-            margin-bottom: 30px;
+            padding: 8px 30px;
             border-bottom: 2px solid var(--border-color);
-            padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #0b0d11;
+            position: relative;
+            z-index: 100;
         }
 
-        h1 { margin: 0; color: var(--light-blue); }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-toggle-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--light-blue);
+            font-size: 1.5rem;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .menu-toggle-btn:hover {
+            background-color: var(--primary-blue);
+            color: white;
+            box-shadow: 0 0 8px var(--light-blue);
+        }
+
+        header h1 { margin: 0; color: var(--light-blue); font-size: 1.5rem; }
         
         .global-summary {
             background-color: var(--card-bg);
-            padding: 15px 25px;
+            padding: 8px 16px;
             border-radius: 8px;
-            display: inline-flex;
-            gap: 40px;
-            margin-top: 15px;
+            display: flex;
+            gap: 25px;
             border: 1px solid var(--primary-blue);
-            font-size: 1.1rem;
+            font-size: 0.95rem;
+        }
+        .summary-item span { font-weight: bold; }
+
+        /* PANEL MENÚ DESPLEGABLE FLOTANTE */
+        .dropdown-menu-panel {
+            position: absolute;
+            top: 100%;
+            left: 40px;
+            background-color: var(--menu-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+            display: none;
+            flex-direction: column;
+            padding: 10px;
+            min-width: 200px;
+            z-index: 200;
+        }
+        .dropdown-menu-panel.open { display: flex; }
+
+        .menu-panel-item {
+            background: none;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .menu-panel-item:hover {
+            color: white;
+            background-color: rgba(0, 74, 119, 0.2);
+        }
+        .menu-panel-item.active {
+            color: white;
+            background-color: var(--primary-blue);
+            border-color: var(--light-blue);
         }
 
-        .summary-item span {
-            font-weight: bold;
+        /* CONTENEDOR PRINCIPAL */
+        .content-wrapper {
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
         }
 
         .main-container {
-            max-width: 1400px;
+            padding: 30px 40px;
+            max-width: 1600px;
+            width: 100%;
+            box-sizing: border-box;
             margin: 0 auto;
         }
 
         .top-actions {
             display: flex;
             justify-content: flex-end;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
-        /* Botones Globales */
+        /* Botones */
         button {
             background-color: var(--primary-blue);
             color: white;
@@ -80,11 +160,15 @@
         button.btn-secondary { background-color: #444; border-color: #666; }
         button.btn-secondary:hover { background-color: #555; box-shadow: none; }
 
+        /* Vistas Ocultables */
+        .app-view { display: none; }
+        .app-view.active { display: block; }
+
         /* Grid de Personajes */
         .characters-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+            gap: 25px;
         }
 
         .char-card {
@@ -96,7 +180,6 @@
             flex-direction: column;
             justify-content: space-between;
         }
-
         .char-card:hover { border-color: var(--primary-blue); }
 
         .char-header {
@@ -111,7 +194,7 @@
         .char-avatar {
             width: 70px;
             height: 70px;
-            background-color: #222;
+            background: transparent;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             object-fit: contain;
@@ -119,8 +202,6 @@
 
         .char-info { flex-grow: 1; }
         .char-info h3 { margin: 0; color: var(--light-blue); font-size: 1.3rem; }
-        
-        /* Ajuste para alinear nivel, ícono y clase */
         .char-info p { 
             margin: 4px 0 0 0; 
             font-size: 0.9rem; 
@@ -130,365 +211,102 @@
             gap: 5px;
         }
         
-        .class-icon-inline {
-            width: 16px;
-            height: 16px;
-            object-fit: contain;
-            vertical-align: middle;
-        }
+        .class-icon-inline { width: 16px; height: 16px; object-fit: contain; background: transparent; }
 
-        /* ACCIONES DE TARJETA */
-        .char-actions-header {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        
+        .char-actions-header { display: flex; gap: 12px; align-items: center; }
         .char-actions-header button.btn-inline-action {
-            background: none !important;
-            border: none !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            box-shadow: none !important;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: color 0.2s ease;
-            line-height: 1;
+            background: none !important; border: none !important; padding: 0 !important; margin: 0 !important;
+            box-shadow: none !important; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; line-height: 1;
         }
+        .char-actions-header button.btn-inline-edit:hover { color: var(--light-blue); }
+        .char-actions-header button.btn-inline-delete:hover { color: #ff6b6b; }
 
-        .char-actions-header button.btn-inline-action:hover {
-            box-shadow: none !important;
-        }
+        /* Listas Internas */
+        .boss-list-container, .drop-list-container { max-height: 220px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
+        .boss-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #43748c; }
+        .boss-row-left { display: flex; align-items: center; gap: 10px; }
+        .boss-icon { width: 24px; height: 24px; object-fit: contain; background: transparent; border-radius: 4px; }
 
-        .char-actions-header button.btn-inline-edit:hover {
-            color: var(--light-blue);
-        }
+        .card-rentals-summary { border-top: 1px dashed var(--border-color); padding-top: 10px; margin-bottom: 15px; color: var(--text-muted); }
+        .rental-badge { display: inline-flex; align-items: center; gap: 5px; background: #1c1c1c; padding: 3px 8px; border-radius: 4px; margin: 2px; border: 1px solid #292929; font-size: 0.8rem; }
+        .rental-badge img { width: 14px; height: 14px; object-fit: contain; background: transparent; }
 
-        .char-actions-header button.btn-inline-delete:hover {
-            color: #ff6b6b;
-        }
+        .char-footer { border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .meso-total { font-size: 1.2rem; font-weight: bold; color: var(--success-color); }
 
-        /* Lista de jefes en la tarjeta */
-        .boss-list-container {
-            max-height: 220px;
-            overflow-y: auto;
-            margin-bottom: 15px;
-            padding-right: 5px;
-        }
+        /* Tablas */
+        .drop-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+        .drop-table th { color: var(--light-blue); border-bottom: 1px solid var(--border-color); padding: 6px 4px; }
+        .drop-table td { padding: 6px 4px; border-bottom: 1px solid rgba(67,116,140,0.2); vertical-align: middle; }
+        .drop-item-cell { display: flex; align-items: center; gap: 8px; }
 
-        .boss-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 0;
-            border-bottom: 1px solid #43748c;
-        }
-
-        .boss-row-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .boss-icon {
-            width: 24px;
-            height: 24px;
-            object-fit: contain;
-            background-color: #111;
-            border-radius: 4px;
-        }
-
-        /* Rentals en la tarjeta */
-        .card-rentals-summary {
-            font-size: 0.85rem;
-            border-top: 1px dashed var(--border-color);
-            padding-top: 10px;
-            margin-bottom: 15px;
-            color: var(--text-muted);
-        }
-        .rental-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: #1c1c1c;
-            padding: 3px 8px;
-            border-radius: 4px;
-            margin: 2px;
-            border: 1px solid #292929;
-            font-size: 0.8rem;
-        }
-        .rental-badge img { width: 14px; height: 14px; object-fit: contain; }
-
-        .char-footer {
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .meso-total {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--success-color);
-        }
-
-        /* MODAL INTERACTIVO AMPLADO */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0,0,0,0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background-color: var(--card-bg);
-            border: 2px solid var(--primary-blue);
-            border-radius: 12px;
-            width: 95%;
-            max-width: 1250px;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .modal-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #111;
-        }
+        /* MODALES */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background-color: var(--card-bg); border: 2px solid var(--primary-blue); border-radius: 12px; width: 95%; max-width: 1250px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background-color: #111; }
         .modal-header h2 { margin: 0; color: var(--light-blue); }
+        
+        /* Layout Modal Adaptativo */
+        .modal-body { padding: 20px; overflow-y: auto; display: grid; grid-template-columns: 1fr 360px; gap: 25px; }
+        
+        /* Layout para Drop Tracker Integrado de Forma Limpia (No anidado) */
+        .modal-content.drop-layout-compact { max-width: 500px; }
+        .modal-content.drop-layout-compact .modal-body { grid-template-columns: 1fr; gap: 15px; }
+        .modal-content.drop-layout-compact .modal-side-section { background: transparent; padding: 0; border: none; max-height: none; }
 
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: 25px;
-        }
+        .modal-main-section h3, .modal-side-section h3 { margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; color: var(--light-blue); }
+        
+        /* Listas y Grillas de Selección */
+        .modal-selection-scroll-area { max-height: 65vh; overflow-y: auto; padding-right: 5px; }
+        .category-title { margin: 15px 0 5px 0; color: var(--light-blue); font-size: 1rem; font-weight: bold; }
+        .category-separator { border: none; border-top: 1px solid var(--border-color); margin-bottom: 10px; opacity: 0.6; }
+        .selection-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        
+        .select-card { background: #1f1f1f; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 0.8rem; user-select: none; }
+        .select-card:hover { border-color: var(--light-blue); }
+        .select-card.selected { background-color: rgba(0, 74, 119, 0.4); border-color: var(--light-blue); }
+        .select-card-left { display: flex; align-items: center; gap: 6px; overflow: hidden; }
+        .select-card-left span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .modal-bosses-section h3, .modal-side-section h3 {
-            margin-top: 0;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
-            color: var(--light-blue);
-        }
+        .party-select { padding: 2px 4px; font-size: 0.75rem; background-color: #222; color: white; border: 1px solid var(--border-color); }
 
-        /* GRID DE JEFES EN 4 COLUMNAS */
-        .boss-selection-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            max-height: 62vh;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .boss-select-card {
-            background: #1f1f1f;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            font-size: 0.8rem;
-            user-select: none;
-        }
-        .boss-select-card:hover { border-color: var(--light-blue); }
-        .boss-select-card.selected {
-            background-color: rgba(0, 74, 119, 0.4);
-            border-color: var(--light-blue);
-        }
-
-        .boss-select-left { display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; }
-        .boss-select-left span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .party-select {
-            padding: 2px 4px;
-            font-size: 0.75rem;
-            background-color: #222;
-            color: white;
-            border: 1px solid var(--border-color);
-        }
-
-        /* Panel Lateral */
-        .modal-side-section {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            background: #111111;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .modal-form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
+        .modal-side-section { display: flex; flex-direction: column; gap: 15px; background: #111111; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); overflow-y: auto; max-height: 62vh; }
+        .modal-form-group { display: flex; flex-direction: column; gap: 4px; }
         .modal-form-group label { font-size: 0.85rem; color: var(--text-muted); }
         .modal-form-group input, .modal-form-group select { background: #222; border: 1px solid var(--border-color); padding: 8px; color: white; border-radius: 4px; width: 100%; box-sizing: border-box; }
+        .modal-grid-row { display: grid; grid-template-columns: 80px 1fr; gap: 10px; }
 
-        /* Estructura asimétrica para Nivel y Clase */
-        .modal-grid-row {
-            display: grid;
-            grid-template-columns: 80px 1fr;
-            gap: 10px;
-        }
+        .side-selected-drop-item { background: #1c1c1c; border: 1px solid #333; padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; }
+        .side-drop-top { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; }
+        .side-drop-title-left { display: flex; align-items: center; gap: 8px; }
+        .switch-container { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted); }
+        .switch-input { cursor: pointer; width: 16px; height: 16px; margin: 0; }
+        .split-name-input { background: #2a2a2a; border: 1px solid var(--border-color); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; width: 100%; box-sizing: border-box; margin-top: 2px; }
 
-        /* ESTILOS PARA EL DROPDOWN DE CLASES PERSONALIZADO CON ICONOS */
-        .custom-dropdown {
-            position: relative;
-            width: 100%;
-            user-select: none;
-        }
+        /* Custom Dropdown Clases */
+        .custom-dropdown { position: relative; width: 100%; user-select: none; }
+        .custom-dropdown-selected { background: #222; border: 1px solid var(--border-color); padding: 8px; color: white; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; box-sizing: border-box; height: 35px; }
+        .custom-dropdown-selected::after { content: '▼'; margin-left: auto; font-size: 0.7rem; color: var(--text-muted); }
+        .custom-dropdown-options { position: absolute; top: 102%; left: 0; right: 0; background: #1a1a1a; border: 1px solid var(--border-color); border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1100; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .custom-dropdown-options.open { display: block; }
+        .custom-dropdown-item { padding: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: white; }
+        .custom-dropdown-item:hover { background: var(--primary-blue); }
+        .dropdown-class-icon { width: 18px; height: 18px; object-fit: contain; background: transparent; }
 
-        .custom-dropdown-selected {
-            background: #222;
-            border: 1px solid var(--border-color);
-            padding: 8px;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            box-sizing: border-box;
-            height: 35px;
-        }
+        .image-upload-box { border: 2px dashed var(--border-color); padding: 12px; text-align: center; cursor: pointer; border-radius: 6px; background: #1a1a1a; }
+        .image-upload-box img { max-height: 80px; max-width: 100%; object-fit: contain; margin-top: 8px; display: none; background: transparent; }
 
-        .custom-dropdown-selected::after {
-            content: '▼';
-            margin-left: auto;
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .custom-dropdown-options {
-            position: absolute;
-            top: 102%;
-            left: 0;
-            right: 0;
-            background: #1a1a1a;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            max-height: 240px;
-            overflow-y: auto;
-            z-index: 1100;
-            display: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        }
-
-        .custom-dropdown-options.open {
-            display: block;
-        }
-
-        .custom-dropdown-item {
-            padding: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            color: white;
-            transition: background 0.2s;
-        }
-
-        .custom-dropdown-item:hover {
-            background: var(--primary-blue);
-        }
-
-        .dropdown-class-icon {
-            width: 18px;
-            height: 18px;
-            object-fit: contain;
-        }
-
-        .image-upload-box {
-            border: 2px dashed var(--border-color);
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 6px;
-            background: #1a1a1a;
-        }
-        .image-upload-box:hover { border-color: var(--light-blue); }
-        .image-upload-box img { max-height: 90px; max-width: 100%; object-fit: contain; margin-top: 8px; display: none; }
-
-        /* Lista de Rentals */
-        .rentals-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .rental-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            background: #1c1c1c;
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: 1px solid #252525;
-        }
+        .rentals-list { display: flex; flex-direction: column; gap: 6px; }
+        .rental-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; background: #1c1c1c; padding: 6px 10px; border-radius: 4px; border: 1px solid #252525; }
         .rental-item-left { display: flex; align-items: center; gap: 8px; }
-        .rental-item img { width: 18px; height: 18px; object-fit: contain; }
+        .rental-item img { width: 18px; height: 18px; object-fit: contain; background: transparent; }
 
-        /* FOOTER */
-        .modal-footer {
-            padding: 15px 20px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #111;
-        }
+        /* Footer del modal alineado a la derecha */
+        .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; align-items: center; gap: 12px; background-color: #111; }
+        .preset-select { background-color: #222; color: var(--light-blue); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
 
-        .modal-footer-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .routing-box { display: flex; flex-direction: column; gap: 8px; background: #111111; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); }
 
-        .modal-footer-right {
-            display: flex;
-            gap: 10px;
-        }
-
-        .preset-select {
-            background-color: #222;
-            color: var(--light-blue);
-            border: 1px solid var(--border-color);
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .preset-select:hover {
-            border-color: var(--light-blue);
-        }
-
-        .counter-badge {
-            font-size: 0.85rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background: #333;
-        }
-        .counter-badge.warning { background: var(--danger-color); font-weight: bold; }
-
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #111; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
@@ -497,39 +315,63 @@
 </head>
 <body>
 
+    <!-- NAV HEADER PRINCIPAL -->
     <header>
-        <h1>MapleStory Boss Tracker</h1>
-        <div class="global-summary">
+        <div class="header-left">
+            <button class="menu-toggle-btn" onclick="toggleMenuPanel(event)">☰</button>
+            <h1 id="view-title">MapleStory Boss Tracker</h1>
+        </div>
+        
+        <div class="global-summary" id="global-boss-summary-box">
             <div class="summary-item">Weekly Meso: <span id="global-meso-total" style="color: var(--success-color);">0</span></div>
             <div class="summary-item">Bosses: <span id="global-boss-count">0 / 180</span></div>
         </div>
+
+        <!-- PANEL DE MENÚ DESPLEGABLE DESDE EL BOTÓN -->
+        <div class="dropdown-menu-panel" id="global-menu-panel">
+            <button class="menu-panel-item active" id="menu-item-boss" onclick="switchView('boss')">Boss Tracker</button>
+            <button class="menu-panel-item" id="menu-item-drop" onclick="switchView('drop')">Drop Tracker</button>
+        </div>
     </header>
 
-    <div class="main-container">
-        <div class="top-actions">
-            <button onclick="openModal()">+ Add Character</button>
-        </div>
+    <!-- WRAPPER DEL CONTENIDO -->
+    <div class="content-wrapper">
+        <div class="main-container">
+            <!-- VISTA BOSS TRACKER -->
+            <div id="view-boss-tracker" class="app-view active">
+                <div class="top-actions">
+                    <button onclick="openCharacterModal('boss')">+ Add Character</button>
+                </div>
+                <div class="characters-grid" id="boss-characters-grid"></div>
+            </div>
 
-        <div class="characters-grid" id="characters-grid"></div>
+            <!-- VISTA DROP TRACKER -->
+            <div id="view-drop-tracker" class="app-view">
+                <div class="top-actions">
+                    <button onclick="openCharacterModal('drop')">+ Add Character</button>
+                </div>
+                <div class="characters-grid" id="drop-characters-grid"></div>
+            </div>
+        </div>
     </div>
 
+    <!-- MODAL DINÁMICO: CONFIGURABLE SEGÚN MODO -->
     <div class="modal-overlay" id="char-modal">
-        <div class="modal-content">
+        <div class="modal-content" id="modal-content-container">
             <div class="modal-header">
                 <h2 id="modal-title">Add Character</h2>
-                <div class="modal-header-right" style="display:flex; gap:15px; align-items:center;">
-                    <span id="modal-boss-counter" class="counter-badge">Bosses: 0/14</span>
-                    <button class="btn-delete" style="padding: 5px 10px; font-size: 0.8rem;" onclick="closeModal()">X</button>
-                </div>
+                <button class="btn-delete" style="padding: 5px 10px; font-size: 0.8rem;" onclick="closeCharacterModal()">X</button>
             </div>
             <div class="modal-body">
-                <div class="modal-bosses-section">
-                    <h3>Pick your weekly bosses</h3>
-                    <div class="boss-selection-grid" id="modal-boss-grid"></div>
+                
+                <!-- SECCIÓN IZQUIERDA (SOLO SE MUESTRA EN MODO BOSS TRACKER) -->
+                <div class="modal-main-section" id="modal-left-boss-section">
+                    <div class="modal-selection-scroll-area" id="modal-boss-sections-container"></div>
                 </div>
 
-                <div class="modal-side-section">
-                    <h3>Character Data</h3>
+                <!-- SECCIÓN DERECHA / PRINCIPAL (DATOS DEL PERSONAJE) -->
+                <div class="modal-side-section" id="modal-right-data-section">
+                    <h3 id="side-section-header-title">Character Data</h3>
                     <div class="modal-form-group">
                         <label>Name</label>
                         <input type="text" id="modal-name" placeholder="e.g., Balthir">
@@ -551,17 +393,17 @@
                     </div>
 
                     <div class="image-upload-box" onclick="document.getElementById('modal-image-file').click()">
-                        <span id="upload-text" style="font-size:0.85rem; color:var(--text-muted);;">📁 Click to upload custom img.</span>
+                        <span id="upload-text" style="font-size:0.85rem; color:var(--text-muted);">📁 Click to upload custom img.</span>
                         <input type="file" id="modal-image-file" accept="image/*" style="display:none;" onchange="handleImageUpload(this)">
                         <img id="modal-preview-img" src="" alt="Preview">
                     </div>
 
-                    <h3>Rentals</h3>
-                    <div class="rentals-list" id="modal-rentals-list"></div>
+                    <!-- AREA DE CONTENIDO DINÁMICO (RENTAS EN BOSS TRACKER / IMPORTACIÓN EN DROP TRACKER) -->
+                    <div id="modal-dynamic-bottom-area"></div>
                 </div>
             </div>
             <div class="modal-footer">
-                <div class="modal-footer-left">
+                <div id="modal-footer-presets-wrapper" style="margin-right: auto;">
                     <select id="modal-presets" class="preset-select" onchange="applyBossPreset(this.value)">
                         <option value="" selected disabled>Load Boss Preset...</option>
                         <option value="A">A) E. Lucid</option>
@@ -572,137 +414,108 @@
                         <option value="F">F) C. Tenebris Trade</option>
                     </select>
                 </div>
-                <div class="modal-footer-right">
-                    <button class="btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button id="btn-modal-save" onclick="saveModalData()">Save</button>
+                <button class="btn-secondary" onclick="closeCharacterModal()">Cancel</button>
+                <button onclick="saveCharacterData()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: DETALLES DE LOGS DE DROPS -->
+    <div class="modal-overlay" id="drop-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Drops to <span id="drop-modal-char-name" style="color:var(--light-blue)"></span></h2>
+                <button class="btn-delete" style="padding: 5px 10px; font-size: 0.8rem;" onclick="closeDropModal()">X</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-main-section">
+                    <div class="modal-selection-scroll-area" id="modal-drop-sections-container"></div>
                 </div>
+                <div class="modal-side-section">
+                    <h3>Configuration</h3>
+                    <div class="modal-form-group" style="margin-bottom: 10px;">
+                        <label>Date</label>
+                        <input type="date" id="drop-modal-date">
+                    </div>
+                    
+                    <h3>Selected Items</h3>
+                    <div id="side-selected-drops-list"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeDropModal()">Cancel</button>
+                <button onclick="saveDropLogs()">Save Drops</button>
             </div>
         </div>
     </div>
 
     <script>
+        // DATA PRINCIPAL DE JUEGO 
         const KRONOS_BOSS_DATA = {
-            "Hard Jupiter": 4845000000, "Normal Jupiter": 1615000000,
-            "Extreme Kaling": 6026000000, "Extreme First Adversary": 5880000000, "Extreme Kalos": 5200000000,
-            "Extreme Seren": 4235000000, "Hard Baldrix": 4200000000, "Hard Limbo": 3745000000,
-            "Hard Kaling": 2990000000, "Hard First Adversary": 2940000000, "Normal Baldrix": 2800000000,
-            "Hard Malefic Star": 3990000000, "Normal Malefic Star": 1452000000,
-            "Chaos Kalos": 2600000000, "Normal Limbo": 2100000000, "Normal Kaling": 1506500000,
-            "Extreme Lotus": 1397500000, "Normal First Adversary": 1365000000, "Normal Kalos": 1300000000,
-            "Hard Seren": 1096562500, "Easy Kaling": 1031250000, "Easy First Adversary": 985000000,
-            "Easy Kalos": 937500000, "Normal Seren": 889021875, "Hard Verus Hilla": 762105000,
-            "Hard Darknell": 667920000, "Hard Will": 621810000, "Chaos Slime": 600578125,
-            "Normal Verus Hilla": 581880000, "Chaos Gloom": 563945000, "Hard Lucid": 504000000,
-            "Hard Lotus": 444675000, "Hard Damien": 421875000, "Normal Darknell": 316875000,
-            "Normal Gloom": 297675000, "Normal Will": 279075000, "Normal Lucid": 253828125,
-            "Easy Will": 246744750, "Easy Lucid": 237009375, "Normal Slime": 231673500,
-            "Normal Damien": 169000000, "Normal Lotus": 162562500, "Akechi": 144000000,
-            "Chaos Papulatus": 132250000, "Chaos Vellum": 105062500, "Hard Magnus": 95062500,
-            "Princess No": 81000000, "Chaos Queen": 81000000, "Chaos Zakum": 81000000,
-            "Chaos Pierre": 81000000, "Chaos Von Bon": 81000000, "Normal Cygnus": 72250000,
-            "Chaos Pink Bean": 64000000, "Hard Hilla": 56250000, "Easy Cygnus": 45562500
+            "Hard Jupiter": 4845000000, "Normal Jupiter": 1615000000, "Extreme Kaling": 6026000000, "Extreme First Adversary": 5880000000,
+            "Extreme Kalos": 5200000000, "Extreme Seren": 4235000000, "Hard Baldrix": 4200000000, "Hard Limbo": 3745000000,
+            "Hard Kaling": 2990000000, "Hard First Adversary": 2940000000, "Normal Baldrix": 2800000000, "Hard Malefic Star": 3990000000,
+            "Normal Malefic Star": 1452000000, "Chaos Kalos": 2600000000, "Normal Limbo": 2100000000, "Normal Kaling": 1506500000,
+            "Extreme Lotus": 1397500000, "Normal First Adversary": 1365000000, "Normal Kalos": 1300000000, "Hard Seren": 1096562500,
+            "Easy Kaling": 1031250000, "Easy First Adversary": 985000000, "Easy Kalos": 937500000, "Normal Seren": 889021875,
+            "Hard Verus Hilla": 762105000, "Hard Darknell": 667920000, "Hard Will": 621810000, "Chaos Slime": 600578125,
+            "Normal Verus Hilla": 581880000, "Chaos Gloom": 563945000, "Hard Lucid": 504000000, "Hard Lotus": 444675000,
+            "Hard Damien": 421875000, "Normal Darknell": 316875000, "Normal Gloom": 297675000, "Normal Will": 279075000,
+            "Normal Lucid": 253828125, "Easy Will": 246744750, "Easy Lucid": 237009375, "Normal Slime": 231673500,
+            "Normal Damien": 169000000, "Normal Lotus": 162562500, "Akechi": 144000000, "Chaos Papulatus": 132250000,
+            "Chaos Vellum": 105062500, "Hard Magnus": 95062500, "Princess No": 81000000, "Chaos Queen": 81000000,
+            "Chaos Zakum": 81000000, "Chaos Pierre": 81000000, "Chaos Von Bon": 81000000, "Normal Cygnus": 72250000,
+            "Chaos Pink Bean": 64000000, "Hard Hilla": 56250000
         };
 
-        const BOSS_SELECTION_ORDER = [
-            "Jupiter", "Baldrix", "Limbo", "Malefic Star", "Kaling", "First Adversary", "Kalos", "Seren", "Darknell", "Verus Hilla",
-            "Gloom", "Will", "Lucid", "Slime", "Damien", "Lotus", "Akechi", "Chaos Papulatus", "Chaos Vellum",
-            "Hard Magnus", "Princess No", "Chaos Queen", "Chaos Von Bon", "Chaos Pierre", "Chaos Zakum",
-            "Cygnus", "Chaos Pink Bean", "Hard Hilla"
+        const BOSS_CATEGORIES = [
+            {
+                name: "Grandis",
+                baseBosses: ["Jupiter", "Baldrix", "Limbo", "Malefic Star", "Kaling", "First Adversary", "Kalos", "Seren"]
+            },
+            {
+                name: "Tenebris & Arcane River",
+                baseBosses: ["Darknell", "Verus Hilla", "Gloom", "Will", "Lucid"]
+            },
+            {
+                name: "Lotus, Damien & Slime",
+                baseBosses: ["Lotus", "Damien", "Slime"]
+            },
+            {
+                name: "Miscellaneous",
+                baseBosses: ["Akechi", "Chaos Vellum", "Hard Magnus", "Princess No", "Chaos Queen", "Chaos Pierre", "Chaos Von Bon", "Chaos Zakum", "Cygnus", "Chaos Pink Bean", "Hard Hilla"]
+            }
         ];
 
         const BOSS_VARIANTS = {
-            "Jupiter": ["Hard Jupiter", "Normal Jupiter"],
-            "Kaling": ["Extreme Kaling", "Hard Kaling", "Normal Kaling", "Easy Kaling"],
-            "Baldrix": ["Hard Baldrix", "Normal Baldrix"],
-            "Malefic Star": ["Hard Malefic Star", "Normal Malefic Star"],
+            "Jupiter": ["Hard Jupiter", "Normal Jupiter"], "Kaling": ["Extreme Kaling", "Hard Kaling", "Normal Kaling", "Easy Kaling"],
+            "Baldrix": ["Hard Baldrix", "Normal Baldrix"], "Malefic Star": ["Hard Malefic Star", "Normal Malefic Star"],
             "First Adversary": ["Extreme First Adversary", "Hard First Adversary", "Normal First Adversary", "Easy First Adversary"],
-            "Kalos": ["Extreme Kalos", "Chaos Kalos", "Normal Kalos", "Easy Kalos"],
-            "Seren": ["Extreme Seren", "Hard Seren", "Normal Seren"],
-            "Darknell": ["Hard Darknell", "Normal Darknell"],
-            "Will": ["Hard Will", "Normal Will", "Easy Will"],
-            "Lucid": ["Hard Lucid", "Normal Lucid", "Easy Lucid"],
-            "Limbo": ["Hard Limbo", "Normal Limbo"],
-            "Lotus": ["Extreme Lotus", "Hard Lotus", "Normal Lotus"],
-            "Slime": ["Chaos Slime", "Normal Slime"],
-            "Verus Hilla": ["Hard Verus Hilla", "Normal Verus Hilla"],
-            "Gloom": ["Chaos Gloom", "Normal Gloom"],
-            "Damien": ["Hard Damien", "Normal Damien"],
-            "Cygnus": ["Normal Cygnus", "Easy Cygnus"]
+            "Kalos": ["Extreme Kalos", "Chaos Kalos", "Normal Kalos", "Easy Kalos"], "Seren": ["Extreme Seren", "Hard Seren", "Normal Seren"],
+            "Darknell": ["Hard Darknell", "Normal Darknell"], "Will": ["Hard Will", "Normal Will", "Easy Will"],
+            "Lucid": ["Hard Lucid", "Normal Lucid", "Easy Lucid"], "Limbo": ["Hard Limbo", "Normal Limbo"],
+            "Lotus": ["Extreme Lotus", "Hard Lotus", "Normal Lotus"], "Slime": ["Chaos Slime", "Normal Slime"],
+            "Verus Hilla": ["Hard Verus Hilla", "Normal Verus Hilla"], "Gloom": ["Chaos Gloom", "Normal Gloom"],
+            "Damien": ["Hard Damien", "Normal Damien"], "Cygnus": ["Normal Cygnus"]
         };
 
         const BOSS_ICON_MAP = {
-            "Kaling": "kaling.png", "Baldrix": "baldrix.png", "First Adversary": "adversary.png",
-            "Malefic Star": "malefic.png", "Jupiter": "jupiter.png",
-            "Kalos": "kalos.png", "Seren": "seren.png", "Darknell": "darknell.png", "Will": "will.png",
-            "Lucid": "lucid.png", "Limbo": "limbo.png", "Extreme Lotus": "xlotus.png", "Lotus": "lotus.png", "Slime": "slime.png",
-            "Verus Hilla": "vhilla.png", "Gloom": "gloom.png", "Damien": "damien.png", "Cygnus": "cygnus.png",
-            "Akechi": "akechi.png", "Chaos Papulatus": "papulatus.png", "Chaos Vellum": "vellum.png",
-            "Hard Magnus": "magnus.png", "Princess No": "pno.png", "Chaos Queen": "queen.png",
-            "Chaos Zakum": "zakum.png", "Chaos Pierre": "pierre.png", "Chaos Von Bon": "vonbon.png",
-            "Chaos Pink Bean": "pinkbean.png", "Hard Hilla": "hilla.png"
+            "Kaling": "kaling.png", "Baldrix": "baldrix.png", "First Adversary": "adversary.png", "Malefic Star": "malefic.png", "Jupiter": "jupiter.png",
+            "Kalos": "kalos.png", "Seren": "seren.png", "Darknell": "darknell.png", "Will": "will.png", "Lucid": "lucid.png", "Limbo": "limbo.png",
+            "Extreme Lotus": "xlotus.png", "Lotus": "lotus.png", "Slime": "slime.png", "Verus Hilla": "vhilla.png", "Gloom": "gloom.png",
+            "Damien": "damien.png", "Cygnus": "cygnus.png", "Akechi": "akechi.png", "Chaos Papulatus": "papulatus.png", "Chaos Vellum": "vellum.png",
+            "Hard Magnus": "magnus.png", "Princess No": "pno.png", "Chaos Queen": "queen.png", "Chaos Zakum": "zakum.png", "Chaos Pierre": "pierre.png",
+            "Chaos Von Bon": "vonbon.png", "Chaos Pink Bean": "pinkbean.png", "Hard Hilla": "hilla.png"
         };
 
         const MAPLE_CLASSES = [
-            "Adele", "Angelic Buster", "Aran", "Ark", "Battle Mage", "Bishop", "Blaze Wizard", "Bowmaster", 
-            "Buccaneer", "Cadena", "Cannoneer", "Corsair", "Dark Knight", "Dawn Warrior", "Demon Avenger", 
-            "Demon Slayer", "Dual blade", "Erel Light", "Evan", "Fire Poison", "Hayato", "Hero", "Hoyoung", 
-            "Ice Lightning", "Iel", "Illium", "Kain", "Kaiser", "Kanna", "Khali", "Kinesis", "Lara", "Lethe", 
-            "Luminous", "Lynn", "Marksman", "Mechanic", "Mercedes", "Mihile", "Mo Xuan", "Night Lord", 
-            "Night Walker", "Paladin", "Pathfinder", "Phantom", "Ren", "Shadower", "Shade", 
-            "Sia Astelle", "Thunder Breaker", "Wild Hunter", "Wind Archer", "Xenon", "Zero"
+            "Adele", "Angelic Buster", "Aran", "Ark", "Battle Mage", "Bishop", "Blaze Wizard", "Bowmaster", "Buccaneer", "Cadena",
+            "Cannoneer", "Corsair", "Dark Knight", "Dawn Warrior", "Demon Avenger", "Demon Slayer", "Dual blade", "Erel Light",
+            "Evan", "Fire Poison", "Hayato", "Hero", "Hoyoung", "Ice Lightning", "Iel", "Illium", "Kain", "Kaiser", "Kanna",
+            "Khali", "Kinesis", "Lara", "Lethe", "Luminous", "Lynn", "Marksman", "Mechanic", "Mercedes", "Mihile", "Mo Xuan",
+            "Night Lord", "Night Walker", "Paladin", "Pathfinder", "Phantom", "Ren", "Shadower", "Shade", "Sia Astelle",
+            "Thunder Breaker", "Wild Hunter", "Wind Archer", "Xenon", "Zero"
         ].sort((a, b) => a.localeCompare(b));
-
-        const BOSS_PRESETS = {
-            "A": [
-                { name: "Easy Lucid", partySize: 1 }, { name: "Normal Slime", partySize: 1 }, { name: "Normal Lotus", partySize: 1 },
-                { name: "Normal Damien", partySize: 1 }, { name: "Normal Cygnus", partySize: 1 }, { name: "Akechi", partySize: 1 },
-                { name: "Princess No", partySize: 1 }, { name: "Chaos Papulatus", partySize: 1 }, { name: "Hard Magnus", partySize: 1 },
-                { name: "Chaos Zakum", partySize: 1 }, { name: "Chaos Pierre", partySize: 1 }, { name: "Chaos Von Bon", partySize: 1 },
-                { name: "Chaos Queen", partySize: 1 }, { name: "Chaos Vellum", partySize: 1 }
-            ],
-            "B": [
-                { name: "Normal Damien", partySize: 1 }, { name: "Normal Lotus", partySize: 1 }, { name: "Akechi", partySize: 1 },
-                { name: "Princess No", partySize: 1 }, { name: "Chaos Zakum", partySize: 1 }, { name: "Hard Magnus", partySize: 1 },
-                { name: "Hard Hilla", partySize: 1 }, { name: "Chaos Pink Bean", partySize: 1 }, { name: "Chaos Vellum", partySize: 1 },
-                { name: "Chaos Von Bon", partySize: 1 }, { name: "Chaos Pierre", partySize: 1 }, { name: "Chaos Queen", partySize: 1 },
-                { name: "Normal Cygnus", partySize: 1 }, { name: "Chaos Papulatus", partySize: 1 }
-            ],
-            "C": [
-                { name: "Normal Darknell", partySize: 1 }, { name: "Normal Verus Hilla", partySize: 1 }, { name: "Normal Gloom", partySize: 1 },
-                { name: "Easy Will", partySize: 1 }, { name: "Easy Lucid", partySize: 1 }, { name: "Normal Slime", partySize: 1 },
-                { name: "Hard Lotus", partySize: 1 }, { name: "Hard Damien", partySize: 1 }, { name: "Akechi", partySize: 1 },
-                { name: "Chaos Vellum", partySize: 1 }, { name: "Hard Magnus", partySize: 1 }, { name: "Chaos Papulatus", partySize: 1 },
-                { name: "Chaos Queen", partySize: 1 }, { name: "Princess No", partySize: 1 }
-            ],
-            "D": [
-                { name: "Hard Darknell", partySize: 1 }, { name: "Hard Verus Hilla", partySize: 1 }, { name: "Chaos Gloom", partySize: 1 },
-                { name: "Hard Will", partySize: 1 }, { name: "Hard Lucid", partySize: 1 }, { name: "Chaos Slime", partySize: 1 },
-                { name: "Hard Lotus", partySize: 1 }, { name: "Hard Damien", partySize: 1 }, { name: "Akechi", partySize: 1 },
-                { name: "Chaos Vellum", partySize: 1 }, { name: "Hard Magnus", partySize: 1 }, { name: "Chaos Papulatus", partySize: 1 },
-                { name: "Chaos Queen", partySize: 1 }, { name: "Princess No", partySize: 1 }
-            ],
-            "E": [
-                { name: "Easy Kaling", partySize: 1 }, { name: "Easy First Adversary", partySize: 1 }, { name: "Easy Kalos", partySize: 1 },
-                { name: "Normal Seren", partySize: 1 }, { name: "Hard Darknell", partySize: 1 }, { name: "Hard Verus Hilla", partySize: 1 },
-                { name: "Chaos Gloom", partySize: 1 }, { name: "Hard Will", partySize: 1 }, { name: "Hard Lucid", partySize: 1 },
-                { name: "Chaos Slime", partySize: 1 }, { name: "Hard Lotus", partySize: 1 }, { name: "Hard Damien", partySize: 1 },
-                { name: "Akechi", partySize: 1 }, { name: "Chaos Papulatus", partySize: 1 }
-            ],
-            "F": [
-                { name: "Hard Darknell", partySize: 2 }, { name: "Hard Verus Hilla", partySize: 2 }, { name: "Chaos Gloom", partySize: 2 },
-                { name: "Hard Will", partySize: 2 }, { name: "Hard Lucid", partySize: 2 }, { name: "Chaos Slime", partySize: 2 },
-                { name: "Hard Lotus", partySize: 1 }, { name: "Hard Damien", partySize: 1 }, { name: "Akechi", partySize: 1 },
-                { name: "Chaos Vellum", partySize: 1 }, { name: "Hard Magnus", partySize: 1 }, { name: "Chaos Papulatus", partySize: 1 },
-                { name: "Chaos Queen", partySize: 1 }, { name: "Princess No", partySize: 1 }
-            ]
-        };
-
-        function getBossIcon(fullBossName) {
-            for (let key in BOSS_ICON_MAP) {
-                if (fullBossName.includes(key)) return `Icons/${BOSS_ICON_MAP[key]}`;
-            }
-            return 'Icons/default.png';
-        }
 
         const RENTALS_DATA = [
             { id: "rb_face", name: "Red Beryl Face", cost: 200000000, icon: "Icons/rental_rb_face.png" },
@@ -714,214 +527,255 @@
             { id: "totem", name: "Totem Set", cost: 600000000, icon: "Icons/rental_totem.png" }
         ];
 
-        let characters = JSON.parse(localStorage.getItem('maple_boss_tracker_v2')) || [];
-        let currentEditingIndex = null; 
-        let tempModalBosses = []; 
-        let tempModalRentals = []; 
+        const KRONOS_DROPS_CATEGORIES = [
+            {
+                name: "Brilliant Boss Accessory",
+                items: [
+                    { name: "Sin Of Pride", icon: "sin.png" },
+                    { name: "Oath of Death", icon: "oath.png" },
+                    { name: "Whisper of the Source", icon: "limbor.png" },
+                    { name: "Blissful Nightmare", icon: "blissful.png" },
+                    { name: "Immortal Legacy", icon: "immortal.png" }
+                ]
+            },
+            {
+                name: "Exceptional Hammer & Grindstones",
+                items: [
+                    { name: "Kaling Hammer", icon: "hammer_kaling.png" },
+                    { name: "Adversary Hammer", icon: "adv hammer.png" },
+                    { name: "Kalos Hammer", icon: "hammer_kalos.png" },
+                    { name: "Seren Hammer", icon: "hammer_seren.png" },
+                    { name: "Black Mage Hammer", icon: "hammer_bm.png" },
+                    { name: "Grindstone of Faith", icon: "grindstone2.png" },
+                    { name: "Grindstone of Life", icon: "grindstone.png" }
+                ]
+            },
+            {
+                name: "Pitched Boss Accessory",
+                items: [
+                    { name: "Total Control", icon: "total control.png" },
+                    { name: "Mitra's Rage", icon: "mitra.png" },
+                    { name: "Source of Suffering", icon: "source.png" },
+                    { name: "Commanding Force Earrings", icon: "cfe.png" },
+                    { name: "Endless Terror", icon: "endless terror.png" },
+                    { name: "Cursed Spellbook", icon: "cursed spellbook.png" },
+                    { name: "Dreamy Belt", icon: "dreamy belt.png" },
+                    { name: "Berserked", icon: "berserked.png" },
+                    { name: "Black Heart", icon: "black heart.png" },
+                    { name: "Magic Eyepatch", icon: "magic eyepatch.png" },
+                    { name: "Genesis Badge", icon: "genesis badge.png" }
+                ]
+            },
+            {
+                name: "Boxes",
+                items: [
+                    { name: "Jupiter Armor Box", icon: "jupiter box.png" },
+                    { name: "Baldrix Armor Box", icon: "baldrix box.png" },
+                    { name: "Limbo Armor Box", icon: "limbo box.png" },
+                    { name: "Malefic Star Armor Box", icon: "malefic box.png" },
+                    { name: "Kaling Armor Box", icon: "kaling box.png" },
+                    { name: "Adversary Armor Box", icon: "adv box.png" },
+                    { name: "Kalos Armor Box", icon: "kalos box.png" },
+                    { name: "Life Boss Ring Box", icon: "shining jade.png" },
+                    { name: "White Ring Box", icon: "white jade.png" },
+                    { name: "Black Ring Box", icon: "black jade.png" },
+                    { name: "Red Ring Box", icon: "red jade.png" },
+                    { name: "Green Ring Box", icon: "green jade.png" },
+                    { name: "Arcane Wep Box", icon: "wep box.png" },
+                    { name: "Arcane Armor Box", icon: "armor box.png" },
+                    { name: "Pitched Box", icon: "pitched box.png" }
+                ]
+            },
+            {
+                name: "Miscellaneous",
+                items: [
+                    { name: "Daybreak Pendant", icon: "daybreak.png" },
+                    { name: "Dominator Pendant", icon: "dominator.png" },
+                    { name: "Slime Ring", icon: "slime ring.png" },
+                    { name: "Kanna's Treasure", icon: "kannat.png" },
+                    { name: "Twilight Mark", icon: "tmark.png" },
+                    { name: "Papulatus Mark", icon: "papmark.png" },
+                    { name: "Black Bean Mark", icon: "bbm.png" },
+                    { name: "Ruin Force Shield", icon: "rfs.png" }
+                ]
+            }
+        ];
+
+        const BOSS_PRESETS = {
+            "A": [{name:"Easy Lucid",partySize:1},{name:"Normal Slime",partySize:1},{name:"Normal Lotus",partySize:1},{name:"Normal Damien",partySize:1},{name:"Akechi",partySize:1},{name:"Princess No",partySize:1},{name:"Chaos Papulatus",partySize:1},{name:"Hard Magnus",partySize:1},{name:"Chaos Zakum",partySize:1},{name:"Chaos Pierre",partySize:1},{name:"Chaos Von Bon",partySize:1},{name:"Chaos Queen",partySize:1},{name:"Chaos Vellum",partySize:1}],
+            "B": [{name:"Normal Damien",partySize:1},{name:"Normal Lotus",partySize:1},{name:"Akechi",partySize:1},{name:"Princess No",partySize:1},{name:"Chaos Zakum",partySize:1},{name:"Hard Magnus",partySize:1},{name:"Hard Hilla",partySize:1},{name:"Chaos Pink Bean",partySize:1},{name:"Chaos Vellum",partySize:1},{name:"Chaos Von Bon",partySize:1},{name:"Chaos Pierre",partySize:1},{name:"Chaos Queen",partySize:1},{name:"Chaos Papulatus",partySize:1}],
+            "C": [{name:"Normal Darknell",partySize:1},{name:"Normal Verus Hilla",partySize:1},{name:"Normal Gloom",partySize:1},{name:"Easy Will",partySize:1},{name:"Easy Lucid",partySize:1},{name:"Normal Slime",partySize:1},{name:"Hard Lotus",partySize:1},{name:"Hard Damien",partySize:1},{name:"Akechi",partySize:1},{name:"Chaos Vellum",partySize:1},{name:"Hard Magnus",partySize:1},{name:"Chaos Papulatus",partySize:1},{name:"Chaos Queen",partySize:1},{name:"Princess No",partySize:1}],
+            "D": [{name:"Hard Darknell",partySize:1},{name:"Hard Verus Hilla",partySize:1},{name:"Chaos Gloom",partySize:1},{name:"Hard Will",partySize:1},{name:"Hard Lucid",partySize:1},{name:"Chaos Slime",partySize:1},{name:"Hard Lotus",partySize:1},{name:"Hard Damien",partySize:1},{name:"Akechi",partySize:1},{name:"Chaos Vellum",partySize:1},{name:"Hard Magnus",partySize:1},{name:"Chaos Papulatus",partySize:1},{name:"Chaos Queen",partySize:1},{name:"Princess No",partySize:1}],
+            "E": [{name:"Easy Kaling",partySize:1},{name:"Easy First Adversary",partySize:1},{name:"Easy Kalos",partySize:1},{name:"Normal Seren",partySize:1},{name:"Hard Darknell",partySize:1},{name:"Hard Verus Hilla",partySize:1},{name:"Chaos Gloom",partySize:1},{name:"Hard Will",partySize:1},{name:"Hard Lucid",partySize:1},{name:"Chaos Slime",partySize:1},{name:"Hard Lotus",partySize:1},{name:"Hard Damien",partySize:1},{name:"Akechi",partySize:1},{name:"Chaos Papulatus",partySize:1}],
+            "F": [{name:"Hard Darknell",partySize:2},{name:"Hard Verus Hilla",partySize:2},{name:"Chaos Gloom",partySize:2},{name:"Hard Will",partySize:2},{name:"Hard Lucid",partySize:2},{name:"Chaos Slime",partySize:2},{name:"Hard Lotus",partySize:1},{name:"Hard Damien",partySize:1},{name:"Akechi",partySize:1},{name:"Chaos Vellum",partySize:1},{name:"Hard Magnus",partySize:1},{name:"Chaos Papulatus",partySize:1},{name:"Chaos Queen",partySize:1},{name:"Princess No",partySize:1}]
+        };
+
+        let bossCharacters = JSON.parse(localStorage.getItem('maple_boss_chars_v4')) || [];
+        let dropCharacters = JSON.parse(localStorage.getItem('maple_drop_chars_v4')) || [];
+        
+        let currentView = 'boss';
+        let modalMode = 'boss'; 
+        let currentEditingIndex = null;
+
+        let tempModalBosses = [];
+        let tempModalRentals = [];
         let tempBase64Image = "";
         let selectedClassValue = MAPLE_CLASSES[0];
+        let tempSelectedDropsData = {};
+        let currentDropCharIndex = null;
 
-        // CONSTRUIR EL DROPDOWN DE CLASES (Conserva el espacio y pasa a minúsculas)
+        function getBossIcon(fullBossName) {
+            for (let key in BOSS_ICON_MAP) { if (fullBossName.includes(key)) return `Icons/${BOSS_ICON_MAP[key]}`; }
+            return 'Icons/default.png';
+        }
+
+        function getDropIcon(dropName) {
+            for (let category of KRONOS_DROPS_CATEGORIES) {
+                const drop = category.items.find(d => d.name === dropName);
+                if (drop) return `Icons/drops/${drop.icon}`;
+            }
+            return 'Icons/default.png';
+        }
+
+        // --- GESTIÓN DEL MENÚ HAMBURGUESA ---
+        function toggleMenuPanel(event) {
+            event.stopPropagation();
+            document.getElementById('global-menu-panel').classList.toggle('open');
+        }
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.menu-panel-item').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('global-menu-panel').classList.remove('open');
+
+            if (view === 'boss') {
+                document.getElementById('menu-item-boss').classList.add('active');
+                document.getElementById('view-boss-tracker').classList.add('active');
+                document.getElementById('view-drop-tracker').classList.remove('active');
+                document.getElementById('view-title').innerText = "MapleStory Boss Tracker";
+                document.getElementById('global-boss-summary-box').style.display = 'flex';
+            } else {
+                document.getElementById('menu-item-drop').classList.add('active');
+                document.getElementById('view-drop-tracker').classList.add('active');
+                document.getElementById('view-boss-tracker').classList.remove('active');
+                document.getElementById('view-title').innerText = "MapleStory Drop Tracker";
+                document.getElementById('global-boss-summary-box').style.display = 'none';
+            }
+            renderCharacters();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('maple_boss_chars_v4', JSON.stringify(bossCharacters));
+            localStorage.setItem('maple_drop_chars_v4', JSON.stringify(dropCharacters));
+            renderCharacters();
+        }
+
         function initCustomClassDropdown() {
             const optionsBox = document.getElementById('dropdown-options-box');
             optionsBox.innerHTML = '';
-
             MAPLE_CLASSES.forEach(cls => {
                 const item = document.createElement('div');
                 item.className = 'custom-dropdown-item';
                 const lowCaseCls = cls.toLowerCase();
                 item.innerHTML = `
-                    <img class="dropdown-class-icon" src="Icons/classes/${lowCaseCls}.png" onerror="this.src='Icons/default.png'" alt="">
+                    <img class="dropdown-class-icon" src="Icons/classes/${lowCaseCls}.png" onerror="this.src='Icons/default.png'">
                     <span>${cls}</span>
                 `;
-                item.onclick = (e) => {
-                    e.stopPropagation();
-                    selectDropdownClass(cls);
-                };
+                item.onclick = (e) => { e.stopPropagation(); selectDropdownClass(cls); };
                 optionsBox.appendChild(item);
             });
         }
 
-        function toggleDropdownOptions() {
-            document.getElementById('dropdown-options-box').classList.toggle('open');
-        }
-
+        function toggleDropdownOptions() { document.getElementById('dropdown-options-box').classList.toggle('open'); }
         function selectDropdownClass(cls) {
             selectedClassValue = cls;
             const trigger = document.getElementById('dropdown-selected-trigger');
             const lowCaseCls = cls.toLowerCase();
             trigger.innerHTML = `
-                <img class="dropdown-class-icon" src="Icons/classes/${lowCaseCls}.png" onerror="this.src='Icons/default.png'" alt="">
+                <img class="dropdown-class-icon" src="Icons/classes/${lowCaseCls}.png" onerror="this.src='Icons/default.png'">
                 <span>${cls}</span>
             `;
             document.getElementById('dropdown-options-box').classList.remove('open');
-            updateDefaultAvatarPreview();
+            if (!tempBase64Image) updateImagePreview();
         }
 
-        window.addEventListener('click', function(e) {
-            const wrapper = document.getElementById('class-dropdown-wrapper');
-            if (wrapper && !wrapper.contains(e.target)) {
-                document.getElementById('dropdown-options-box').classList.remove('open');
-            }
-        });
-
-        function saveToStorage() {
-            localStorage.setItem('maple_boss_tracker_v2', JSON.stringify(characters));
-            renderCharacters();
-        }
-
-        function openModal(index = null) {
+        // --- ABRIR MODAL INTEGRADO Y ADAPTATIVO ---
+        function openCharacterModal(mode, index = null) {
+            modalMode = mode;
             currentEditingIndex = index;
-            document.getElementById('modal-presets').value = ""; 
             initCustomClassDropdown();
 
-            if (index !== null) {
-                const char = characters[index];
-                document.getElementById('modal-title').innerText = `Edit ${char.name}`;
-                document.getElementById('modal-name').value = char.name;
-                document.getElementById('modal-level').value = char.level;
-                selectDropdownClass(char.class || MAPLE_CLASSES[0]);
-                tempModalBosses = JSON.parse(JSON.stringify(char.bosses));
-                tempModalRentals = JSON.parse(JSON.stringify(char.rentals || []));
-                tempBase64Image = char.image || "";
+            const modalContent = document.getElementById('modal-content-container');
+            const leftSection = document.getElementById('modal-left-boss-section');
+            const rightSection = document.getElementById('modal-right-data-section');
+            const bottomArea = document.getElementById('modal-dynamic-bottom-area');
+            const presetsWrapper = document.getElementById('modal-footer-presets-wrapper');
+            const sideTitle = document.getElementById('side-section-header-title');
+
+            // Reset de inputs comunes
+            document.getElementById('modal-name').value = "";
+            document.getElementById('modal-level').value = "220";
+            selectDropdownClass(MAPLE_CLASSES[0]);
+            tempModalBosses = [];
+            tempModalRentals = [];
+            tempBase64Image = "";
+
+            let activeList = (mode === 'boss') ? bossCharacters : dropCharacters;
+
+            if (mode === 'boss') {
+                modalContent.classList.remove('drop-layout-compact');
+                leftSection.style.display = 'block';
+                rightSection.className = "modal-side-section"; // Mantiene estética de caja lateral
+                presetsWrapper.style.display = 'block';
+                sideTitle.style.display = "block";
+                sideTitle.innerText = "Character Data";
+                document.getElementById('modal-presets').value = "";
+
+                if (index !== null) {
+                    const char = activeList[index];
+                    document.getElementById('modal-title').innerText = `Edit Boss Character: ${char.name}`;
+                    document.getElementById('modal-name').value = char.name;
+                    document.getElementById('modal-level').value = char.level;
+                    selectDropdownClass(char.class || MAPLE_CLASSES[0]);
+                    tempModalBosses = JSON.parse(JSON.stringify(char.bosses || []));
+                    tempModalRentals = JSON.parse(JSON.stringify(char.rentals || []));
+                    tempBase64Image = char.image || "";
+                } else {
+                    document.getElementById('modal-title').innerText = "Add Boss Character";
+                }
+
+                renderRentalsLayout(bottomArea);
+                renderModalBossGrid();
+
             } else {
-                document.getElementById('modal-title').innerText = "Add Character";
-                document.getElementById('modal-name').value = "";
-                document.getElementById('modal-level').value = "220";
-                selectDropdownClass(MAPLE_CLASSES[0]);
-                tempModalBosses = [];
-                tempModalRentals = [];
-                tempBase64Image = "";
+                modalContent.classList.add('drop-layout-compact');
+                leftSection.style.display = 'none';
+                rightSection.className = ""; // Limpia la caja lateral gris para evitar el efecto "ventana dentro de otra"
+                presetsWrapper.style.display = 'none';
+                sideTitle.style.display = "none"; // Remueve el header secundario redundante
+
+                if (index !== null) {
+                    const char = activeList[index];
+                    document.getElementById('modal-title').innerText = `Edit Drop Character: ${char.name}`;
+                    document.getElementById('modal-name').value = char.name;
+                    document.getElementById('modal-level').value = char.level;
+                    selectDropdownClass(char.class || MAPLE_CLASSES[0]);
+                    tempBase64Image = char.image || "";
+                    
+                    bottomArea.innerHTML = '';
+                } else {
+                    document.getElementById('modal-title').innerText = "Add Drop Character";
+                    renderImportLayout(bottomArea);
+                }
             }
 
-            renderModalBossGrid();
-            renderModalRentals();
-            updateModalBossCounter();
             updateImagePreview();
             document.getElementById('char-modal').style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('char-modal').style.display = 'none';
-        }
-
-        function handleImageUpload(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    tempBase64Image = e.target.result;
-                    updateImagePreview();
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function updateImagePreview() {
-            const img = document.getElementById('modal-preview-img');
-            const txt = document.getElementById('upload-text');
-            
-            if (tempBase64Image) {
-                img.src = tempBase64Image;
-                img.style.display = "inline-block";
-                txt.style.display = "none";
-            } else {
-                const lowCaseAvatar = selectedClassValue.toLowerCase();
-                img.src = `Icons/avatars/${lowCaseAvatar}.png`;
-                img.style.display = "inline-block";
-                txt.style.display = "none";
-            }
-        }
-
-        function updateDefaultAvatarPreview() {
-            if (!tempBase64Image) {
-                updateImagePreview();
-            }
-        }
-
-        function applyBossPreset(presetKey) {
-            if (!BOSS_PRESETS[presetKey]) return;
-            tempModalBosses = JSON.parse(JSON.stringify(BOSS_PRESETS[presetKey]));
-            renderModalBossGrid();
-            updateModalBossCounter();
-        }
-
-        function renderModalBossGrid() {
-            const container = document.getElementById('modal-boss-grid');
-            container.innerHTML = '';
-
-            let allAvailableBosses = [];
-            BOSS_SELECTION_ORDER.forEach(groupName => {
-                if (BOSS_VARIANTS[groupName]) {
-                    BOSS_VARIANTS[groupName].forEach(variant => allAvailableBosses.push(variant));
-                } else {
-                    allAvailableBosses.push(groupName);
-                }
-            });
-
-            allAvailableBosses.forEach(bossName => {
-                const activeBossIndex = tempModalBosses.findIndex(b => b.name === bossName);
-                const isSelected = activeBossIndex !== -1;
-                
-                const card = document.createElement('div');
-                card.className = `boss-select-card ${isSelected ? 'selected' : ''}`;
-                
-                let partyControlsHTML = '';
-                if (isSelected) {
-                    const currentPartySize = tempModalBosses[activeBossIndex].partySize || 1;
-                    partyControlsHTML = `
-                        <select class="party-select" onclick="event.stopPropagation()" onchange="changeModalBossParty('${bossName}', this.value)">
-                            ${[1,2,3,4,5,6].map(num => `<option value="${num}" ${currentPartySize === num ? 'selected' : ''}>PT:${num}</option>`).join('')}
-                        </select>
-                    `;
-                }
-
-                card.innerHTML = `
-                    <div class="boss-select-left">
-                        <img class="boss-icon" src="${getBossIcon(bossName)}" alt="">
-                        <span title="${bossName}">${bossName}</span>
-                    </div>
-                    ${partyControlsHTML}
-                `;
-
-                card.onclick = () => toggleBossInModal(bossName);
-                container.appendChild(card);
-            });
-        }
-
-        function toggleBossInModal(bossName) {
-            const index = tempModalBosses.findIndex(b => b.name === bossName);
-            if (index !== -1) {
-                tempModalBosses.splice(index, 1);
-            } else {
-                if (tempModalBosses.length >= 14) {
-                    alert("You have reached the limit of 14 bosses for this character.");
-                    return;
-                }
-                tempModalBosses.push({ name: bossName, partySize: 1 });
-            }
-            renderModalBossGrid();
-            updateModalBossCounter();
-        }
-
-        function changeModalBossParty(bossName, size) {
-            const index = tempModalBosses.findIndex(b => b.name === bossName);
-            if (index !== -1) {
-                tempModalBosses[index].partySize = parseInt(size);
-            }
-        }
-
-        function updateModalBossCounter() {
-            const counter = document.getElementById('modal-boss-counter');
-            counter.innerText = `Bosses: ${tempModalBosses.length}/14`;
-            if (tempModalBosses.length >= 14) counter.classList.add('warning');
-            else counter.classList.remove('warning');
-        }
-
-        function renderModalRentals() {
-            const container = document.getElementById('modal-rentals-list');
-            container.innerHTML = '';
-
+        function renderRentalsLayout(container) {
+            container.innerHTML = `<h3>Rentals</h3><div class="rentals-list" id="modal-rentals-list"></div>`;
+            const innerContainer = document.getElementById('modal-rentals-list');
             RENTALS_DATA.forEach(rental => {
                 const isChecked = tempModalRentals.includes(rental.id);
                 const div = document.createElement('div');
@@ -929,53 +783,353 @@
                 div.innerHTML = `
                     <div class="rental-item-left">
                         <input type="checkbox" id="chk-${rental.id}" ${isChecked ? 'checked' : ''} onchange="toggleRentalInModal('${rental.id}')">
-                        <img src="${rental.icon}" onerror="this.style.display='none'" alt="">
+                        <img src="${rental.icon}" onerror="this.style.display='none'">
                         <label for="chk-${rental.id}">${rental.name}</label>
                     </div>
                     <span style="color:var(--danger-color); font-size:0.8rem;">-${(rental.cost / 1000000)}M</span>
                 `;
-                container.appendChild(div);
+                innerContainer.appendChild(div);
             });
+        }
+
+        function renderImportLayout(container) {
+            if (bossCharacters.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let optionsHTML = '<option value="" selected>-- Create character from scratch --</option>';
+            bossCharacters.forEach((bc, idx) => {
+                const alreadyExists = dropCharacters.some(dc => dc.name.toLowerCase() === bc.name.toLowerCase());
+                if (!alreadyExists) {
+                    optionsHTML += `<option value="${idx}">Import as: ${bc.name} (${bc.class})</option>`;
+                }
+            });
+
+            container.innerHTML = `
+                <h3 style="margin-top: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; color: var(--light-blue);">Import from Boss Tracker</h3>
+                <div class="routing-box">
+                    <label style="font-size:0.85rem; color:var(--text-muted);">Choose an existing character to copy data:</label>
+                    <select id="modal-import-dropdown" onchange="handleImportSelection(this.value)" style="background:#222; color:white; border:1px solid var(--border-color); padding:8px; border-radius:4px; width:100%; margin-top:5px;">
+                        ${optionsHTML}
+                    </select>
+                </div>
+            `;
+        }
+
+        function handleImportSelection(bossCharIdx) {
+            if (bossCharIdx === "") {
+                document.getElementById('modal-name').value = "";
+                document.getElementById('modal-level').value = "220";
+                selectDropdownClass(MAPLE_CLASSES[0]);
+                tempBase64Image = "";
+                updateImagePreview();
+                return;
+            }
+            const sourceChar = bossCharacters[parseInt(bossCharIdx)];
+            document.getElementById('modal-name').value = sourceChar.name;
+            document.getElementById('modal-level').value = sourceChar.level;
+            selectDropdownClass(sourceChar.class || MAPLE_CLASSES[0]);
+            tempBase64Image = sourceChar.image || "";
+            updateImagePreview();
+        }
+
+        function closeCharacterModal() { document.getElementById('char-modal').style.display = 'none'; }
+
+        function handleImageUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) { tempBase64Image = e.target.result; updateImagePreview(); }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.addEventListener('click', function() {
+            document.getElementById('global-menu-panel').classList.remove('open');
+        });
+
+        // Escucha global para cerrar ventanas con la tecla ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                closeCharacterModal();
+                closeDropModal();
+            }
+        });
+
+        function updateImagePreview() {
+            const img = document.getElementById('modal-preview-img');
+            const txt = document.getElementById('upload-text');
+            if (tempBase64Image) {
+                img.src = tempBase64Image; img.style.display = "inline-block"; txt.style.display = "none";
+            } else {
+                const lowCaseAvatar = selectedClassValue.toLowerCase();
+                img.src = `Icons/avatars/${lowCaseAvatar}.png`; img.style.display = "inline-block"; txt.style.display = "none";
+            }
+        }
+
+        function applyBossPreset(presetKey) {
+            if (!BOSS_PRESETS[presetKey]) return;
+            tempModalBosses = JSON.parse(JSON.stringify(BOSS_PRESETS[presetKey]));
+            renderModalBossGrid();
+        }
+
+        function renderModalBossGrid() {
+            const container = document.getElementById('modal-boss-sections-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            BOSS_CATEGORIES.forEach(category => {
+                const title = document.createElement('div');
+                title.className = 'category-title';
+                title.innerText = category.name;
+                
+                const hr = document.createElement('hr');
+                hr.className = 'category-separator';
+                
+                const grid = document.createElement('div');
+                grid.className = 'selection-grid';
+
+                let hasVariantsOrBosses = false;
+
+                category.baseBosses.forEach(baseName => {
+                    let variantsToRender = [];
+                    if (BOSS_VARIANTS[baseName]) {
+                        variantsToRender = BOSS_VARIANTS[baseName];
+                    } else if (KRONOS_BOSS_DATA[baseName]) {
+                        variantsToRender = [baseName];
+                    }
+
+                    variantsToRender.forEach(bossName => {
+                        hasVariantsOrBosses = true;
+                        const activeBossIndex = tempModalBosses.findIndex(b => b.name === bossName);
+                        const isSelected = activeBossIndex !== -1;
+                        const card = document.createElement('div');
+                        card.className = `select-card ${isSelected ? 'selected' : ''}`;
+                        
+                        let partyControlsHTML = '';
+                        if (isSelected) {
+                            const currentPartySize = tempModalBosses[activeBossIndex].partySize || 1;
+                            partyControlsHTML = `
+                                <select class="party-select" onclick="event.stopPropagation()" onchange="changeModalBossParty('${bossName}', this.value)">
+                                    ${[1,2,3,4,5,6].map(num => `<option value="${num}" ${currentPartySize === num ? 'selected' : ''}>PT:${num}</option>`).join('')}
+                                </select>
+                            `;
+                        }
+                        card.innerHTML = `
+                            <div class="select-card-left">
+                                <img class="boss-icon" src="${getBossIcon(bossName)}">
+                                <span title="${bossName}">${bossName}</span>
+                            </div>
+                            ${partyControlsHTML}
+                        `;
+                        card.onclick = () => {
+                            if (activeBossIndex !== -1) { tempModalBosses.splice(activeBossIndex, 1); }
+                            else {
+                                if (tempModalBosses.length >= 14) { alert("Max 14 bosses allowed."); return; }
+                                tempModalBosses.push({ name: bossName, partySize: 1 });
+                            }
+                            renderModalBossGrid();
+                        };
+                        grid.appendChild(card);
+                    });
+                });
+
+                if (hasVariantsOrBosses) {
+                    container.appendChild(title);
+                    container.appendChild(hr);
+                    container.appendChild(grid);
+                }
+            });
+        }
+
+        function changeModalBossParty(bossName, size) {
+            const index = tempModalBosses.findIndex(b => b.name === bossName);
+            if (index !== -1) tempModalBosses[index].partySize = parseInt(size);
         }
 
         function toggleRentalInModal(id) {
             const idx = tempModalRentals.indexOf(id);
-            if (idx !== -1) tempModalRentals.splice(idx, 1);
-            else tempModalRentals.push(id);
+            if (idx !== -1) tempModalRentals.splice(idx, 1); else tempModalRentals.push(id);
         }
 
-        function saveModalData() {
+        function saveCharacterData() {
             const name = document.getElementById('modal-name').value.trim();
-            const level = parseInt(document.getElementById('modal-level').value) || 200;
-            const charClass = selectedClassValue;
+            const level = parseInt(document.getElementById('modal-level').value) || 220;
+            if (!name) { alert("Please set a character name."); return; }
 
-            if (!name) {
-                alert("Please enter a character name.");
-                return;
-            }
-
-            const charData = {
-                name: name,
-                level: level,
-                class: charClass,
-                image: tempBase64Image, 
-                bosses: tempModalBosses,
-                rentals: tempModalRentals
-            };
+            let activeList = (modalMode === 'boss') ? bossCharacters : dropCharacters;
 
             if (currentEditingIndex !== null) {
-                characters[currentEditingIndex] = charData;
+                activeList[currentEditingIndex].name = name;
+                activeList[currentEditingIndex].level = level;
+                activeList[currentEditingIndex].class = selectedClassValue;
+                activeList[currentEditingIndex].image = tempBase64Image;
+                if (modalMode === 'boss') {
+                    activeList[currentEditingIndex].bosses = tempModalBosses;
+                    activeList[currentEditingIndex].rentals = tempModalRentals;
+                }
             } else {
-                characters.push(charData);
+                if (modalMode === 'boss') {
+                    bossCharacters.push({
+                        name: name, level: level, class: selectedClassValue, image: tempBase64Image,
+                        bosses: tempModalBosses, rentals: tempModalRentals
+                    });
+                } else {
+                    dropCharacters.push({
+                        name: name, level: level, class: selectedClassValue, image: tempBase64Image,
+                        logs: []
+                    });
+                }
             }
-
-            closeModal();
+            closeCharacterModal();
             saveToStorage();
         }
 
-        function deleteCharacter(index) {
-            if (confirm(`Are you sure you want to delete ${characters[index].name}?`)) {
-                characters.splice(index, 1);
+        function deleteCharacterCard(mode, index) {
+            const listName = (mode === 'boss') ? 'Boss Tracker' : 'Drop Tracker';
+            const charName = (mode === 'boss') ? bossCharacters[index].name : dropCharacters[index].name;
+            
+            if (confirm(`Are you sure you want to delete ${charName} EXCLUSIVELY from the ${listName}?`)) {
+                if (mode === 'boss') bossCharacters.splice(index, 1);
+                else dropCharacters.splice(index, 1);
+                saveToStorage();
+            }
+        }
+
+        // --- LÓGICA LOGS DE DROPS ---
+        function openDropModal(index) {
+            currentDropCharIndex = index;
+            const char = dropCharacters[index];
+            document.getElementById('drop-modal-char-name').innerText = char.name;
+            document.getElementById('drop-modal-date').value = new Date().toISOString().split('T')[0];
+
+            tempSelectedDropsData = {};
+            renderDropSelectionGrid();
+            renderSideSelectedDrops();
+            document.getElementById('drop-modal').style.display = 'flex';
+        }
+
+        function closeDropModal() { document.getElementById('drop-modal').style.display = 'none'; }
+
+        function renderDropSelectionGrid() {
+            const container = document.getElementById('modal-drop-sections-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            KRONOS_DROPS_CATEGORIES.forEach(category => {
+                const title = document.createElement('div');
+                title.className = 'category-title';
+                title.innerText = category.name;
+                
+                const hr = document.createElement('hr');
+                hr.className = 'category-separator';
+                
+                const grid = document.createElement('div');
+                grid.className = 'selection-grid';
+
+                category.items.forEach(drop => {
+                    const isSelected = tempSelectedDropsData[drop.name] !== undefined;
+                    const card = document.createElement('div');
+                    card.className = `select-card ${isSelected ? 'selected' : ''}`;
+                    card.innerHTML = `
+                        <div class="select-card-left">
+                            <img class="boss-icon" src="${getDropIcon(drop.name)}" onerror="this.src='Icons/default.png'">
+                            <span>${drop.name}</span>
+                        </div>
+                    `;
+                    
+                    // Escapamos de forma segura los nombres con apóstrofes usando encodeURIComponent / string directo
+                    card.onclick = () => {
+                        handleDropSelectionToggle(drop.name);
+                    };
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(title);
+                container.appendChild(hr);
+                grid.style.marginBottom = "20px";
+                container.appendChild(grid);
+            });
+        }
+
+        function handleDropSelectionToggle(dropName) {
+            if (tempSelectedDropsData[dropName] !== undefined) { 
+                delete tempSelectedDropsData[dropName]; 
+            } else { 
+                tempSelectedDropsData[dropName] = { split: false, owner: "" }; 
+            }
+            renderDropSelectionGrid();
+            renderSideSelectedDrops();
+        }
+
+        function renderSideSelectedDrops() {
+            const container = document.getElementById('side-selected-drops-list');
+            container.innerHTML = '';
+            Object.keys(tempSelectedDropsData).forEach(dropName => {
+                const itemData = tempSelectedDropsData[dropName];
+                const div = document.createElement('div');
+                div.className = 'side-selected-drop-item';
+                
+                // Agregados los iconos correctos usando getDropIcon(dropName)
+                div.innerHTML = `
+                    <div class="side-drop-top">
+                        <div class="side-drop-title-left">
+                            <img class="boss-icon" src="${getDropIcon(dropName)}" onerror="this.src='Icons/default.png'">
+                            <span style="font-weight:bold; color:var(--light-blue);">${dropName}</span>
+                        </div>
+                        <div class="switch-container">
+                            <label>Split?</label>
+                            <input type="checkbox" class="switch-input" ${itemData.split ? 'checked' : ''}>
+                        </div>
+                    </div>
+                    ${itemData.split ? `<input type="text" class="split-name-input" placeholder="Who took it?" value="${itemData.owner}">` : ''}
+                `;
+                
+                // Asignamos los eventos de forma directa por JS en lugar de in-line para evitar problemas con comillas y apóstrofes
+                div.querySelector('.switch-input').onchange = (e) => {
+                    toggleDropSplitSwitch(dropName, e.target.checked);
+                };
+                if (itemData.split) {
+                    div.querySelector('.split-name-input').oninput = (e) => {
+                        updateDropOwner(dropName, e.target.value);
+                    };
+                }
+                
+                container.appendChild(div);
+            });
+        }
+
+        function toggleDropSplitSwitch(dropName, isChecked) {
+            tempSelectedDropsData[dropName].split = isChecked;
+            if (!isChecked) tempSelectedDropsData[dropName].owner = "";
+            renderSideSelectedDrops();
+        }
+
+        function updateDropOwner(dropName, value) { tempSelectedDropsData[dropName].owner = value; }
+
+        function saveDropLogs() {
+            const logDate = document.getElementById('drop-modal-date').value;
+            const dropNames = Object.keys(tempSelectedDropsData);
+            if (!logDate || dropNames.length === 0) { alert("Please configure the date and select at least one item."); return; }
+
+            const char = dropCharacters[currentDropCharIndex];
+            dropNames.forEach(name => {
+                const item = tempSelectedDropsData[name];
+                char.logs.push({
+                    date: logDate,
+                    name: name,
+                    split: item.split ? item.owner.trim() || "Party Member" : " "
+                });
+            });
+            char.logs.sort((a,b) => new Date(b.date) - new Date(a.date));
+            closeDropModal();
+            saveToStorage();
+        }
+
+        function removeDropLog(charIndex, logIndex) {
+            if (confirm("Delete this drop entry?")) {
+                dropCharacters[charIndex].logs.splice(logIndex, 1);
                 saveToStorage();
             }
         }
@@ -985,119 +1139,175 @@
                 const base = KRONOS_BOSS_DATA[boss.name] || 0;
                 return total + Math.floor(base / boss.partySize);
             }, 0);
-
             let rentalsCost = (char.rentals || []).reduce((total, rentalId) => {
                 const rData = RENTALS_DATA.find(r => r.id === rentalId);
                 return total + (rData ? rData.cost : 0);
             }, 0);
-
             return bossMeso - rentalsCost;
         }
 
+        // --- RENDERIZADO TABLAS / GRIDS ---
         function renderCharacters() {
-            const grid = document.getElementById('characters-grid');
-            grid.innerHTML = '';
+            const bossGrid = document.getElementById('boss-characters-grid');
+            const dropGrid = document.getElementById('drop-characters-grid');
+            bossGrid.innerHTML = '';
+            dropGrid.innerHTML = '';
 
             let globalMesoTotal = 0;
             let globalBossCount = 0;
 
-            characters.forEach((char, charIndex) => {
-                const netMeso = calculateCharacterNetMeso(char);
-                globalMesoTotal += netMeso;
-                globalBossCount += char.bosses.length;
+            if (currentView === 'boss') {
+                bossCharacters.forEach((char, index) => {
+                    const clsSafe = char.class || 'Hero';
+                    const lowCaseCls = clsSafe.toLowerCase();
+                    const netMeso = calculateCharacterNetMeso(char);
+                    globalMesoTotal += netMeso;
+                    globalBossCount += char.bosses.length;
 
-                const charClassSafe = char.class || 'Hero';
-                const lowCaseClass = charClassSafe.toLowerCase();
+                    let rentalsSummaryHTML = '';
+                    if (char.rentals && char.rentals.length > 0) {
+                        rentalsSummaryHTML = `<div class="card-rentals-summary">`;
+                        char.rentals.forEach(rId => {
+                            const rData = RENTALS_DATA.find(r => r.id === rId);
+                            if (rData) rentalsSummaryHTML += `<span class="rental-badge"><img src="${rData.icon}"> ${rData.name}</span>`;
+                        });
+                        rentalsSummaryHTML += `</div>`;
+                    }
 
-                let finalAvatarSrc = char.image ? char.image : `Icons/avatars/${lowCaseClass}.png`;
-                let avatarHTML = `<img class="char-avatar" src="${finalAvatarSrc}" alt="avatar" onerror="this.src='Icons/default.png'">`;
+                    let cardHTML = `
+                        <div class="char-card">
+                            <div>
+                                <div class="char-header">
+                                    <img class="char-avatar" src="${char.image || `Icons/avatars/${lowCaseCls}.png`}" onerror="this.src='Icons/default.png'">
+                                    <div class="char-info">
+                                        <h3>${char.name}</h3>
+                                        <p>Lv. ${char.level} | <img class="class-icon-inline" src="Icons/classes/${lowCaseCls}.png" onerror="this.style.display='none'"> ${clsSafe}</p>
+                                    </div>
+                                    <div class="char-actions-header">
+                                        <button class="btn-inline-action btn-inline-edit" onclick="openCharacterModal('boss', ${index})">✎</button>
+                                        <button class="btn-inline-action btn-inline-delete" onclick="deleteCharacterCard('boss', ${index})">×</button>
+                                    </div>
+                                </div>
+                                <div class="boss-list-container">
+                    `;
 
-                let rentalsSummaryHTML = '';
-                if (char.rentals && char.rentals.length > 0) {
-                    rentalsSummaryHTML = `<div class="card-rentals-summary">`;
-                    char.rentals.forEach(rId => {
-                        const rData = RENTALS_DATA.find(r => r.id === rId);
-                        if (rData) {
-                            rentalsSummaryHTML += `
-                                <span class="rental-badge">
-                                    <img src="${rData.icon}" onerror="this.style.display='none'">
-                                    ${rData.name}
-                                </span>`;
-                        }
+                    const sortedBosses = [...char.bosses].sort((a,b) => {
+                        return Math.floor((KRONOS_BOSS_DATA[b.name]||0)/(b.partySize||1)) - Math.floor((KRONOS_BOSS_DATA[a.name]||0)/(a.partySize||1));
                     });
-                    rentalsSummaryHTML += `</div>`;
-                }
 
-                let cardHTML = `
-                    <div class="char-card">
-                        <div>
-                            <div class="char-header">
-                                ${avatarHTML}
-                                <div class="char-info">
-                                    <h3>${char.name}</h3>
-                                    <p>Lv. ${char.level} | <img class="class-icon-inline" src="Icons/classes/${lowCaseClass}.png" alt="" onerror="this.style.display='none'"> ${charClassSafe}</p>
+                    sortedBosses.forEach(boss => {
+                        const finalMeso = Math.floor((KRONOS_BOSS_DATA[boss.name] || 0) / boss.partySize);
+                        cardHTML += `
+                            <div class="boss-row">
+                                <div class="boss-row-left">
+                                    <img class="boss-icon" src="${getBossIcon(boss.name)}">
+                                    <span style="font-size:0.9rem;">${boss.name}</span>
                                 </div>
-                                <div class="char-actions-header">
-                                    <button class="btn-inline-action btn-inline-edit" title="Edit" onclick="openModal(${charIndex})">✎</button>
-                                    <button class="btn-inline-action btn-inline-delete" title="Delete" onclick="deleteCharacter(${charIndex})">×</button>
-                                </div>
+                                <span style="color:var(--text-muted); font-size:0.85rem;">
+                                    ${boss.partySize > 1 ? `<span style="color:var(--light-blue)">PT:${boss.partySize}</span> | ` : ''} 
+                                    ${finalMeso.toLocaleString()}
+                                </span>
                             </div>
+                        `;
+                    });
 
-                            <div class="boss-list-container">
-                `;
-
-                const sortedBosses = [...char.bosses].sort((a, b) => {
-                    const mesoA = Math.floor((KRONOS_BOSS_DATA[a.name] || 0) / (a.partySize || 1));
-                    const mesoB = Math.floor((KRONOS_BOSS_DATA[b.name] || 0) / (b.partySize || 1));
-                    return mesoB - mesoA;
-                });
-
-                sortedBosses.forEach(boss => {
-                    const base = KRONOS_BOSS_DATA[boss.name] || 0;
-                    const finalMeso = Math.floor(base / boss.partySize);
                     cardHTML += `
-                        <div class="boss-row">
-                            <div class="boss-row-left">
-                                <img class="boss-icon" src="${getBossIcon(boss.name)}" alt="">
-                                <span style="font-size:0.9rem;">${boss.name}</span>
+                                </div>
+                                ${rentalsSummaryHTML}
                             </div>
-                            <span style="color:var(--text-muted); font-size:0.85rem;">
-                                ${boss.partySize > 1 ? `<span style="color:var(--light-blue)">PT:${boss.partySize}</span> | ` : ''} 
-                                ${finalMeso.toLocaleString()}
-                            </span>
+                            <div class="char-footer">
+                                <span style="font-size:0.85rem; color:var(--text-muted); display:inline-flex; align-items:center; gap:5px;">
+                                    <img src="Icons/crystal.png" style="width:16px; height:16px; object-fit:contain;"> Bosses: ${char.bosses.length}/14
+                                </span>
+                                <span class="meso-total">${netMeso.toLocaleString()}</span>
+                            </div>
                         </div>
                     `;
+                    bossGrid.innerHTML += cardHTML;
                 });
 
-                cardHTML += `
-                            </div>
-                            ${rentalsSummaryHTML}
-                        </div>
-                        <div class="char-footer">
-                            <span style="font-size:0.85rem; color:var(--text-muted); display: inline-flex; align-items: center; gap: 5px;">
-                                <img src="Icons/crystal.png" alt="Crystal" style="width: 16px; height: 16px; object-fit: contain;">
-                                Bosses: ${char.bosses.length}/14
-                            </span>
-                            <span class="meso-total">${netMeso.toLocaleString()}</span>
-                        </div>
-                    </div>
-                `;
-
-                grid.innerHTML += cardHTML;
-            });
-
-            document.getElementById('global-meso-total').innerText = globalMesoTotal.toLocaleString() + " Meso";
+                document.getElementById('global-meso-total').innerText = globalMesoTotal.toLocaleString() + " Meso";
+                const counterSpan = document.getElementById('global-boss-count');
+                counterSpan.innerText = `${globalBossCount} / 180`;
+                counterSpan.style.color = (globalBossCount > 180) ? 'var(--danger-color)' : 'var(--light-blue)';
+            }
             
-            const bossCounterSpan = document.getElementById('global-boss-count');
-            bossCounterSpan.innerText = `${globalBossCount} / 180`;
-            if (globalBossCount > 180) {
-                bossCounterSpan.style.color = 'var(--danger-color)';
-                bossCounterSpan.style.fontWeight = 'bold';
-            } else {
-                bossCounterSpan.style.color = 'var(--light-blue)';
-                bossCounterSpan.style.fontWeight = 'normal';
+            else if (currentView === 'drop') {
+                dropCharacters.forEach((char, index) => {
+                    const clsSafe = char.class || 'Hero';
+                    const lowCaseCls = clsSafe.toLowerCase();
+                    const logs = char.logs || [];
+                    let logRowsHTML = '';
+
+                    if (logs.length === 0) {
+                        logRowsHTML = `<tr><td colspan="4" style="color:var(--text-muted); text-align:center; padding:20px 0;">No drop logs yet. Click '+' to add!</td></tr>`;
+                    } else {
+                        logs.forEach((log, logIdx) => {
+                            logRowsHTML += `
+                                <tr>
+                                    <td style="color:var(--light-blue); font-weight:bold;">${log.date ? log.date.substring(5) : '??-??'}</td>
+                                    <td>
+                                        <div class="drop-item-cell">
+                                            <img src="${getDropIcon(log.name)}" class="boss-icon" onerror="this.src='Icons/default.png'">
+                                            <span>${log.name}</span>
+                                        </div>
+                                    </td>
+                                    <td style="color:${log.split === ' ' ? 'var(--success-color)' : 'var(--text-muted)'}; font-weight:bold;">${log.split}</td>
+                                    <td style="text-align:right;">
+                                        <button class="btn-inline-action" style="background:none; border:none; color:var(--text-muted); cursor:pointer;" onclick="removeDropLog(${index}, ${logIdx})">×</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+
+                    let cardHTML = `
+                        <div class="char-card">
+                            <div>
+                                <div class="char-header">
+                                    <img class="char-avatar" src="${char.image || `Icons/avatars/${lowCaseCls}.png`}" onerror="this.src='Icons/default.png'">
+                                    <div class="char-info">
+                                        <h3>${char.name}</h3>
+                                        <p>Lv. ${char.level} | <img class="class-icon-inline" src="Icons/classes/${lowCaseCls}.png" onerror="this.style.display='none'"> ${clsSafe}</p>
+                                    </div>
+                                    <div class="char-actions-header" style="gap:5px;">
+                                        <button onclick="openDropModal(${index})" style="padding: 4px 10px; font-size:0.9rem;">+</button>
+                                        <button class="btn-inline-action btn-inline-edit" style="font-size:1.1rem; margin-left:5px;" onclick="openCharacterModal('drop', ${index})">✎</button>
+                                        <button class="btn-inline-action btn-inline-delete" style="font-size:1.1rem;" onclick="deleteCharacterCard('drop', ${index})">×</button>
+                                    </div>
+                                </div>
+                                <div class="drop-list-container">
+                                    <table class="drop-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:55px;">Date</th>
+                                                <th>Drop</th>
+                                                <th>Split</th>
+                                                <th style="width:25px;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>${logRowsHTML}</tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="char-footer" style="border-top:1px dashed var(--border-color); padding-top:10px;">
+                                <span style="font-size:0.85rem; color:var(--text-muted);">Total Items Tracked:</span>
+                                <span style="font-weight:bold; color:var(--light-blue); font-size:1.1rem;">${logs.length}</span>
+                            </div>
+                        </div>
+                    `;
+                    dropGrid.innerHTML += cardHTML;
+                });
             }
         }
+
+        window.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('class-dropdown-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                const box = document.getElementById('dropdown-options-box');
+                if (box) box.classList.remove('open');
+            }
+        });
 
         renderCharacters();
     </script>
