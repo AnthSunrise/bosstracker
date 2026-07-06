@@ -19,7 +19,7 @@
         }
 
         body {
-            font-family: 'Calibri', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Calibri', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -37,7 +37,6 @@
 	        display: flex;
 	        justify-content: space-between;
 	        align-items: center;
-	        /* Replace URL with your preferred image path or online asset */
 	        background: linear-gradient(rgba(11, 13, 17, 0.75), rgba(11, 13, 17, 0.75)), 
 	                    url('https://external-preview.redd.it/thought-you-guys-might-enjoy-my-desktop-background-v0-XIOtseg7lC_AcRb4da1m9ImYpuDuooR62i5YmgTK-CQ.jpg?auto=webp&s=5466578965df0adeb7acbd2afcd0f40cb068df8e') center/cover no-repeat;
 	        position: relative;
@@ -225,8 +224,6 @@
 
         /* Listas Internas */
         .boss-list-container { max-height: 220px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
-        
-        /* Modificado max-height de 220px a 320px para ver aproximadamente 7 items en el Drop Tracker */
         .drop-list-container { max-height: 305px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
         
         .boss-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #43748c; }
@@ -245,7 +242,14 @@
         .drop-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
         .drop-table th { color: var(--light-blue); border-bottom: 1px solid var(--border-color); padding: 6px 4px; }
         .drop-table td { padding: 6px 4px; border-bottom: 1px solid rgba(67,116,140,0.2); vertical-align: middle; }
-        .drop-item-cell { display: flex; align-items: center; gap: 8px; }
+        
+        /* ESTILOS DE ARBOL PARA SUB-ITEMS */
+        .drop-item-cell { display: flex; flex-direction: column; gap: 2px; }
+        .drop-item-parent { display: flex; align-items: center; gap: 8px; }
+        .drop-item-child-container { display: flex; flex-direction: column; padding-left: 18px; margin-top: 1px; }
+        .drop-item-child-row { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
+        .tree-connector { font-family: 'Courier New', Courier, monospace; color: var(--border-color); font-weight: bold; font-size: 0.9rem; user-select: none; }
+        .child-icon { width: 18px; height: 18px; object-fit: contain; background: transparent; border-radius: 3px; }
 
         /* MODALES */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
@@ -253,17 +257,14 @@
         .modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background-color: #111; }
         .modal-header h2 { margin: 0; color: var(--light-blue); }
         
-        /* Layout Modal Adaptativo */
         .modal-body { padding: 20px; overflow-y: auto; display: grid; grid-template-columns: 1fr 360px; gap: 25px; }
         
-        /* Layout para Drop Tracker Integrado de Forma Limpia (No anidado) */
         .modal-content.drop-layout-compact { max-width: 500px; }
         .modal-content.drop-layout-compact .modal-body { grid-template-columns: 1fr; gap: 15px; }
         .modal-content.drop-layout-compact .modal-side-section { background: transparent; padding: 0; border: none; max-height: none; }
 
         .modal-main-section h3, .modal-side-section h3 { margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; color: var(--light-blue); }
         
-        /* Listas y Grillas de Selección */
         .modal-selection-scroll-area { max-height: 65vh; overflow-y: auto; padding-right: 5px; }
         .category-title { margin: 15px 0 5px 0; color: var(--light-blue); font-size: 1rem; font-weight: bold; }
         .category-separator { border: none; border-top: 1px solid var(--border-color); margin-bottom: 10px; opacity: 0.6; }
@@ -277,20 +278,52 @@
 
         .party-select { padding: 2px 4px; font-size: 0.75rem; background-color: #222; color: white; border: 1px solid var(--border-color); }
 
-        .modal-side-section { display: flex; flex-direction: column; gap: 15px; background: #111111; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); overflow-y: auto; max-height: 62vh; }
-        .modal-form-group { display: flex; flex-direction: column; gap: 4px; }
+        /* ========== CAMBIO ESTÉTICO 1: Reducir espacio en modal side-section ========== */
+        .modal-side-section { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px;
+            background: #111111; 
+            padding: 12px 15px;
+            border-radius: 8px; 
+            border: 1px solid var(--border-color); 
+            overflow-y: auto; 
+            max-height: 62vh; 
+        }
+
+        #side-section-header-title {
+            margin-bottom: 2px;
+            padding-bottom: 4px;
+        }
+
+        .modal-side-section .modal-form-group:first-of-type {
+            margin-top: 0px;
+        }
+
+        .modal-form-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 1px;
+        }
+        /* ========== FIN CAMBIO 1 ========== */
+
         .modal-form-group label { font-size: 0.85rem; color: var(--text-muted); }
         .modal-form-group input, .modal-form-group select { background: #222; border: 1px solid var(--border-color); padding: 8px; color: white; border-radius: 4px; width: 100%; box-sizing: border-box; }
         .modal-grid-row { display: grid; grid-template-columns: 80px 1fr; gap: 10px; }
 
-        .side-selected-drop-item { background: #1c1c1c; border: 1px solid #333; padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; }
+        .side-selected-drop-item { background: #1c1c1c; border: 1px solid #333; padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 8px; }
         .side-drop-top { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; }
         .side-drop-title-left { display: flex; align-items: center; gap: 8px; }
         .switch-container { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted); }
         .switch-input { cursor: pointer; width: 16px; height: 16px; margin: 0; }
         .split-name-input { background: #2a2a2a; border: 1px solid var(--border-color); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; width: 100%; box-sizing: border-box; margin-top: 2px; }
+        
+        .side-quantity-input { background: #222; border: 1px solid var(--border-color); color: white; padding: 3px 6px; border-radius: 4px; width: 65px; font-weight: bold; text-align: center; }
+        .side-subitem-select { background: #2a2a2a; border: 1px solid var(--border-color); color: white; padding: 4px; border-radius: 4px; font-size: 0.8rem; width: 100%; margin-top: 4px; }
+        .hybrid-box-options { border-top: 1px dashed #444; margin-top: 5px; padding-top: 5px; display: flex; flex-direction: column; gap: 4px; }
+        .hybrid-option-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); padding: 2px 0; }
+        .hybrid-option-row input[type="number"] { width: 50px; background: #222; border: 1px solid var(--border-color); color: white; border-radius: 4px; text-align: center; }
 
-        /* Custom Dropdown Clases */
         .custom-dropdown { position: relative; width: 100%; user-select: none; }
         .custom-dropdown-selected { background: #222; border: 1px solid var(--border-color); padding: 8px; color: white; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; box-sizing: border-box; height: 35px; }
         .custom-dropdown-selected::after { content: '▼'; margin-left: auto; font-size: 0.7rem; color: var(--text-muted); }
@@ -308,7 +341,81 @@
         .rental-item-left { display: flex; align-items: center; gap: 8px; }
         .rental-item img { width: 18px; height: 18px; object-fit: contain; background: transparent; }
 
-        /* Footer del modal alineado a la derecha */
+        /* ========== CAMBIO ESTÉTICO 2: Full View mejorado ========== */
+        .fullview-layout { 
+            display: grid; 
+            grid-template-columns: 1fr 380px; 
+            gap: 20px;
+            height: 70vh; 
+            padding: 2px 0;
+        }
+
+        .fullview-left { 
+            overflow-y: auto; 
+            overflow-x: hidden;
+            padding-right: 12px;
+            margin-right: 2px;
+            margin-left: 5px;
+        }
+
+        /* ========== PANEL DERECHO - CORREGIDO ========== */
+        .fullview-right { 
+            display: flex; 
+            flex-direction: column; 
+            height: 100%;
+            min-height: 0;
+            padding-right: 20px;
+            gap: 0px;
+        }
+
+        .analytic-card { 
+            background: #15191f; 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            padding: 12px 14px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .analytic-card label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 6px;
+            flex-shrink: 0;
+        }
+
+        .analytic-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 5px;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+            min-height: 0;
+            margin-top: 0;
+        }
+
+        .analytic-list > span {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .analytic-row { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            font-size: 0.85rem; 
+            background: #1d222a; 
+            padding: 5px 8px;
+            border-radius: 4px; 
+            border: 1px solid #27303d; 
+            flex-shrink: 0;
+        }
+        /* ========== FIN CAMBIO 2 ========== */
+
         .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; align-items: center; gap: 12px; background-color: #111; }
         .preset-select { background-color: #222; color: var(--light-blue); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
 
@@ -318,6 +425,15 @@
         ::-webkit-scrollbar-track { background: #111; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary-blue); }
+
+        .fullview-right h3 {
+            margin-top: 0;
+            margin-bottom: 6px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+            color: var(--light-blue);
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -418,6 +534,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE CONTROL DE DROPS -->
     <div class="modal-overlay" id="drop-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -446,7 +563,59 @@
         </div>
     </div>
 
+    <!-- MODAL MASIVO DE VISTA COMPLETA (FULL VIEW) -->
+    <div class="modal-overlay" id="fullview-modal">
+        <div class="modal-content" style="max-width: 1300px;">
+            <div class="modal-header">
+                <h2>Full History: <span id="fullview-char-name" style="color:var(--light-blue)"></span></h2>
+                <button class="btn-delete" style="padding: 5px 10px; font-size: 0.8rem;" onclick="closeFullViewModal()">X</button>
+            </div>
+            <div class="modal-body fullview-layout">
+                <div class="fullview-left">
+                    <table class="drop-table" style="font-size: 0.95rem;">
+                        <thead>
+                            <tr>
+                                <th style="width:100px; padding: 10px 5px;">Date</th>
+                                <th style="padding: 10px 5px;">Drop Details</th>
+                                <th style="width:150px; padding: 10px 5px;">Split Target</th>
+                                <th style="width:40px; padding: 10px 5px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="fullview-table-body"></tbody>
+                    </table>
+                </div>
+                <div class="fullview-right">
+                    <div class="analytic-card">
+                        <label>Total Items:</label>
+                        <div class="analytic-list" id="fullview-analytics-container"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeFullViewModal()">Close View</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // --- MAPEO DE ICONOS PARA PIEZAS INDIVIDUALES (EDITA AQUÍ TUS ARCHIVOS .PNG) ---
+        const PIECES_ICON_MAP = {
+            "Eternal Hat": "eternal hat.png",
+            "Eternal Top": "eternal top.png",
+            "Eternal Bottom": "eternal bottom.png",
+            "Eternal Shoulder": "eternal shoulder.png",
+            "Eternal Cape": "eternal cape.png",
+            "Eternal Glove": "eternal glove.png",
+            "Eternal Shoe": "eternal shoe.png",
+            
+            "Arcane Umbra Hat": "arcane hat.png",
+            "Arcane Umbra Overall": "arcane overall.png",
+            "Arcane Umbra Cape": "arcane cape.png",
+            "Arcane Umbra Glove": "arcane glove.png",
+            "Arcane Umbra Shoe": "arcane shoe.png",
+            "Arcane Umbra Shoulder": "arcane shoulder.png"
+        };
+
         // DATA PRINCIPAL DE JUEGO 
         const KRONOS_BOSS_DATA = {
             "Hard Jupiter": 5925000000, "Normal Jupiter": 2970000000, "Extreme Kaling": 6026000000, "Extreme First Adversary": 5880000000,
@@ -466,22 +635,10 @@
         };
 
         const BOSS_CATEGORIES = [
-            {
-                name: "Grandis",
-                baseBosses: ["Jupiter", "Baldrix", "Limbo", "Malefic Star", "Kaling", "First Adversary", "Kalos", "Seren"]
-            },
-            {
-                name: "Tenebris & Arcane River",
-                baseBosses: ["Darknell", "Verus Hilla", "Gloom", "Will", "Lucid"]
-            },
-            {
-                name: "Lotus, Damien & Slime",
-                baseBosses: ["Lotus", "Damien", "Slime"]
-            },
-            {
-                name: "Miscellaneous",
-                baseBosses: ["Akechi", "Chaos Vellum", "Hard Magnus", "Princess No", "Chaos Queen", "Chaos Pierre", "Chaos Von Bon", "Chaos Zakum", "Cygnus", "Chaos Pink Bean", "Hard Hilla"]
-            }
+            { name: "Grandis", baseBosses: ["Jupiter", "Baldrix", "Limbo", "Malefic Star", "Kaling", "First Adversary", "Kalos", "Seren"] },
+            { name: "Tenebris & Arcane River", baseBosses: ["Darknell", "Verus Hilla", "Gloom", "Will", "Lucid"] },
+            { name: "Lotus, Damien & Slime", baseBosses: ["Lotus", "Damien", "Slime"] },
+            { name: "Miscellaneous", baseBosses: ["Akechi", "Chaos Vellum", "Hard Magnus", "Princess No", "Chaos Queen", "Chaos Pierre", "Chaos Von Bon", "Chaos Zakum", "Cygnus", "Chaos Pink Bean", "Hard Hilla"] }
         ];
 
         const BOSS_VARIANTS = {
@@ -598,6 +755,18 @@
             }
         ];
 
+        const BOX_SUB_ITEMS = {
+            "Kalos Armor Box": ["Eternal Hat", "Eternal Top", "Eternal Bottom", "Eternal Shoulder"],
+            "Kaling Armor Box": ["Eternal Hat", "Eternal Top", "Eternal Bottom", "Eternal Shoulder"],
+            "Adversary Armor Box": ["Eternal Hat", "Eternal Top", "Eternal Bottom", "Eternal Shoulder"],
+            "Malefic Star Armor Box": ["Eternal Hat", "Eternal Top", "Eternal Bottom", "Eternal Shoulder"],
+            "Limbo Armor Box": ["Eternal Cape", "Eternal Glove", "Eternal Shoe"],
+            "Baldrix Armor Box": ["Eternal Cape", "Eternal Glove", "Eternal Shoe"],
+            "Jupiter Armor Box": ["Eternal Cape", "Eternal Glove", "Eternal Shoe"]
+        };
+
+        const ARCANE_ARMOR_OPTIONS = ["Arcane Umbra Hat", "Arcane Umbra Overall", "Arcane Umbra Cape", "Arcane Umbra Glove", "Arcane Umbra Shoe", "Arcane Umbra Shoulder"];
+
         const BOSS_PRESETS = {
             "A": [{name:"Easy Lucid",partySize:1},{name:"Normal Slime",partySize:1},{name:"Normal Lotus",partySize:1},{name:"Normal Damien",partySize:1},{name:"Akechi",partySize:1},{name:"Princess No",partySize:1},{name:"Chaos Papulatus",partySize:1},{name:"Hard Magnus",partySize:1},{name:"Chaos Zakum",partySize:1},{name:"Chaos Pierre",partySize:1},{name:"Chaos Von Bon",partySize:1},{name:"Chaos Queen",partySize:1},{name:"Chaos Vellum",partySize:1},{name:"Normal Cygnus",partySize:1}],
             "B": [{name:"Normal Damien",partySize:1},{name:"Normal Lotus",partySize:1},{name:"Akechi",partySize:1},{name:"Princess No",partySize:1},{name:"Chaos Zakum",partySize:1},{name:"Hard Magnus",partySize:1},{name:"Hard Hilla",partySize:1},{name:"Chaos Pink Bean",partySize:1},{name:"Chaos Vellum",partySize:1},{name:"Chaos Von Bon",partySize:1},{name:"Chaos Pierre",partySize:1},{name:"Chaos Queen",partySize:1},{name:"Chaos Papulatus",partySize:1}, {name:"Normal Cygnus",partySize:1}],
@@ -620,6 +789,7 @@
         let selectedClassValue = MAPLE_CLASSES[0];
         let tempSelectedDropsData = {};
         let currentDropCharIndex = null;
+        let currentFullViewCharIndex = null;
 
         function getBossIcon(fullBossName) {
             for (let key in BOSS_ICON_MAP) { if (fullBossName.includes(key)) return `Icons/${BOSS_ICON_MAP[key]}`; }
@@ -627,14 +797,20 @@
         }
 
         function getDropIcon(dropName) {
+            let cleanName = dropName.split(' (')[0].split(' ↳')[0].trim();
+            
+            if (PIECES_ICON_MAP[cleanName]) {
+                return `Icons/drops/${PIECES_ICON_MAP[cleanName]}`;
+            }
+            
+            let searchName = cleanName.replace(" ", " ");
             for (let category of KRONOS_DROPS_CATEGORIES) {
-                const drop = category.items.find(d => d.name === dropName);
+                const drop = category.items.find(d => d.name === searchName);
                 if (drop) return `Icons/drops/${drop.icon}`;
             }
             return 'Icons/default.png';
         }
 
-        // --- GESTIÓN DEL MENÚ HAMBURGUESA ---
         function toggleMenuPanel(event) {
             event.stopPropagation();
             document.getElementById('global-menu-panel').classList.toggle('open');
@@ -696,7 +872,6 @@
             if (!tempBase64Image) updateImagePreview();
         }
 
-        // --- ABRIR MODAL INTEGRADO Y ADAPTATIVO ---
         function openCharacterModal(mode, index = null) {
             modalMode = mode;
             currentEditingIndex = index;
@@ -709,7 +884,6 @@
             const presetsWrapper = document.getElementById('modal-footer-presets-wrapper');
             const sideTitle = document.getElementById('side-section-header-title');
 
-            // Reset de inputs comunes
             document.getElementById('modal-name').value = "";
             document.getElementById('modal-level').value = "220";
             selectDropdownClass(MAPLE_CLASSES[0]);
@@ -722,7 +896,7 @@
             if (mode === 'boss') {
                 modalContent.classList.remove('drop-layout-compact');
                 leftSection.style.display = 'block';
-                rightSection.className = "modal-side-section"; // Mantiene estética de caja lateral
+                rightSection.className = "modal-side-section";
                 presetsWrapper.style.display = 'block';
                 sideTitle.style.display = "block";
                 sideTitle.innerText = "Character Data";
@@ -747,9 +921,9 @@
             } else {
                 modalContent.classList.add('drop-layout-compact');
                 leftSection.style.display = 'none';
-                rightSection.className = ""; // Limpia la caja lateral gris para evitar el efecto "ventana dentro de otra"
+                rightSection.className = "";
                 presetsWrapper.style.display = 'none';
-                sideTitle.style.display = "none"; // Remueve el header secundario redundante
+                sideTitle.style.display = "none";
 
                 if (index !== null) {
                     const char = activeList[index];
@@ -758,7 +932,6 @@
                     document.getElementById('modal-level').value = char.level;
                     selectDropdownClass(char.class || MAPLE_CLASSES[0]);
                     tempBase64Image = char.image || "";
-                    
                     bottomArea.innerHTML = '';
                 } else {
                     document.getElementById('modal-title').innerText = "Add Drop Character";
@@ -842,15 +1015,13 @@
             }
         }
 
-        document.getElementById('global-menu-panel').addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
+        document.getElementById('global-menu-panel').addEventListener('click', function(e) { e.stopPropagation(); });
 
-        // Escucha global para cerrar ventanas con la tecla ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === "Escape") {
                 closeCharacterModal();
                 closeDropModal();
+                closeFullViewModal();
             }
         });
 
@@ -891,11 +1062,8 @@
 
                 category.baseBosses.forEach(baseName => {
                     let variantsToRender = [];
-                    if (BOSS_VARIANTS[baseName]) {
-                        variantsToRender = BOSS_VARIANTS[baseName];
-                    } else if (KRONOS_BOSS_DATA[baseName]) {
-                        variantsToRender = [baseName];
-                    }
+                    if (BOSS_VARIANTS[baseName]) { variantsToRender = BOSS_VARIANTS[baseName]; }
+                    else if (KRONOS_BOSS_DATA[baseName]) { variantsToRender = [baseName]; }
 
                     variantsToRender.forEach(bossName => {
                         hasVariantsOrBosses = true;
@@ -994,7 +1162,7 @@
             }
         }
 
-        // --- LÓGICA LOGS DE DROPS ---
+        // --- LOGS DE DROPS ---
         function openDropModal(index) {
             currentDropCharIndex = index;
             const char = dropCharacters[index];
@@ -1036,9 +1204,7 @@
                         </div>
                     `;
                     
-                    card.onclick = () => {
-                        handleDropSelectionToggle(drop.name);
-                    };
+                    card.onclick = () => { handleDropSelectionToggle(drop.name); };
                     grid.appendChild(card);
                 });
 
@@ -1053,7 +1219,17 @@
             if (tempSelectedDropsData[dropName] !== undefined) { 
                 delete tempSelectedDropsData[dropName]; 
             } else { 
-                tempSelectedDropsData[dropName] = { split: false, owner: "" }; 
+                let isStackable = dropName.endsWith("Ring Box") || dropName === "Arcane Wep Box";
+                let isArmor = BOX_SUB_ITEMS[dropName] !== undefined;
+                let isHybrid = dropName === "Arcane Armor Box";
+
+                tempSelectedDropsData[dropName] = { 
+                    split: false, 
+                    owner: "",
+                    quantity: 1,
+                    subItem: isArmor ? BOX_SUB_ITEMS[dropName][0] : "",
+                    hybridSelections: isHybrid ? ARCANE_ARMOR_OPTIONS.reduce((acc, curr) => ({...acc, [curr]: 0}), {}) : null
+                }; 
             }
             renderDropSelectionGrid();
             renderSideSelectedDrops();
@@ -1067,31 +1243,88 @@
                 const div = document.createElement('div');
                 div.className = 'side-selected-drop-item';
                 
+                let isStackable = dropName.endsWith("Ring Box") || dropName === "Arcane Wep Box";
+                let isArmor = BOX_SUB_ITEMS[dropName] !== undefined;
+                let isHybrid = dropName === "Arcane Armor Box";
+
+                let sideControlsHTML = '';
+
+                if (isStackable) {
+                    sideControlsHTML = `
+                        <div style="display:flex; justify-content: space-between; align-items:center; margin-top:5px;">
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Quantity:</label>
+                            <input type="number" min="1" value="${itemData.quantity}" class="side-quantity-input" onchange="updateSideQuantity('${dropName}', this.value)">
+                        </div>
+                    `;
+                } else if (isArmor) {
+                    let selectOptions = BOX_SUB_ITEMS[dropName].map(opt => `<option value="${opt}" ${itemData.subItem === opt ? 'selected' : ''}>${opt}</option>`).join('');
+                    sideControlsHTML = `
+                        <div style="margin-top:2px;">
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Select Piece:</label>
+                            <select class="side-subitem-select" onchange="updateSideSubItem('${dropName}', this.value)">${selectOptions}</select>
+                        </div>
+                    `;
+                } else if (isHybrid) {
+                    let hybridRowsHTML = ARCANE_ARMOR_OPTIONS.map(opt => `
+                        <div class="hybrid-option-row">
+                            <span>${opt}</span>
+                            <input type="number" min="0" value="${itemData.hybridSelections[opt] || 0}" onchange="updateHybridSelection('${opt}', this.value)">
+                        </div>
+                    `).join('');
+
+                    sideControlsHTML = `
+                        <div style="display:flex; justify-content: space-between; align-items:center; margin-top:5px;">
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Total Quantity:</label>
+                            <input type="number" min="1" value="${itemData.quantity}" class="side-quantity-input" onchange="updateSideQuantity('${dropName}', this.value)">
+                        </div>
+                        <div class="hybrid-box-options">
+                            <label style="font-size:0.8rem; color:var(--light-blue); font-weight:bold; margin-bottom:2px;">Opened Pieces Counter:</label>
+                            ${hybridRowsHTML}
+                        </div>
+                    `;
+                }
+
+                let showSplit = !isStackable && !isArmor && !isHybrid;
+
                 div.innerHTML = `
                     <div class="side-drop-top">
                         <div class="side-drop-title-left">
                             <img class="boss-icon" src="${getDropIcon(dropName)}" onerror="this.src='Icons/default.png'">
                             <span style="font-weight:bold; color:var(--light-blue);">${dropName}</span>
                         </div>
+                        ${showSplit ? `
                         <div class="switch-container">
                             <label>Split?</label>
                             <input type="checkbox" class="switch-input" ${itemData.split ? 'checked' : ''}>
-                        </div>
+                        </div>` : ''}
                     </div>
-                    ${itemData.split ? `<input type="text" class="split-name-input" placeholder="Who took it?" value="${itemData.owner}">` : ''}
+                    ${sideControlsHTML}
+                    ${itemData.split && showSplit ? `<input type="text" class="split-name-input" placeholder="Who took it?" value="${itemData.owner}">` : ''}
                 `;
                 
-                div.querySelector('.switch-input').onchange = (e) => {
-                    toggleDropSplitSwitch(dropName, e.target.checked);
-                };
-                if (itemData.split) {
-                    div.querySelector('.split-name-input').oninput = (e) => {
-                        updateDropOwner(dropName, e.target.value);
-                    };
+                if (showSplit) {
+                    div.querySelector('.switch-input').onchange = (e) => { toggleDropSplitSwitch(dropName, e.target.checked); };
+                    if (itemData.split) {
+                        div.querySelector('.split-name-input').oninput = (e) => { updateDropOwner(dropName, e.target.value); };
+                    }
                 }
                 
                 container.appendChild(div);
             });
+        }
+
+        function updateSideQuantity(dropName, val) {
+            let parsed = parseInt(val) || 1;
+            if (parsed < 1) parsed = 1;
+            tempSelectedDropsData[dropName].quantity = parsed;
+        }
+
+        function updateSideSubItem(dropName, val) { tempSelectedDropsData[dropName].subItem = val; }
+
+        function updateHybridSelection(pieceName, val) {
+            let parsed = parseInt(val) || 0;
+            if (parsed < 0) parsed = 0;
+            tempSelectedDropsData["Arcane Armor Box"].hybridSelections[pieceName] = parsed;
         }
 
         function toggleDropSplitSwitch(dropName, isChecked) {
@@ -1109,18 +1342,49 @@
 
             const char = dropCharacters[currentDropCharIndex];
             
-            // Modificado: Se insertan los nuevos drops al revés o de forma cronológica estricta para asegurar estabilidad visual
             dropNames.forEach((name, idx) => {
                 const item = tempSelectedDropsData[name];
+                let finalNameSaved = name;
+
+                let isStackable = name.endsWith("Ring Box") || name === "Arcane Wep Box";
+                let isArmor = BOX_SUB_ITEMS[name] !== undefined;
+                let isHybrid = name === "Arcane Armor Box";
+
+                if (isStackable) {
+                    finalNameSaved = `${name} (${item.quantity})`;
+                } else if (isArmor) {
+                    finalNameSaved = `${name} ↳ ${item.subItem}`;
+                } else if (isHybrid) {
+                    let itemsStringArr = [];
+                    let totalMarkedPieces = 0;
+                    Object.keys(item.hybridSelections).forEach(piece => {
+                        let count = item.hybridSelections[piece];
+                        if (count > 0) {
+                            itemsStringArr.push(`${piece} (${count})`);
+                            totalMarkedPieces += count;
+                        }
+                    });
+
+                    if (totalMarkedPieces > item.quantity) {
+                        alert(`Warning: Total marked pieces (${totalMarkedPieces}) exceeds box count (${item.quantity}). Setting box count to ${totalMarkedPieces}.`);
+                        item.quantity = totalMarkedPieces;
+                    }
+
+                    if (itemsStringArr.length > 0) {
+                        finalNameSaved = `${name} (${item.quantity}) • ${itemsStringArr.join(' • ')}`;
+                    } else {
+                        finalNameSaved = `${name} (${item.quantity})`;
+                    }
+                }
+
                 char.logs.push({
                     date: logDate,
-                    name: name,
+                    name: finalNameSaved,
                     split: item.split ? item.owner.trim() || "Party Member" : " ",
-                    timestamp: Date.now() + idx // Clave de desempate secundaria única para ordenar por inserción
+                    timestamp: Date.now() + idx
                 });
             });
             
-            // Criterio de ordenación mejorado: Primero por Fecha descendente, si es igual desempata por orden de inserción (timestamp) más nuevo arriba
             char.logs.sort((a, b) => {
                 const dateDiff = new Date(b.date) - new Date(a.date);
                 if (dateDiff !== 0) return dateDiff;
@@ -1135,7 +1399,191 @@
             if (confirm("Delete this drop entry?")) {
                 dropCharacters[charIndex].logs.splice(logIndex, 1);
                 saveToStorage();
+                if (document.getElementById('fullview-modal').style.display === 'flex') {
+                    renderFullViewData();
+                }
             }
+        }
+
+        // --- SISTEMA FULL VIEW ---
+        function openFullViewModal(index) {
+            currentFullViewCharIndex = index;
+            renderFullViewData();
+            document.getElementById('fullview-modal').style.display = 'flex';
+        }
+
+        function closeFullViewModal() { document.getElementById('fullview-modal').style.display = 'none'; }
+
+        function renderFullViewData() {
+            const char = dropCharacters[currentFullViewCharIndex];
+            document.getElementById('fullview-char-name').innerText = char.name;
+            
+            const tbody = document.getElementById('fullview-table-body');
+            tbody.innerHTML = '';
+
+            const logs = char.logs || [];
+            if (logs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="color:var(--text-muted); text-align:center; padding:30px 0;">No drop records found for this character.</td></tr>`;
+            } else {
+                logs.forEach((log, logIdx) => {
+                    tbody.appendChild(createLogRenderRow(log, logIdx, true));
+                });
+            }
+
+            let inventoryTotals = {};
+            logs.forEach(log => {
+                let text = log.name;
+
+                if (text.includes("Arcane Armor Box")) {
+                    if (text.includes("•")) {
+                        let parts = text.split(" • ");
+                        for (let i = 1; i < parts.length; i++) {
+                            let match = parts[i].match(/(.+) \((\d+)\)/);
+                            if (match) {
+                                let pieceName = match[1].trim();
+                                let count = parseInt(match[2]) || 1;
+                                inventoryTotals[pieceName] = (inventoryTotals[pieceName] || 0) + count;
+                            }
+                        }
+                    } else {
+                        let match = text.match(/\((\d+)\)/);
+                        let count = match ? parseInt(match[1]) : 1;
+                        inventoryTotals["Arcane Armor Box"] = (inventoryTotals["Arcane Armor Box"] || 0) + count;
+                    }
+                } 
+                else if (text.includes("↳")) {
+                    let pieceName = text.split(" ↳ ")[1].trim();
+                    inventoryTotals[pieceName] = (inventoryTotals[pieceName] || 0) + 1;
+                } 
+                else if (text.match(/\((\d+)\)/)) {
+                    let match = text.match(/(.+) \((\d+)\)/);
+                    if (match) {
+                        let baseName = match[1].trim();
+                        let count = parseInt(match[2]) || 1;
+                        inventoryTotals[baseName] = (inventoryTotals[baseName] || 0) + count;
+                    }
+                } 
+                else {
+                    inventoryTotals[text] = (inventoryTotals[text] || 0) + 1;
+                }
+            });
+
+            const analyticsContainer = document.getElementById('fullview-analytics-container');
+            analyticsContainer.innerHTML = '';
+
+            let sortedItems = Object.keys(inventoryTotals).sort((a,b) => a.localeCompare(b));
+            if (sortedItems.length === 0) {
+                analyticsContainer.innerHTML = `<span style="color:var(--text-muted); font-style:italic; font-size:0.85rem;">Inventory empty.</span>`;
+            } else {
+                sortedItems.forEach(itemName => {
+                    const count = inventoryTotals[itemName];
+                    const row = document.createElement('div');
+                    row.className = 'analytic-row';
+                    row.innerHTML = `
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <img src="${getDropIcon(itemName)}" class="boss-icon" onerror="this.src='Icons/default.png'">
+                            <span style="font-weight:bold;">${itemName}</span>
+                        </div>
+                        <span style="color:var(--light-blue); font-size:1.05rem; font-weight:bold;">x${count}</span>
+                    `;
+                    analyticsContainer.appendChild(row);
+                });
+            }
+        }
+
+        function createLogRenderRow(log, logIdx, isFullView = false, charIdx = null) {
+            const tr = document.createElement('tr');
+            let text = log.name;
+            let dropCellHTML = '';
+
+            if (text.includes("Arcane Armor Box") && text.includes("•")) {
+                let parts = text.split(" • ");
+                let parentBoxTitle = parts[0]; 
+
+                let childRowsHTML = '';
+                for (let i = 1; i < parts.length; i++) {
+                    let isLast = (i === parts.length - 1);
+                    let connector = isLast ? '└' : '├';
+                    let match = parts[i].match(/(.+) \((\d+)\)/);
+                    
+                    if (match) {
+                        let subItemName = match[1].trim();
+                        let subItemCount = match[2];
+                        childRowsHTML += `
+                            <div class="drop-item-child-row">
+                                <span class="tree-connector">${connector}</span>
+                                <img src="${getDropIcon(subItemName)}" class="child-icon" onerror="this.src='Icons/default.png'">
+                                <span>${subItemName} (${subItemCount})</span>
+                            </div>
+                        `;
+                    }
+                }
+
+                dropCellHTML = `
+                    <div class="drop-item-cell">
+                        <div class="drop-item-parent">
+                            <img src="${getDropIcon('Arcane Armor Box')}" class="boss-icon" onerror="this.src='Icons/default.png'">
+                            <span>${parentBoxTitle}</span>
+                        </div>
+                        <div class="drop-item-child-container">
+                            ${childRowsHTML}
+                        </div>
+                    </div>
+                `;
+            } 
+            else if (text.includes("↳")) {
+                let parts = text.split(" ↳ ");
+                let parentBoxTitle = parts[0];
+                let subItemName = parts[1].trim();
+
+                dropCellHTML = `
+                    <div class="drop-item-cell">
+                        <div class="drop-item-parent">
+                            <img src="${getDropIcon(parentBoxTitle)}" class="boss-icon" onerror="this.src='Icons/default.png'">
+                            <span>${parentBoxTitle}</span>
+                        </div>
+                        <div class="drop-item-child-container">
+                            <div class="drop-item-child-row">
+                                <span class="tree-connector">└</span>
+                                <img src="${getDropIcon(subItemName)}" class="child-icon" onerror="this.src='Icons/default.png'">
+                                <span>${subItemName}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } 
+            else {
+                dropCellHTML = `
+                    <div class="drop-item-cell">
+                        <div class="drop-item-parent">
+                            <img src="${getDropIcon(text)}" class="boss-icon" onerror="this.src='Icons/default.png'">
+                            <span>${text}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (isFullView) {
+                tr.innerHTML = `
+                    <td style="color:var(--light-blue); font-weight:bold; padding: 8px 5px;">${log.date}</td>
+                    <td style="padding: 8px 5px;">${dropCellHTML}</td>
+                    <td style="color:${log.split === ' ' ? 'var(--success-color)' : 'var(--text-muted)'}; padding: 8px 5px;">${log.split}</td>
+                    <td style="text-align:right; padding: 8px 5px;">
+                        <button class="btn-inline-action" style="background:none; border:none; color:var(--text-muted); cursor:pointer;" onclick="removeDropLog(${currentFullViewCharIndex}, ${logIdx})">×</button>
+                    </td>
+                `;
+            } else {
+                tr.innerHTML = `
+                    <td style="color:var(--light-blue); font-weight:bold;">${log.date ? log.date.substring(5) : '??-??'}</td>
+                    <td>${dropCellHTML}</td>
+                    <td style="color:${log.split === ' ' ? 'var(--success-color)' : 'var(--text-muted)'}; font-weight:regular;">${log.split}</td>
+                    <td style="text-align:right;">
+                        <button class="btn-inline-action" style="background:none; border:none; color:var(--text-muted); cursor:pointer;" onclick="removeDropLog(${charIdx}, ${logIdx})">×</button>
+                    </td>
+                `;
+            }
+
+            return tr;
         }
 
         function calculateCharacterNetMeso(char) {
@@ -1150,7 +1598,6 @@
             return bossMeso - rentalsCost;
         }
 
-        // --- RENDERIZADO TABLAS / GRIDS ---
         function renderCharacters() {
             const bossGrid = document.getElementById('boss-characters-grid');
             const dropGrid = document.getElementById('drop-characters-grid');
@@ -1177,7 +1624,6 @@
                         });
                         rentalsSummaryHTML += `</div>`;
                     } else {
-                        // Solución al espacio vacío: Añadir una etiqueta elegante de "No Rentals" si la lista está vacía
                         rentalsSummaryHTML = `<div class="card-rentals-summary"><span class="no-rentals-badge">No Rentals</span></div>`;
                     }
 
@@ -1244,29 +1690,6 @@
                     const clsSafe = char.class || 'Hero';
                     const lowCaseCls = clsSafe.toLowerCase();
                     const logs = char.logs || [];
-                    let logRowsHTML = '';
-
-                    if (logs.length === 0) {
-                        logRowsHTML = `<tr><td colspan="4" style="color:var(--text-muted); text-align:center; padding:20px 0;">No drop logs yet. Click '+' to add!</td></tr>`;
-                    } else {
-                        logs.forEach((log, logIdx) => {
-                            logRowsHTML += `
-                                <tr>
-                                    <td style="color:var(--light-blue); font-weight:bold;">${log.date ? log.date.substring(5) : '??-??'}</td>
-                                    <td>
-                                        <div class="drop-item-cell">
-                                            <img src="${getDropIcon(log.name)}" class="boss-icon" onerror="this.src='Icons/default.png'">
-                                            <span>${log.name}</span>
-                                        </div>
-                                    </td>
-                                    <td style="color:${log.split === ' ' ? 'var(--success-color)' : 'var(--text-muted)'}; font-weight:regular;">${log.split}</td>
-                                    <td style="text-align:right;">
-                                        <button class="btn-inline-action" style="background:none; border:none; color:var(--text-muted); cursor:pointer;" onclick="removeDropLog(${index}, ${logIdx})">×</button>
-                                    </td>
-                                </tr>
-                            `;
-                        });
-                    }
 
                     let cardHTML = `
                         <div class="char-card">
@@ -1293,17 +1716,26 @@
                                                 <th style="width:25px;"></th>
                                             </tr>
                                         </thead>
-                                        <tbody>${logRowsHTML}</tbody>
+                                        <tbody id="drop-tbody-char-${index}"></tbody>
                                     </table>
                                 </div>
                             </div>
                             <div class="char-footer" style="border-top:1px dashed var(--border-color); padding-top:10px;">
-                                <span style="font-size:0.85rem; color:var(--text-muted);">Total Items Tracked:</span>
-                                <span style="font-weight:bold; color:var(--light-blue); font-size:1.1rem;">${logs.length}</span>
+                                <button class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="openFullViewModal(${index})">Full View</button>
+                                <span style="font-weight:bold; color:var(--light-blue); font-size:1.1rem;">${logs.length} Items</span>
                             </div>
                         </div>
                     `;
                     dropGrid.innerHTML += cardHTML;
+
+                    const tbody = document.getElementById(`drop-tbody-char-${index}`);
+                    if (logs.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="4" style="color:var(--text-muted); text-align:center; padding:20px 0;">No drop logs yet. Click '+' to add!</td></tr>`;
+                    } else {
+                        logs.forEach((log, logIdx) => {
+                            tbody.appendChild(createLogRenderRow(log, logIdx, false, index));
+                        });
+                    }
                 });
             }
         }
