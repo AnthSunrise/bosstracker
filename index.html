@@ -14,12 +14,17 @@
             --primary-blue: #004a77;
             --light-blue: #81b2d1;
             --danger-color: #e74c3c;
-            --success-color: #2ecc71;
+            --success-color: #81b2d1;
             --border-color: #43748c;
+            --highlight-green: rgba(67,116,140,0.15);
+            --meso-color: #2ecc71;
+        }
+
+        * {
+            font-family: 'Calibri', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Calibri', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -30,18 +35,17 @@
             overflow: hidden;
         }
 
-        /* HEADER & MENÚ HAMBURGUESA */
-	    header {
-    	    padding: 8px 30px;
-	        border-bottom: 2px solid var(--border-color);
-	        display: flex;
-	        justify-content: space-between;
-	        align-items: center;
-	        background: linear-gradient(rgba(11, 13, 17, 0.75), rgba(11, 13, 17, 0.75)), 
-	                    url('https://external-preview.redd.it/thought-you-guys-might-enjoy-my-desktop-background-v0-XIOtseg7lC_AcRb4da1m9ImYpuDuooR62i5YmgTK-CQ.jpg?auto=webp&s=5466578965df0adeb7acbd2afcd0f40cb068df8e') center/cover no-repeat;
-	        position: relative;
-	        z-index: 100;
-	    }
+        header {
+            padding: 8px 30px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(rgba(11, 13, 17, 0.75), rgba(11, 13, 17, 0.75)), 
+                        url('https://external-preview.redd.it/thought-you-guys-might-enjoy-my-desktop-background-v0-XIOtseg7lC_AcRb4da1m9ImYpuDuooR62i5YmgTK-CQ.jpg?auto=webp&s=5466578965df0adeb7acbd2afcd0f40cb068df8e') center/cover no-repeat;
+            position: relative;
+            z-index: 100;
+        }
 
         .header-left {
             display: flex;
@@ -78,7 +82,6 @@
         }
         .summary-item span { font-weight: bold; }
 
-        /* PANEL MENÚ DESPLEGABLE FLOTANTE */
         .dropdown-menu-panel {
             position: absolute;
             top: 100%;
@@ -90,7 +93,7 @@
             display: none;
             flex-direction: column;
             padding: 10px;
-            min-width: 200px;
+            min-width: 220px;
             z-index: 200;
         }
         .dropdown-menu-panel.open { display: flex; }
@@ -120,7 +123,6 @@
             border-color: var(--light-blue);
         }
 
-        /* CONTENEDOR PRINCIPAL */
         .content-wrapper {
             flex-grow: 1;
             overflow-y: auto;
@@ -138,10 +140,10 @@
         .top-actions {
             display: flex;
             justify-content: flex-end;
+            gap: 10px;
             margin-bottom: 25px;
         }
 
-        /* Botones */
         button {
             background-color: var(--primary-blue);
             color: white;
@@ -160,12 +162,12 @@
         button.btn-delete:hover { background-color: #c0392b; box-shadow: none; }
         button.btn-secondary { background-color: #444; border-color: #666; }
         button.btn-secondary:hover { background-color: #555; box-shadow: none; }
+        button.btn-success { background-color: #004a77; border-color: #81b2d1; }
+        button.btn-success:hover { background-color: #004a77; box-shadow: 0 0 8px var(--success-color); }
 
-        /* Vistas Ocultables */
         .app-view { display: none; }
         .app-view.active { display: block; }
 
-        /* Grid de Personajes */
         .characters-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
@@ -222,9 +224,9 @@
         .char-actions-header button.btn-inline-edit:hover { color: var(--light-blue); }
         .char-actions-header button.btn-inline-delete:hover { color: #ff6b6b; }
 
-        /* Listas Internas */
         .boss-list-container { max-height: 220px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
         .drop-list-container { max-height: 305px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
+        .daily-list-container { max-height: 305px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
         
         .boss-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #43748c; }
         .boss-row-left { display: flex; align-items: center; gap: 10px; }
@@ -235,21 +237,55 @@
         .rental-badge img { width: 14px; height: 14px; object-fit: contain; background: transparent; }
         .no-rentals-badge { font-size: 0.85rem; color: var(--text-muted); font-style: italic; padding: 4px 0; display: inline-block; }
 
-        .char-footer { border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .meso-total { font-size: 1.2rem; font-weight: bold; color: var(--success-color); }
+        .char-footer { border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .meso-total { font-size: 1.2rem; font-weight: bold; color: var(--meso-color); }
 
-        /* Tablas */
         .drop-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
         .drop-table th { color: var(--light-blue); border-bottom: 1px solid var(--border-color); padding: 6px 4px; }
         .drop-table td { padding: 6px 4px; border-bottom: 1px solid rgba(67,116,140,0.2); vertical-align: middle; }
         
-        /* ESTILOS DE ARBOL PARA SUB-ITEMS */
         .drop-item-cell { display: flex; flex-direction: column; gap: 2px; }
         .drop-item-parent { display: flex; align-items: center; gap: 8px; }
         .drop-item-child-container { display: flex; flex-direction: column; padding-left: 18px; margin-top: 1px; }
         .drop-item-child-row { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
         .tree-connector { font-family: 'Courier New', Courier, monospace; color: var(--border-color); font-weight: bold; font-size: 0.9rem; user-select: none; }
         .child-icon { width: 18px; height: 18px; object-fit: contain; background: transparent; border-radius: 3px; }
+
+        /* Daily Activity Styles */
+        .daily-activity-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 6px;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+            border-bottom: 1px solid rgba(67,116,140,0.15);
+        }
+        .daily-activity-row.completed {
+            background-color: var(--highlight-green);
+        }
+        .daily-activity-row input[type="checkbox"] {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            accent-color: var(--success-color);
+            flex-shrink: 0;
+        }
+        .daily-activity-row .activity-name {
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+        .daily-activity-row.completed .activity-name {
+            color: var(--success-color);
+        }
+        .daily-activity-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            background: transparent;
+            flex-shrink: 0;
+        }
 
         /* MODALES */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
@@ -278,7 +314,6 @@
 
         .party-select { padding: 2px 4px; font-size: 0.75rem; background-color: #222; color: white; border: 1px solid var(--border-color); }
 
-        /* ========== CAMBIO ESTÉTICO 1: Reducir espacio en modal side-section ========== */
         .modal-side-section { 
             display: flex; 
             flex-direction: column; 
@@ -305,7 +340,6 @@
             flex-direction: column; 
             gap: 1px;
         }
-        /* ========== FIN CAMBIO 1 ========== */
 
         .modal-form-group label { font-size: 0.85rem; color: var(--text-muted); }
         .modal-form-group input, .modal-form-group select { background: #222; border: 1px solid var(--border-color); padding: 8px; color: white; border-radius: 4px; width: 100%; box-sizing: border-box; }
@@ -341,7 +375,6 @@
         .rental-item-left { display: flex; align-items: center; gap: 8px; }
         .rental-item img { width: 18px; height: 18px; object-fit: contain; background: transparent; }
 
-        /* ========== CAMBIO ESTÉTICO 2: Full View mejorado ========== */
         .fullview-layout { 
             display: grid; 
             grid-template-columns: 1fr 380px; 
@@ -358,7 +391,6 @@
             margin-left: 5px;
         }
 
-        /* ========== PANEL DERECHO - CORREGIDO ========== */
         .fullview-right { 
             display: flex; 
             flex-direction: column; 
@@ -414,7 +446,147 @@
             border: 1px solid #27303d; 
             flex-shrink: 0;
         }
-        /* ========== FIN CAMBIO 2 ========== */
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            padding: 5px;
+        }
+        .inventory-item {
+            background: #1d222a;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            user-select: none;
+        }
+        .inventory-item:hover {
+            border-color: var(--light-blue);
+            transform: scale(1.05);
+        }
+        .inventory-item:active {
+            transform: scale(0.95);
+        }
+        .inventory-item img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            background: transparent;
+            display: block;
+            margin: 0 auto;
+        }
+        .inventory-item .item-name {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .inventory-item .item-count {
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            color: var(--light-blue);
+            background: rgba(0,0,0,0.7);
+            padding: 0 4px;
+            border-radius: 3px;
+        }
+        .inventory-item .item-delete {
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            font-size: 0.6rem;
+            color: var(--danger-color);
+            background: rgba(0,0,0,0.7);
+            padding: 0 4px;
+            border-radius: 3px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .inventory-item:hover .item-delete {
+            opacity: 1;
+        }
+        .inventory-empty {
+            color: var(--text-muted);
+            text-align: center;
+            padding: 30px 0;
+            font-style: italic;
+            grid-column: 1 / -1;
+        }
+        .inventory-note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 4px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 6px;
+        }
+
+        /* Inventory Suggestions Dropdown */
+        .inv-suggestions-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .inv-suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1100;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .inv-suggestions-dropdown.open {
+            display: block;
+        }
+
+        .inv-suggestion-item {
+            padding: 6px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: white;
+            transition: background 0.15s;
+        }
+
+        .inv-suggestion-item:hover {
+            background: var(--primary-blue);
+        }
+
+        .inv-suggestion-item img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            background: transparent;
+            flex-shrink: 0;
+        }
+
+        .inv-suggestion-item .suggestion-name {
+            flex: 1;
+        }
+
+        .inv-suggestion-item .suggestion-category {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
 
         .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; align-items: center; gap: 12px; background-color: #111; }
         .preset-select { background-color: #222; color: var(--light-blue); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
@@ -434,6 +606,15 @@
             color: var(--light-blue);
             font-size: 1rem;
         }
+
+        @media (max-width: 768px) {
+            .characters-grid { grid-template-columns: 1fr; }
+            .fullview-layout { grid-template-columns: 1fr; height: auto; }
+            .fullview-right { height: 300px; }
+            .modal-body { grid-template-columns: 1fr; }
+            .selection-grid { grid-template-columns: repeat(2, 1fr); }
+            .main-container { padding: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -445,13 +626,14 @@
         </div>
         
         <div class="global-summary" id="global-boss-summary-box">
-            <div class="summary-item">Weekly Meso: <span id="global-meso-total" style="color: var(--success-color);">0</span></div>
+            <div class="summary-item">Weekly Meso: <span id="global-meso-total" style="color: var(--meso-color);">0</span></div>
             <div class="summary-item">Bosses: <span id="global-boss-count">0 / 180</span></div>
         </div>
 
         <div class="dropdown-menu-panel" id="global-menu-panel">
             <button class="menu-panel-item active" id="menu-item-boss" onclick="switchView('boss')">Boss Tracker</button>
             <button class="menu-panel-item" id="menu-item-drop" onclick="switchView('drop')">Drop Tracker</button>
+            <button class="menu-panel-item" id="menu-item-daily" onclick="switchView('daily')">Daily & Weekly</button>
         </div>
     </header>
 
@@ -470,9 +652,17 @@
                 </div>
                 <div class="characters-grid" id="drop-characters-grid"></div>
             </div>
+
+            <div id="view-daily-tracker" class="app-view">
+                <div class="top-actions">
+                    <button onclick="openDailyModal()">+ Add Character</button>
+                </div>
+                <div class="characters-grid" id="daily-characters-grid"></div>
+            </div>
         </div>
     </div>
 
+    <!-- Character Modal (Boss & Drop) -->
     <div class="modal-overlay" id="char-modal">
         <div class="modal-content" id="modal-content-container">
             <div class="modal-header">
@@ -534,7 +724,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE CONTROL DE DROPS -->
+    <!-- Drop Modal -->
     <div class="modal-overlay" id="drop-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -563,7 +753,59 @@
         </div>
     </div>
 
-    <!-- MODAL MASIVO DE VISTA COMPLETA (FULL VIEW) -->
+    <!-- Daily Modal -->
+    <div class="modal-overlay" id="daily-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="daily-modal-title">Add Character & Activities</h2>
+                <button class="btn-delete" style="padding: 5px 10px; font-size: 0.8rem;" onclick="closeDailyModal()">X</button>
+            </div>
+            <div class="modal-body" style="grid-template-columns: 1fr 360px;">
+                <div class="modal-main-section">
+                    <div class="modal-selection-scroll-area" id="modal-daily-sections-container"></div>
+                </div>
+                <div class="modal-side-section">
+                    <h3 id="daily-modal-char-name">Character Data</h3>
+                    <div class="modal-form-group">
+                        <label>Name</label>
+                        <input type="text" id="daily-modal-name" placeholder="e.g., Balthir">
+                    </div>
+                    <div class="modal-grid-row">
+                        <div class="modal-form-group">
+                            <label>Level</label>
+                            <input type="number" id="daily-modal-level" value="220" min="1" max="300">
+                        </div>
+                        <div class="modal-form-group">
+                            <label>Class</label>
+                            <div class="custom-dropdown" id="daily-class-dropdown-wrapper">
+                                <div class="custom-dropdown-selected" id="daily-dropdown-selected-trigger" onclick="toggleDailyDropdownOptions()">
+                                    <span>Select Class</span>
+                                </div>
+                                <div class="custom-dropdown-options" id="daily-dropdown-options-box"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="image-upload-box" onclick="document.getElementById('daily-modal-image-file').click()">
+                        <span id="daily-upload-text" style="font-size:0.85rem; color:var(--text-muted);">📁 Click to upload custom img.</span>
+                        <input type="file" id="daily-modal-image-file" accept="image/*" style="display:none;" onchange="handleDailyImageUpload(this)">
+                        <img id="daily-modal-preview-img" src="" alt="Preview">
+                    </div>
+                    
+                    <!-- Import from Boss Tracker -->
+                    <div id="daily-import-section"></div>
+                    
+                    <h3 style="margin-top:10px;">Selected Activities</h3>
+                    <div id="side-selected-dailies-list"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeDailyModal()">Cancel</button>
+                <button onclick="saveDailyActivities()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full View Modal -->
     <div class="modal-overlay" id="fullview-modal">
         <div class="modal-content" style="max-width: 1300px;">
             <div class="modal-header">
@@ -597,8 +839,51 @@
         </div>
     </div>
 
+    <!-- Inventory Manager Modal -->
+    <div class="modal-overlay" id="inventory-modal">
+        <div class="modal-content" style="max-width: 1200px;">
+            <div class="modal-header">
+                <h2>Inventory Manager: <span id="inventory-char-name" style="color:var(--light-blue)"></span></h2>
+                <button class="btn-delete" style="padding: 5px 10px; font-size: 0.8rem;" onclick="closeInventoryModal()">X</button>
+            </div>
+            <div class="modal-body" style="grid-template-columns: 1fr 320px;">
+                <div class="modal-main-section">
+                    <div class="inventory-grid" id="inventory-grid-container"></div>
+                </div>
+                <div class="modal-side-section" style="max-height: 62vh;">
+                    <h3>Add Item</h3>
+                    <div class="modal-form-group">
+                        <label>Item Name</label>
+                        <div class="inv-suggestions-wrapper">
+                            <input type="text" id="inv-item-name" placeholder="e.g., Arcane Umbra Hat" autocomplete="off">
+                            <div class="inv-suggestions-dropdown" id="inv-suggestions-dropdown"></div>
+                        </div>
+                    </div>
+                    <div class="modal-form-group">
+                        <label>Quantity</label>
+                        <input type="number" id="inv-item-qty" value="1" min="1">
+                    </div>
+                    <button onclick="addInventoryItem()" style="width:100%;">Add Item</button>
+                    
+                    <div class="inventory-note">
+                        💡 Left-click: +1 | Right-click: -1 | Hover for delete
+                    </div>
+                    
+                    <hr style="border-color:var(--border-color); margin: 10px 0;">
+                    
+                    <div style="display:flex; gap:8px;">
+                        <button onclick="clearInventory()" class="btn-delete" style="flex:1;">Clear All</button>
+                        <button onclick="closeInventoryModal()" class="btn-secondary" style="flex:1;">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- MAPEO DE ICONOS PARA PIEZAS INDIVIDUALES (EDITA AQUÍ TUS ARCHIVOS .PNG) ---
+        // ============================================================
+        // DATA DEFINITIONS
+        // ============================================================
         const PIECES_ICON_MAP = {
             "Eternal Hat": "eternal hat.png",
             "Eternal Top": "eternal top.png",
@@ -607,7 +892,6 @@
             "Eternal Cape": "eternal cape.png",
             "Eternal Glove": "eternal glove.png",
             "Eternal Shoe": "eternal shoe.png",
-            
             "Arcane Umbra Hat": "arcane hat.png",
             "Arcane Umbra Overall": "arcane overall.png",
             "Arcane Umbra Cape": "arcane cape.png",
@@ -616,7 +900,24 @@
             "Arcane Umbra Shoulder": "arcane shoulder.png"
         };
 
-        // DATA PRINCIPAL DE JUEGO 
+        // DAILY & WEEKLY ACTIVITIES - WITH SUB-CATEGORIES
+        const DAILY_ACTIVITIES = {
+            "Grandis Symbols": ["Cernium", "Hotel Arcus", "Odium", "Shangri-la", "Arteria", "Carcion", "Tallahart", "Geardrak"],
+            "Arcane Symbol Quests": ["Vanishing Journey", "Chu Chu Island", "Lachelein", "Morass", "Esfera"],
+            "Bosses": ["Gollux", "Arkarium"],
+            "Miscellaneous": ["Monster Park"]
+        };
+
+        const WEEKLY_ACTIVITIES = {
+            "Miscellaneous": ["Monster Park Extreme"],
+            "Epic Dungeon": ["High Mountain", "Angler Company", "Nightmare Paradise"],
+            "Arcane Symbol Weeklies": ["Erda Spectrum", "Hungry Muto", "Midnight Chaser", "Spirit Savior", "Ranheim Defense", "Esfera Guardian"],
+            "Guild": ["Culvert", "Flag Race"]
+        };
+
+        const ALL_DAILY_NAMES = Object.values(DAILY_ACTIVITIES).flat();
+        const ALL_WEEKLY_NAMES = Object.values(WEEKLY_ACTIVITIES).flat();
+
         const KRONOS_BOSS_DATA = {
             "Hard Jupiter": 5925000000, "Normal Jupiter": 2970000000, "Extreme Kaling": 6026000000, "Extreme First Adversary": 5880000000,
             "Extreme Kalos": 5200000000, "Extreme Seren": 4235000000, "Hard Baldrix": 4200000000, "Hard Limbo": 3745000000,
@@ -776,9 +1077,16 @@
             "F": [{name:"Hard Darknell",partySize:2},{name:"Hard Verus Hilla",partySize:2},{name:"Chaos Gloom",partySize:2},{name:"Hard Will",partySize:2},{name:"Hard Lucid",partySize:2},{name:"Chaos Slime",partySize:2},{name:"Hard Lotus",partySize:1},{name:"Hard Damien",partySize:1},{name:"Akechi",partySize:1},{name:"Chaos Vellum",partySize:1},{name:"Hard Magnus",partySize:1},{name:"Chaos Papulatus",partySize:1},{name:"Chaos Queen",partySize:1},{name:"Princess No",partySize:1}]
         };
 
+        // ============================================================
+        // STORAGE
+        // ============================================================
         let bossCharacters = JSON.parse(localStorage.getItem('maple_boss_chars_v4')) || [];
         let dropCharacters = JSON.parse(localStorage.getItem('maple_drop_chars_v4')) || [];
+        let dailyCharacters = JSON.parse(localStorage.getItem('maple_daily_chars_v2')) || [];
         
+        // ============================================================
+        // STATE
+        // ============================================================
         let currentView = 'boss';
         let modalMode = 'boss'; 
         let currentEditingIndex = null;
@@ -790,7 +1098,21 @@
         let tempSelectedDropsData = {};
         let currentDropCharIndex = null;
         let currentFullViewCharIndex = null;
+        let currentInventoryCharIndex = null;
 
+        // Daily Modal State
+        let dailyModalMode = 'add';
+        let dailyEditingIndex = null;
+        let tempSelectedDailies = { dailies: [], weeklies: [] };
+        let dailyTempName = '';
+        let dailyTempLevel = 220;
+        let dailyTempClass = MAPLE_CLASSES[0];
+        let dailyTempImage = '';
+        let dailyClassValue = MAPLE_CLASSES[0];
+
+        // ============================================================
+        // UTILITY FUNCTIONS
+        // ============================================================
         function getBossIcon(fullBossName) {
             for (let key in BOSS_ICON_MAP) { if (fullBossName.includes(key)) return `Icons/${BOSS_ICON_MAP[key]}`; }
             return 'Icons/default.png';
@@ -799,10 +1121,19 @@
         function getDropIcon(dropName) {
             let cleanName = dropName.split(' (')[0].split(' ↳')[0].trim();
             
+            const PIECE_ITEMS = [
+                'Adversary Piece', 'Adversary Half Piece', 'Kalos Piece', 'Kalos Half Piece',
+                'Kaling Piece', 'Kaling Half Piece', 'Malefic Star Piece', 'Limbo Piece',
+                'Baldrix Piece', 'Jupiter Piece'
+            ];
+            
+            if (PIECE_ITEMS.includes(cleanName)) {
+                return `Icons/drops/${cleanName}.png`;
+            }
+            
             if (PIECES_ICON_MAP[cleanName]) {
                 return `Icons/drops/${PIECES_ICON_MAP[cleanName]}`;
             }
-            
             let searchName = cleanName.replace(" ", " ");
             for (let category of KRONOS_DROPS_CATEGORIES) {
                 const drop = category.items.find(d => d.name === searchName);
@@ -811,6 +1142,48 @@
             return 'Icons/default.png';
         }
 
+        const ACTIVITY_ICON_MAP = {
+            "Cernium": "cernium.png",
+            "Hotel Arcus": "hotel arcus.png",
+            "Odium": "odium.png",
+            "Shangri-la": "shangri-la.png",
+            "Arteria": "arteria.png",
+            "Carcion": "carcion.png",
+            "Tallahart": "tallahart.png",
+            "Geardrak": "geardrak.png",
+            "Vanishing Journey": "vanishing journey.png",
+            "Chu Chu Island": "chu chu island.png",
+            "Lachelein": "lachelein.png",
+            "Morass": "morass.png",
+            "Esfera": "esfera.png",
+            "Gollux": "gollux.png",
+            "Arkarium": "arkarium.png",
+            "Monster Park": "monster park.png",
+            "Monster Park Extreme": "monster park extreme.png",
+            "High Mountain": "high mountain.png",
+            "Angler Company": "angler company.png",
+            "Nightmare Paradise": "nightmare paradise.png",
+            "Erda Spectrum": "erda spectrum.png",
+            "Hungry Muto": "hungry muto.png",
+            "Midnight Chaser": "midnight chaser.png",
+            "Spirit Savior": "spirit savior.png",
+            "Ranheim Defense": "ranheim defense.png",
+            "Esfera Guardian": "esfera guardian.png",
+            "Culvert": "culvert.png",
+            "Flag Race": "flag race.png"
+        };
+        
+        function getActivityIcon(activityName) {
+            if (ACTIVITY_ICON_MAP[activityName]) {
+                return `Icons/activities/${ACTIVITY_ICON_MAP[activityName]}`;
+            }
+            const fallback = activityName.toLowerCase().replace(/ /g, '_') + '.png';
+            return `Icons/activities/${fallback}`;
+        }
+
+        // ============================================================
+        // MENU
+        // ============================================================
         function toggleMenuPanel(event) {
             event.stopPropagation();
             document.getElementById('global-menu-panel').classList.toggle('open');
@@ -821,28 +1194,52 @@
             document.querySelectorAll('.menu-panel-item').forEach(btn => btn.classList.remove('active'));
             document.getElementById('global-menu-panel').classList.remove('open');
 
+            document.getElementById('view-boss-tracker').classList.remove('active');
+            document.getElementById('view-drop-tracker').classList.remove('active');
+            document.getElementById('view-daily-tracker').classList.remove('active');
+
             if (view === 'boss') {
                 document.getElementById('menu-item-boss').classList.add('active');
                 document.getElementById('view-boss-tracker').classList.add('active');
-                document.getElementById('view-drop-tracker').classList.remove('active');
                 document.getElementById('view-title').innerText = "MapleStory Boss & Drop Tracker";
                 document.getElementById('global-boss-summary-box').style.display = 'flex';
-            } else {
+                renderBossCharacters();
+            } else if (view === 'drop') {
                 document.getElementById('menu-item-drop').classList.add('active');
                 document.getElementById('view-drop-tracker').classList.add('active');
-                document.getElementById('view-boss-tracker').classList.remove('active');
-                document.getElementById('view-title').innerText = "MapleStory Boss & Drop Tracker";
+                document.getElementById('view-title').innerText = "MapleStory Drop Tracker";
                 document.getElementById('global-boss-summary-box').style.display = 'none';
+                renderDropCharacters();
+            } else if (view === 'daily') {
+                document.getElementById('menu-item-daily').classList.add('active');
+                document.getElementById('view-daily-tracker').classList.add('active');
+                document.getElementById('view-title').innerText = "Daily & Weekly Tracker";
+                document.getElementById('global-boss-summary-box').style.display = 'none';
+                renderDailyCharacters();
             }
-            renderCharacters();
         }
 
-        function saveToStorage() {
+        // ============================================================
+        // SAVE FUNCTIONS
+        // ============================================================
+        function saveBossToStorage() {
             localStorage.setItem('maple_boss_chars_v4', JSON.stringify(bossCharacters));
-            localStorage.setItem('maple_drop_chars_v4', JSON.stringify(dropCharacters));
-            renderCharacters();
+            renderBossCharacters();
         }
 
+        function saveDropToStorage() {
+            localStorage.setItem('maple_drop_chars_v4', JSON.stringify(dropCharacters));
+            renderDropCharacters();
+        }
+
+        function saveDailyToStorage() {
+            localStorage.setItem('maple_daily_chars_v2', JSON.stringify(dailyCharacters));
+            renderDailyCharacters();
+        }
+
+        // ============================================================
+        // CLASS DROPDOWN (Main Modal)
+        // ============================================================
         function initCustomClassDropdown() {
             const optionsBox = document.getElementById('dropdown-options-box');
             optionsBox.innerHTML = '';
@@ -860,6 +1257,7 @@
         }
 
         function toggleDropdownOptions() { document.getElementById('dropdown-options-box').classList.toggle('open'); }
+        
         function selectDropdownClass(cls) {
             selectedClassValue = cls;
             const trigger = document.getElementById('dropdown-selected-trigger');
@@ -872,6 +1270,42 @@
             if (!tempBase64Image) updateImagePreview();
         }
 
+        // ============================================================
+        // CLASS DROPDOWN (Daily Modal)
+        // ============================================================
+        function initDailyClassDropdown() {
+            const optionsBox = document.getElementById('daily-dropdown-options-box');
+            optionsBox.innerHTML = '';
+            MAPLE_CLASSES.forEach(cls => {
+                const item = document.createElement('div');
+                item.className = 'custom-dropdown-item';
+                const lowCaseCls = cls.toLowerCase();
+                item.innerHTML = `
+                    <img class="dropdown-class-icon" src="Icons/classes/${lowCaseCls}.png" onerror="this.src='Icons/default.png'">
+                    <span>${cls}</span>
+                `;
+                item.onclick = (e) => { e.stopPropagation(); selectDailyDropdownClass(cls); };
+                optionsBox.appendChild(item);
+            });
+        }
+
+        function toggleDailyDropdownOptions() { document.getElementById('daily-dropdown-options-box').classList.toggle('open'); }
+        
+        function selectDailyDropdownClass(cls) {
+            dailyClassValue = cls;
+            const trigger = document.getElementById('daily-dropdown-selected-trigger');
+            const lowCaseCls = cls.toLowerCase();
+            trigger.innerHTML = `
+                <img class="dropdown-class-icon" src="Icons/classes/${lowCaseCls}.png" onerror="this.src='Icons/default.png'">
+                <span>${cls}</span>
+            `;
+            document.getElementById('daily-dropdown-options-box').classList.remove('open');
+            if (!dailyTempImage) updateDailyImagePreview();
+        }
+
+        // ============================================================
+        // CHARACTER MODAL (Boss & Drop)
+        // ============================================================
         function openCharacterModal(mode, index = null) {
             modalMode = mode;
             currentEditingIndex = index;
@@ -891,8 +1325,6 @@
             tempModalRentals = [];
             tempBase64Image = "";
 
-            let activeList = (mode === 'boss') ? bossCharacters : dropCharacters;
-
             if (mode === 'boss') {
                 modalContent.classList.remove('drop-layout-compact');
                 leftSection.style.display = 'block';
@@ -903,7 +1335,7 @@
                 document.getElementById('modal-presets').value = "";
 
                 if (index !== null) {
-                    const char = activeList[index];
+                    const char = bossCharacters[index];
                     document.getElementById('modal-title').innerText = `Edit Boss Character: ${char.name}`;
                     document.getElementById('modal-name').value = char.name;
                     document.getElementById('modal-level').value = char.level;
@@ -918,7 +1350,7 @@
                 renderRentalsLayout(bottomArea);
                 renderModalBossGrid();
 
-            } else {
+            } else if (mode === 'drop') {
                 modalContent.classList.add('drop-layout-compact');
                 leftSection.style.display = 'none';
                 rightSection.className = "";
@@ -926,7 +1358,7 @@
                 sideTitle.style.display = "none";
 
                 if (index !== null) {
-                    const char = activeList[index];
+                    const char = dropCharacters[index];
                     document.getElementById('modal-title').innerText = `Edit Drop Character: ${char.name}`;
                     document.getElementById('modal-name').value = char.name;
                     document.getElementById('modal-level').value = char.level;
@@ -935,12 +1367,34 @@
                     bottomArea.innerHTML = '';
                 } else {
                     document.getElementById('modal-title').innerText = "Add Drop Character";
-                    renderImportLayout(bottomArea);
+                    renderDropImportLayout(bottomArea);
                 }
             }
 
             updateImagePreview();
             document.getElementById('char-modal').style.display = 'flex';
+        }
+
+        function closeCharacterModal() { document.getElementById('char-modal').style.display = 'none'; }
+
+        function updateImagePreview() {
+            const img = document.getElementById('modal-preview-img');
+            const txt = document.getElementById('upload-text');
+            if (tempBase64Image) {
+                img.src = tempBase64Image; img.style.display = "inline-block"; txt.style.display = "none";
+            } else {
+                const lowCaseAvatar = selectedClassValue.toLowerCase();
+                img.src = `Icons/avatars/${lowCaseAvatar}.png`; img.style.display = "inline-block"; txt.style.display = "none";
+            }
+        }
+
+        function handleImageUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) { tempBase64Image = e.target.result; updateImagePreview(); }
+                reader.readAsDataURL(file);
+            }
         }
 
         function renderRentalsLayout(container) {
@@ -962,7 +1416,12 @@
             });
         }
 
-        function renderImportLayout(container) {
+        function toggleRentalInModal(id) {
+            const idx = tempModalRentals.indexOf(id);
+            if (idx !== -1) tempModalRentals.splice(idx, 1); else tempModalRentals.push(id);
+        }
+
+        function renderDropImportLayout(container) {
             if (bossCharacters.length === 0) {
                 container.innerHTML = '';
                 return;
@@ -980,14 +1439,14 @@
                 <h3 style="margin-top: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; color: var(--light-blue);">Import from Boss Tracker</h3>
                 <div class="routing-box">
                     <label style="font-size:0.85rem; color:var(--text-muted);">Choose an existing character to copy data:</label>
-                    <select id="modal-import-dropdown" onchange="handleImportSelection(this.value)" style="background:#222; color:white; border:1px solid var(--border-color); padding:8px; border-radius:4px; width:100%; margin-top:5px;">
+                    <select id="modal-import-dropdown" onchange="handleDropImportSelection(this.value)" style="background:#222; color:white; border:1px solid var(--border-color); padding:8px; border-radius:4px; width:100%; margin-top:5px;">
                         ${optionsHTML}
                     </select>
                 </div>
             `;
         }
 
-        function handleImportSelection(bossCharIdx) {
+        function handleDropImportSelection(bossCharIdx) {
             if (bossCharIdx === "") {
                 document.getElementById('modal-name').value = "";
                 document.getElementById('modal-level').value = "220";
@@ -1004,42 +1463,170 @@
             updateImagePreview();
         }
 
-        function closeCharacterModal() { document.getElementById('char-modal').style.display = 'none'; }
+        function saveCharacterData() {
+            const name = document.getElementById('modal-name').value.trim();
+            const level = parseInt(document.getElementById('modal-level').value) || 220;
+            if (!name) { alert("Please set a character name."); return; }
 
-        function handleImageUpload(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) { tempBase64Image = e.target.result; updateImagePreview(); }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        document.getElementById('global-menu-panel').addEventListener('click', function(e) { e.stopPropagation(); });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === "Escape") {
+            if (modalMode === 'boss') {
+                if (currentEditingIndex !== null) {
+                    bossCharacters[currentEditingIndex].name = name;
+                    bossCharacters[currentEditingIndex].level = level;
+                    bossCharacters[currentEditingIndex].class = selectedClassValue;
+                    bossCharacters[currentEditingIndex].image = tempBase64Image;
+                    bossCharacters[currentEditingIndex].bosses = tempModalBosses;
+                    bossCharacters[currentEditingIndex].rentals = tempModalRentals;
+                } else {
+                    bossCharacters.push({
+                        name: name, level: level, class: selectedClassValue, image: tempBase64Image,
+                        bosses: tempModalBosses, rentals: tempModalRentals
+                    });
+                }
                 closeCharacterModal();
-                closeDropModal();
-                closeFullViewModal();
-            }
-        });
-
-        function updateImagePreview() {
-            const img = document.getElementById('modal-preview-img');
-            const txt = document.getElementById('upload-text');
-            if (tempBase64Image) {
-                img.src = tempBase64Image; img.style.display = "inline-block"; txt.style.display = "none";
-            } else {
-                const lowCaseAvatar = selectedClassValue.toLowerCase();
-                img.src = `Icons/avatars/${lowCaseAvatar}.png`; img.style.display = "inline-block"; txt.style.display = "none";
+                saveBossToStorage();
+            } else if (modalMode === 'drop') {
+                if (currentEditingIndex !== null) {
+                    dropCharacters[currentEditingIndex].name = name;
+                    dropCharacters[currentEditingIndex].level = level;
+                    dropCharacters[currentEditingIndex].class = selectedClassValue;
+                    dropCharacters[currentEditingIndex].image = tempBase64Image;
+                } else {
+                    dropCharacters.push({
+                        name: name, level: level, class: selectedClassValue, image: tempBase64Image,
+                        logs: [],
+                        inventory: []
+                    });
+                }
+                closeCharacterModal();
+                saveDropToStorage();
             }
         }
 
-        function applyBossPreset(presetKey) {
-            if (!BOSS_PRESETS[presetKey]) return;
-            tempModalBosses = JSON.parse(JSON.stringify(BOSS_PRESETS[presetKey]));
-            renderModalBossGrid();
+        function deleteCharacterCard(mode, index) {
+            let charName = '';
+            let confirmMsg = '';
+            
+            if (mode === 'boss') {
+                charName = bossCharacters[index].name;
+                confirmMsg = `Are you sure you want to delete ${charName} from Boss Tracker?`;
+                if (confirm(confirmMsg)) {
+                    bossCharacters.splice(index, 1);
+                    saveBossToStorage();
+                }
+            } else if (mode === 'drop') {
+                charName = dropCharacters[index].name;
+                confirmMsg = `Are you sure you want to delete ${charName} from Drop Tracker?`;
+                if (confirm(confirmMsg)) {
+                    dropCharacters.splice(index, 1);
+                    saveDropToStorage();
+                }
+            } else if (mode === 'daily') {
+                charName = dailyCharacters[index].name;
+                confirmMsg = `Are you sure you want to delete ${charName} from Daily & Weekly Tracker?`;
+                if (confirm(confirmMsg)) {
+                    dailyCharacters.splice(index, 1);
+                    saveDailyToStorage();
+                }
+            }
+        }
+
+        // ============================================================
+        // BOSS RENDER & MODAL
+        // ============================================================
+        function renderBossCharacters() {
+            const bossGrid = document.getElementById('boss-characters-grid');
+            bossGrid.innerHTML = '';
+
+            let globalMesoTotal = 0;
+            let globalBossCount = 0;
+
+            bossCharacters.forEach((char, index) => {
+                const clsSafe = char.class || 'Hero';
+                const lowCaseCls = clsSafe.toLowerCase();
+                const netMeso = calculateCharacterNetMeso(char);
+                globalMesoTotal += netMeso;
+                globalBossCount += char.bosses.length;
+
+                let rentalsSummaryHTML = '';
+                if (char.rentals && char.rentals.length > 0) {
+                    rentalsSummaryHTML = `<div class="card-rentals-summary">`;
+                    char.rentals.forEach(rId => {
+                        const rData = RENTALS_DATA.find(r => r.id === rId);
+                        if (rData) rentalsSummaryHTML += `<span class="rental-badge"><img src="${rData.icon}"> ${rData.name}</span>`;
+                    });
+                    rentalsSummaryHTML += `</div>`;
+                } else {
+                    rentalsSummaryHTML = `<div class="card-rentals-summary"><span class="no-rentals-badge">No Rentals</span></div>`;
+                }
+
+                let cardHTML = `
+                    <div class="char-card">
+                        <div>
+                            <div class="char-header">
+                                <img class="char-avatar" src="${char.image || `Icons/avatars/${lowCaseCls}.png`}" onerror="this.src='Icons/default.png'">
+                                <div class="char-info">
+                                    <h3>${char.name}</h3>
+                                    <p>Lv. ${char.level} | <img class="class-icon-inline" src="Icons/classes/${lowCaseCls}.png" onerror="this.style.display='none'"> ${clsSafe}</p>
+                                </div>
+                                <div class="char-actions-header">
+                                    <button class="btn-inline-action btn-inline-edit" onclick="openCharacterModal('boss', ${index})">✎</button>
+                                    <button class="btn-inline-action btn-inline-delete" onclick="deleteCharacterCard('boss', ${index})">×</button>
+                                </div>
+                            </div>
+                            <div class="boss-list-container">
+                `;
+
+                const sortedBosses = [...char.bosses].sort((a,b) => {
+                    return Math.floor((KRONOS_BOSS_DATA[b.name]||0)/(b.partySize||1)) - Math.floor((KRONOS_BOSS_DATA[a.name]||0)/(a.partySize||1));
+                });
+
+                sortedBosses.forEach(boss => {
+                    const finalMeso = Math.floor((KRONOS_BOSS_DATA[boss.name] || 0) / boss.partySize);
+                    cardHTML += `
+                        <div class="boss-row">
+                            <div class="boss-row-left">
+                                <img class="boss-icon" src="${getBossIcon(boss.name)}">
+                                <span style="font-size:0.9rem;">${boss.name}</span>
+                            </div>
+                            <span style="color:var(--text-muted); font-size:0.85rem;">
+                                ${boss.partySize > 1 ? `<span style="color:var(--light-blue)">PT:${boss.partySize}</span> | ` : ''} 
+                                ${finalMeso.toLocaleString()}
+                            </span>
+                        </div>
+                    `;
+                });
+
+                cardHTML += `
+                            </div>
+                            ${rentalsSummaryHTML}
+                        </div>
+                        <div class="char-footer">
+                            <span style="font-size:0.85rem; color:var(--text-muted); display:inline-flex; align-items:center; gap:5px;">
+                                <img src="Icons/crystal.png" style="width:16px; height:16px; object-fit:contain;"> Bosses: ${char.bosses.length}/14
+                            </span>
+                            <span class="meso-total">${netMeso.toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+                bossGrid.innerHTML += cardHTML;
+            });
+
+            document.getElementById('global-meso-total').innerText = globalMesoTotal.toLocaleString() + " Meso";
+            const counterSpan = document.getElementById('global-boss-count');
+            counterSpan.innerText = `${globalBossCount} / 180`;
+            counterSpan.style.color = (globalBossCount > 180) ? 'var(--danger-color)' : 'var(--light-blue)';
+        }
+
+        function calculateCharacterNetMeso(char) {
+            let bossMeso = char.bosses.reduce((total, boss) => {
+                const base = KRONOS_BOSS_DATA[boss.name] || 0;
+                return total + Math.floor(base / boss.partySize);
+            }, 0);
+            let rentalsCost = (char.rentals || []).reduce((total, rentalId) => {
+                const rData = RENTALS_DATA.find(r => r.id === rentalId);
+                return total + (rData ? rData.cost : 0);
+            }, 0);
+            return bossMeso - rentalsCost;
         }
 
         function renderModalBossGrid() {
@@ -1113,56 +1700,171 @@
             if (index !== -1) tempModalBosses[index].partySize = parseInt(size);
         }
 
-        function toggleRentalInModal(id) {
-            const idx = tempModalRentals.indexOf(id);
-            if (idx !== -1) tempModalRentals.splice(idx, 1); else tempModalRentals.push(id);
+        function applyBossPreset(presetKey) {
+            if (!BOSS_PRESETS[presetKey]) return;
+            tempModalBosses = JSON.parse(JSON.stringify(BOSS_PRESETS[presetKey]));
+            renderModalBossGrid();
         }
 
-        function saveCharacterData() {
-            const name = document.getElementById('modal-name').value.trim();
-            const level = parseInt(document.getElementById('modal-level').value) || 220;
-            if (!name) { alert("Please set a character name."); return; }
+        // ============================================================
+        // DROP RENDER & LOGS
+        // ============================================================
+        function renderDropCharacters() {
+            const dropGrid = document.getElementById('drop-characters-grid');
+            dropGrid.innerHTML = '';
 
-            let activeList = (modalMode === 'boss') ? bossCharacters : dropCharacters;
+            dropCharacters.forEach((char, index) => {
+                const clsSafe = char.class || 'Hero';
+                const lowCaseCls = clsSafe.toLowerCase();
+                const logs = char.logs || [];
 
-            if (currentEditingIndex !== null) {
-                activeList[currentEditingIndex].name = name;
-                activeList[currentEditingIndex].level = level;
-                activeList[currentEditingIndex].class = selectedClassValue;
-                activeList[currentEditingIndex].image = tempBase64Image;
-                if (modalMode === 'boss') {
-                    activeList[currentEditingIndex].bosses = tempModalBosses;
-                    activeList[currentEditingIndex].rentals = tempModalRentals;
-                }
-            } else {
-                if (modalMode === 'boss') {
-                    bossCharacters.push({
-                        name: name, level: level, class: selectedClassValue, image: tempBase64Image,
-                        bosses: tempModalBosses, rentals: tempModalRentals
-                    });
+                let cardHTML = `
+                    <div class="char-card">
+                        <div>
+                            <div class="char-header">
+                                <img class="char-avatar" src="${char.image || `Icons/avatars/${lowCaseCls}.png`}" onerror="this.src='Icons/default.png'">
+                                <div class="char-info">
+                                    <h3>${char.name}</h3>
+                                    <p>Lv. ${char.level} | <img class="class-icon-inline" src="Icons/classes/${lowCaseCls}.png" onerror="this.style.display='none'"> ${clsSafe}</p>
+                                </div>
+                                <div class="char-actions-header" style="gap:5px;">
+                                    <button onclick="openDropModal(${index})" style="padding: 4px 10px; font-size:0.9rem;">+</button>
+                                    <button class="btn-inline-action btn-inline-edit" style="font-size:1.1rem; margin-left:5px;" onclick="openCharacterModal('drop', ${index})">✎</button>
+                                    <button class="btn-inline-action btn-inline-delete" style="font-size:1.1rem;" onclick="deleteCharacterCard('drop', ${index})">×</button>
+                                </div>
+                            </div>
+                            <div class="drop-list-container">
+                                <table class="drop-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:55px;">Date</th>
+                                            <th>Drop</th>
+                                            <th>Split</th>
+                                            <th style="width:25px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="drop-tbody-char-${index}"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="char-footer" style="border-top:1px dashed var(--border-color); padding-top:10px;">
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="openFullViewModal(${index})">Full View</button>
+                                <button class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="openDropInventoryModal(${index})">Inventory</button>
+                            </div>
+                            <span style="font-weight:bold; color:var(--light-blue); font-size:1.1rem;">${logs.length} Items</span>
+                        </div>
+                    </div>
+                `;
+                dropGrid.innerHTML += cardHTML;
+
+                const tbody = document.getElementById(`drop-tbody-char-${index}`);
+                if (logs.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="color:var(--text-muted); text-align:center; padding:20px 0;">No drop logs yet. Click '+' to add!</td></tr>`;
                 } else {
-                    dropCharacters.push({
-                        name: name, level: level, class: selectedClassValue, image: tempBase64Image,
-                        logs: []
+                    logs.forEach((log, logIdx) => {
+                        tbody.appendChild(createLogRenderRow(log, logIdx, false, index));
                     });
                 }
-            }
-            closeCharacterModal();
-            saveToStorage();
+            });
         }
 
-        function deleteCharacterCard(mode, index) {
-            const listName = (mode === 'boss') ? 'Boss Tracker' : 'Drop Tracker';
-            const charName = (mode === 'boss') ? bossCharacters[index].name : dropCharacters[index].name;
-            
-            if (confirm(`Are you sure you want to delete ${charName} EXCLUSIVELY from the ${listName}?`)) {
-                if (mode === 'boss') bossCharacters.splice(index, 1);
-                else dropCharacters.splice(index, 1);
-                saveToStorage();
+        function createLogRenderRow(log, logIdx, isFullView = false, charIdx = null) {
+            const tr = document.createElement('tr');
+            let text = log.name;
+            let dropCellHTML = '';
+
+            if (text.includes("Arcane Armor Box") && text.includes("•")) {
+                let parts = text.split(" • ");
+                let parentBoxTitle = parts[0]; 
+
+                let childRowsHTML = '';
+                for (let i = 1; i < parts.length; i++) {
+                    let isLast = (i === parts.length - 1);
+                    let connector = isLast ? '└' : '├';
+                    let match = parts[i].match(/(.+) \((\d+)\)/);
+                    
+                    if (match) {
+                        let subItemName = match[1].trim();
+                        let subItemCount = match[2];
+                        childRowsHTML += `
+                            <div class="drop-item-child-row">
+                                <span class="tree-connector">${connector}</span>
+                                <img src="${getDropIcon(subItemName)}" class="child-icon" onerror="this.src='Icons/default.png'">
+                                <span>${subItemName} (${subItemCount})</span>
+                            </div>
+                        `;
+                    }
+                }
+
+                dropCellHTML = `
+                    <div class="drop-item-cell">
+                        <div class="drop-item-parent">
+                            <img src="${getDropIcon('Arcane Armor Box')}" class="boss-icon" onerror="this.src='Icons/default.png'">
+                            <span>${parentBoxTitle}</span>
+                        </div>
+                        <div class="drop-item-child-container">
+                            ${childRowsHTML}
+                        </div>
+                    </div>
+                `;
+            } 
+            else if (text.includes("↳")) {
+                let parts = text.split(" ↳ ");
+                let parentBoxTitle = parts[0];
+                let subItemName = parts[1].trim();
+
+                dropCellHTML = `
+                    <div class="drop-item-cell">
+                        <div class="drop-item-parent">
+                            <img src="${getDropIcon(parentBoxTitle)}" class="boss-icon" onerror="this.src='Icons/default.png'">
+                            <span>${parentBoxTitle}</span>
+                        </div>
+                        <div class="drop-item-child-container">
+                            <div class="drop-item-child-row">
+                                <span class="tree-connector">└</span>
+                                <img src="${getDropIcon(subItemName)}" class="child-icon" onerror="this.src='Icons/default.png'">
+                                <span>${subItemName}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } 
+            else {
+                dropCellHTML = `
+                    <div class="drop-item-cell">
+                        <div class="drop-item-parent">
+                            <img src="${getDropIcon(text)}" class="boss-icon" onerror="this.src='Icons/default.png'">
+                            <span>${text}</span>
+                        </div>
+                    </div>
+                `;
             }
+
+            if (isFullView) {
+                tr.innerHTML = `
+                    <td style="color:var(--light-blue); font-weight:bold; padding: 8px 5px;">${log.date}</td>
+                    <td style="padding: 8px 5px;">${dropCellHTML}</td>
+                    <td style="color:${log.split === ' ' ? 'var(--success-color)' : 'var(--text-muted)'}; padding: 8px 5px;">${log.split}</td>
+                    <td style="text-align:right; padding: 8px 5px;">
+                        <button class="btn-inline-action" style="background:none; border:none; color:var(--text-muted); cursor:pointer;" onclick="removeDropLog(${currentFullViewCharIndex}, ${logIdx})">×</button>
+                    </td>
+                `;
+            } else {
+                tr.innerHTML = `
+                    <td style="color:var(--light-blue); font-weight:bold;">${log.date ? log.date.substring(5) : '??-??'}</td>
+                    <td>${dropCellHTML}</td>
+                    <td style="color:${log.split === ' ' ? 'var(--success-color)' : 'var(--text-muted)'}; font-weight:regular;">${log.split}</td>
+                    <td style="text-align:right;">
+                        <button class="btn-inline-action" style="background:none; border:none; color:var(--text-muted); cursor:pointer;" onclick="removeDropLog(${charIdx}, ${logIdx})">×</button>
+                    </td>
+                `;
+            }
+
+            return tr;
         }
 
-        // --- LOGS DE DROPS ---
+        // --- DROP LOGS ---
         function openDropModal(index) {
             currentDropCharIndex = index;
             const char = dropCharacters[index];
@@ -1392,20 +2094,22 @@
             });
             
             closeDropModal();
-            saveToStorage();
+            saveDropToStorage();
         }
 
         function removeDropLog(charIndex, logIndex) {
             if (confirm("Delete this drop entry?")) {
                 dropCharacters[charIndex].logs.splice(logIndex, 1);
-                saveToStorage();
+                saveDropToStorage();
                 if (document.getElementById('fullview-modal').style.display === 'flex') {
                     renderFullViewData();
                 }
             }
         }
 
-        // --- SISTEMA FULL VIEW ---
+        // ============================================================
+        // FULL VIEW
+        // ============================================================
         function openFullViewModal(index) {
             currentFullViewCharIndex = index;
             renderFullViewData();
@@ -1491,254 +2195,794 @@
             }
         }
 
-        function createLogRenderRow(log, logIdx, isFullView = false, charIdx = null) {
-            const tr = document.createElement('tr');
-            let text = log.name;
-            let dropCellHTML = '';
-
-            if (text.includes("Arcane Armor Box") && text.includes("•")) {
-                let parts = text.split(" • ");
-                let parentBoxTitle = parts[0]; 
-
-                let childRowsHTML = '';
-                for (let i = 1; i < parts.length; i++) {
-                    let isLast = (i === parts.length - 1);
-                    let connector = isLast ? '└' : '├';
-                    let match = parts[i].match(/(.+) \((\d+)\)/);
-                    
-                    if (match) {
-                        let subItemName = match[1].trim();
-                        let subItemCount = match[2];
-                        childRowsHTML += `
-                            <div class="drop-item-child-row">
-                                <span class="tree-connector">${connector}</span>
-                                <img src="${getDropIcon(subItemName)}" class="child-icon" onerror="this.src='Icons/default.png'">
-                                <span>${subItemName} (${subItemCount})</span>
-                            </div>
-                        `;
-                    }
-                }
-
-                dropCellHTML = `
-                    <div class="drop-item-cell">
-                        <div class="drop-item-parent">
-                            <img src="${getDropIcon('Arcane Armor Box')}" class="boss-icon" onerror="this.src='Icons/default.png'">
-                            <span>${parentBoxTitle}</span>
-                        </div>
-                        <div class="drop-item-child-container">
-                            ${childRowsHTML}
-                        </div>
-                    </div>
-                `;
-            } 
-            else if (text.includes("↳")) {
-                let parts = text.split(" ↳ ");
-                let parentBoxTitle = parts[0];
-                let subItemName = parts[1].trim();
-
-                dropCellHTML = `
-                    <div class="drop-item-cell">
-                        <div class="drop-item-parent">
-                            <img src="${getDropIcon(parentBoxTitle)}" class="boss-icon" onerror="this.src='Icons/default.png'">
-                            <span>${parentBoxTitle}</span>
-                        </div>
-                        <div class="drop-item-child-container">
-                            <div class="drop-item-child-row">
-                                <span class="tree-connector">└</span>
-                                <img src="${getDropIcon(subItemName)}" class="child-icon" onerror="this.src='Icons/default.png'">
-                                <span>${subItemName}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } 
-            else {
-                dropCellHTML = `
-                    <div class="drop-item-cell">
-                        <div class="drop-item-parent">
-                            <img src="${getDropIcon(text)}" class="boss-icon" onerror="this.src='Icons/default.png'">
-                            <span>${text}</span>
-                        </div>
-                    </div>
-                `;
-            }
-
-            if (isFullView) {
-                tr.innerHTML = `
-                    <td style="color:var(--light-blue); font-weight:bold; padding: 8px 5px;">${log.date}</td>
-                    <td style="padding: 8px 5px;">${dropCellHTML}</td>
-                    <td style="color:${log.split === ' ' ? 'var(--success-color)' : 'var(--text-muted)'}; padding: 8px 5px;">${log.split}</td>
-                    <td style="text-align:right; padding: 8px 5px;">
-                        <button class="btn-inline-action" style="background:none; border:none; color:var(--text-muted); cursor:pointer;" onclick="removeDropLog(${currentFullViewCharIndex}, ${logIdx})">×</button>
-                    </td>
-                `;
+        // ============================================================
+        // DAILY MODAL
+        // ============================================================
+        function openDailyModal(index = null) {
+            dailyModalMode = index !== null ? 'edit' : 'add';
+            dailyEditingIndex = index;
+            
+            tempSelectedDailies = { dailies: [], weeklies: [] };
+            
+            const modal = document.getElementById('daily-modal');
+            
+            initDailyClassDropdown();
+            
+            const nameInput = document.getElementById('daily-modal-name');
+            const levelInput = document.getElementById('daily-modal-level');
+            const titleEl = document.getElementById('daily-modal-title');
+            const charNameSpan = document.getElementById('daily-modal-char-name');
+            
+            if (index !== null) {
+                const char = dailyCharacters[index];
+                charNameSpan.innerText = char.name;
+                nameInput.value = char.name;
+                levelInput.value = char.level;
+                selectDailyDropdownClass(char.class || MAPLE_CLASSES[0]);
+                dailyTempImage = char.image || '';
+                tempSelectedDailies = JSON.parse(JSON.stringify(char.activities || { dailies: [], weeklies: [] }));
+                if (!tempSelectedDailies.dailies) tempSelectedDailies.dailies = [];
+                if (!tempSelectedDailies.weeklies) tempSelectedDailies.weeklies = [];
+                titleEl.innerText = `Edit Activities for ${char.name}`;
             } else {
-                tr.innerHTML = `
-                    <td style="color:var(--light-blue); font-weight:bold;">${log.date ? log.date.substring(5) : '??-??'}</td>
-                    <td>${dropCellHTML}</td>
-                    <td style="color:${log.split === ' ' ? 'var(--success-color)' : 'var(--text-muted)'}; font-weight:regular;">${log.split}</td>
-                    <td style="text-align:right;">
-                        <button class="btn-inline-action" style="background:none; border:none; color:var(--text-muted); cursor:pointer;" onclick="removeDropLog(${charIdx}, ${logIdx})">×</button>
-                    </td>
-                `;
-            }
-
-            return tr;
-        }
-
-        function calculateCharacterNetMeso(char) {
-            let bossMeso = char.bosses.reduce((total, boss) => {
-                const base = KRONOS_BOSS_DATA[boss.name] || 0;
-                return total + Math.floor(base / boss.partySize);
-            }, 0);
-            let rentalsCost = (char.rentals || []).reduce((total, rentalId) => {
-                const rData = RENTALS_DATA.find(r => r.id === rentalId);
-                return total + (rData ? rData.cost : 0);
-            }, 0);
-            return bossMeso - rentalsCost;
-        }
-
-        function renderCharacters() {
-            const bossGrid = document.getElementById('boss-characters-grid');
-            const dropGrid = document.getElementById('drop-characters-grid');
-            bossGrid.innerHTML = '';
-            dropGrid.innerHTML = '';
-
-            let globalMesoTotal = 0;
-            let globalBossCount = 0;
-
-            if (currentView === 'boss') {
-                bossCharacters.forEach((char, index) => {
-                    const clsSafe = char.class || 'Hero';
-                    const lowCaseCls = clsSafe.toLowerCase();
-                    const netMeso = calculateCharacterNetMeso(char);
-                    globalMesoTotal += netMeso;
-                    globalBossCount += char.bosses.length;
-
-                    let rentalsSummaryHTML = '';
-                    if (char.rentals && char.rentals.length > 0) {
-                        rentalsSummaryHTML = `<div class="card-rentals-summary">`;
-                        char.rentals.forEach(rId => {
-                            const rData = RENTALS_DATA.find(r => r.id === rId);
-                            if (rData) rentalsSummaryHTML += `<span class="rental-badge"><img src="${rData.icon}"> ${rData.name}</span>`;
-                        });
-                        rentalsSummaryHTML += `</div>`;
-                    } else {
-                        rentalsSummaryHTML = `<div class="card-rentals-summary"><span class="no-rentals-badge">No Rentals</span></div>`;
-                    }
-
-                    let cardHTML = `
-                        <div class="char-card">
-                            <div>
-                                <div class="char-header">
-                                    <img class="char-avatar" src="${char.image || `Icons/avatars/${lowCaseCls}.png`}" onerror="this.src='Icons/default.png'">
-                                    <div class="char-info">
-                                        <h3>${char.name}</h3>
-                                        <p>Lv. ${char.level} | <img class="class-icon-inline" src="Icons/classes/${lowCaseCls}.png" onerror="this.style.display='none'"> ${clsSafe}</p>
-                                    </div>
-                                    <div class="char-actions-header">
-                                        <button class="btn-inline-action btn-inline-edit" onclick="openCharacterModal('boss', ${index})">✎</button>
-                                        <button class="btn-inline-action btn-inline-delete" onclick="deleteCharacterCard('boss', ${index})">×</button>
-                                    </div>
-                                </div>
-                                <div class="boss-list-container">
-                    `;
-
-                    const sortedBosses = [...char.bosses].sort((a,b) => {
-                        return Math.floor((KRONOS_BOSS_DATA[b.name]||0)/(b.partySize||1)) - Math.floor((KRONOS_BOSS_DATA[a.name]||0)/(a.partySize||1));
-                    });
-
-                    sortedBosses.forEach(boss => {
-                        const finalMeso = Math.floor((KRONOS_BOSS_DATA[boss.name] || 0) / boss.partySize);
-                        cardHTML += `
-                            <div class="boss-row">
-                                <div class="boss-row-left">
-                                    <img class="boss-icon" src="${getBossIcon(boss.name)}">
-                                    <span style="font-size:0.9rem;">${boss.name}</span>
-                                </div>
-                                <span style="color:var(--text-muted); font-size:0.85rem;">
-                                    ${boss.partySize > 1 ? `<span style="color:var(--light-blue)">PT:${boss.partySize}</span> | ` : ''} 
-                                    ${finalMeso.toLocaleString()}
-                                </span>
-                            </div>
-                        `;
-                    });
-
-                    cardHTML += `
-                                </div>
-                                ${rentalsSummaryHTML}
-                            </div>
-                            <div class="char-footer">
-                                <span style="font-size:0.85rem; color:var(--text-muted); display:inline-flex; align-items:center; gap:5px;">
-                                    <img src="Icons/crystal.png" style="width:16px; height:16px; object-fit:contain;"> Bosses: ${char.bosses.length}/14
-                                </span>
-                                <span class="meso-total">${netMeso.toLocaleString()}</span>
-                            </div>
-                        </div>
-                    `;
-                    bossGrid.innerHTML += cardHTML;
-                });
-
-                document.getElementById('global-meso-total').innerText = globalMesoTotal.toLocaleString() + " Meso";
-                const counterSpan = document.getElementById('global-boss-count');
-                counterSpan.innerText = `${globalBossCount} / 180`;
-                counterSpan.style.color = (globalBossCount > 180) ? 'var(--danger-color)' : 'var(--light-blue)';
+                charNameSpan.innerText = 'New Character';
+                nameInput.value = '';
+                levelInput.value = '220';
+                selectDailyDropdownClass(MAPLE_CLASSES[0]);
+                dailyTempImage = '';
+                tempSelectedDailies = { dailies: [], weeklies: [] };
+                titleEl.innerText = 'Add Character & Activities';
             }
             
-            else if (currentView === 'drop') {
-                dropCharacters.forEach((char, index) => {
-                    const clsSafe = char.class || 'Hero';
-                    const lowCaseCls = clsSafe.toLowerCase();
-                    const logs = char.logs || [];
+            updateDailyImagePreview();
+            renderDailyImportSection();
+            renderDailySelectionGrid();
+            renderSideSelectedDailies();
+            modal.style.display = 'flex';
+        }
 
-                    let cardHTML = `
-                        <div class="char-card">
-                            <div>
-                                <div class="char-header">
-                                    <img class="char-avatar" src="${char.image || `Icons/avatars/${lowCaseCls}.png`}" onerror="this.src='Icons/default.png'">
-                                    <div class="char-info">
-                                        <h3>${char.name}</h3>
-                                        <p>Lv. ${char.level} | <img class="class-icon-inline" src="Icons/classes/${lowCaseCls}.png" onerror="this.style.display='none'"> ${clsSafe}</p>
-                                    </div>
-                                    <div class="char-actions-header" style="gap:5px;">
-                                        <button onclick="openDropModal(${index})" style="padding: 4px 10px; font-size:0.9rem;">+</button>
-                                        <button class="btn-inline-action btn-inline-edit" style="font-size:1.1rem; margin-left:5px;" onclick="openCharacterModal('drop', ${index})">✎</button>
-                                        <button class="btn-inline-action btn-inline-delete" style="font-size:1.1rem;" onclick="deleteCharacterCard('drop', ${index})">×</button>
-                                    </div>
-                                </div>
-                                <div class="drop-list-container">
-                                    <table class="drop-table">
-                                        <thead>
-                                            <tr>
-                                                <th style="width:55px;">Date</th>
-                                                <th>Drop</th>
-                                                <th>Split</th>
-                                                <th style="width:25px;"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="drop-tbody-char-${index}"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="char-footer" style="border-top:1px dashed var(--border-color); padding-top:10px;">
-                                <button class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="openFullViewModal(${index})">Full View</button>
-                                <span style="font-weight:bold; color:var(--light-blue); font-size:1.1rem;">${logs.length} Items</span>
-                            </div>
-                        </div>
-                    `;
-                    dropGrid.innerHTML += cardHTML;
+        function closeDailyModal() {
+            document.getElementById('daily-modal').style.display = 'none';
+        }
 
-                    const tbody = document.getElementById(`drop-tbody-char-${index}`);
-                    if (logs.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="4" style="color:var(--text-muted); text-align:center; padding:20px 0;">No drop logs yet. Click '+' to add!</td></tr>`;
-                    } else {
-                        logs.forEach((log, logIdx) => {
-                            tbody.appendChild(createLogRenderRow(log, logIdx, false, index));
-                        });
-                    }
-                });
+        function updateDailyImagePreview() {
+            const img = document.getElementById('daily-modal-preview-img');
+            const txt = document.getElementById('daily-upload-text');
+            if (dailyTempImage) {
+                img.src = dailyTempImage; 
+                img.style.display = "inline-block"; 
+                txt.style.display = "none";
+            } else {
+                const lowCaseAvatar = dailyClassValue.toLowerCase();
+                img.src = `Icons/avatars/${lowCaseAvatar}.png`; 
+                img.style.display = "inline-block"; 
+                txt.style.display = "none";
             }
         }
+
+        function handleDailyImageUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) { 
+                    dailyTempImage = e.target.result; 
+                    updateDailyImagePreview(); 
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderDailyImportSection() {
+            const container = document.getElementById('daily-import-section');
+            if (bossCharacters.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let optionsHTML = '<option value="" selected>-- Import from Boss Tracker --</option>';
+            bossCharacters.forEach((bc, idx) => {
+                const alreadyExists = dailyCharacters.some(dc => dc.name.toLowerCase() === bc.name.toLowerCase());
+                if (!alreadyExists) {
+                    optionsHTML += `<option value="${idx}">${bc.name} (${bc.class})</option>`;
+                }
+            });
+
+            container.innerHTML = `
+                <div class="routing-box">
+                    <label style="font-size:0.85rem; color:var(--text-muted);">Import character data:</label>
+                    <select id="daily-import-dropdown" onchange="handleDailyImportSelection(this.value)" style="background:#222; color:white; border:1px solid var(--border-color); padding:8px; border-radius:4px; width:100%; margin-top:5px;">
+                        ${optionsHTML}
+                    </select>
+                </div>
+            `;
+        }
+
+        function handleDailyImportSelection(bossCharIdx) {
+            if (bossCharIdx === "") {
+                document.getElementById('daily-modal-name').value = "";
+                document.getElementById('daily-modal-level').value = "220";
+                selectDailyDropdownClass(MAPLE_CLASSES[0]);
+                dailyTempImage = "";
+                updateDailyImagePreview();
+                return;
+            }
+            const sourceChar = bossCharacters[parseInt(bossCharIdx)];
+            document.getElementById('daily-modal-name').value = sourceChar.name;
+            document.getElementById('daily-modal-level').value = sourceChar.level;
+            selectDailyDropdownClass(sourceChar.class || MAPLE_CLASSES[0]);
+            dailyTempImage = sourceChar.image || "";
+            updateDailyImagePreview();
+        }
+
+        function renderDailySelectionGrid() {
+            const container = document.getElementById('modal-daily-sections-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // Dailies
+            const dailyTitle = document.createElement('div');
+            dailyTitle.className = 'category-title';
+            dailyTitle.innerText = 'Dailies';
+            container.appendChild(dailyTitle);
+            
+            const dailyHr = document.createElement('hr');
+            dailyHr.className = 'category-separator';
+            container.appendChild(dailyHr);
+            
+            Object.keys(DAILY_ACTIVITIES).forEach(category => {
+                const catLabel = document.createElement('div');
+                catLabel.style.cssText = 'color: var(--text-muted); font-size: 0.85rem; margin: 8px 0 4px 4px; font-weight: bold;';
+                catLabel.innerText = category;
+                container.appendChild(catLabel);
+                
+                const dailyGrid = document.createElement('div');
+                dailyGrid.className = 'selection-grid';
+                
+                DAILY_ACTIVITIES[category].forEach(activity => {
+                    const isSelected = tempSelectedDailies.dailies.includes(activity);
+                    const card = document.createElement('div');
+                    card.className = `select-card ${isSelected ? 'selected' : ''}`;
+                    card.innerHTML = `
+                        <div class="select-card-left">
+                            <img class="boss-icon" src="${getActivityIcon(activity)}" onerror="this.src='Icons/default.png'">
+                            <span>${activity}</span>
+                        </div>
+                    `;
+                    card.onclick = () => {
+                        const idx = tempSelectedDailies.dailies.indexOf(activity);
+                        if (idx !== -1) {
+                            tempSelectedDailies.dailies.splice(idx, 1);
+                        } else {
+                            tempSelectedDailies.dailies.push(activity);
+                        }
+                        renderDailySelectionGrid();
+                        renderSideSelectedDailies();
+                    };
+                    dailyGrid.appendChild(card);
+                });
+                container.appendChild(dailyGrid);
+            });
+
+            // Weeklies
+            const weeklyTitle = document.createElement('div');
+            weeklyTitle.className = 'category-title';
+            weeklyTitle.innerText = 'Weeklies';
+            container.appendChild(weeklyTitle);
+            
+            const weeklyHr = document.createElement('hr');
+            weeklyHr.className = 'category-separator';
+            container.appendChild(weeklyHr);
+            
+            Object.keys(WEEKLY_ACTIVITIES).forEach(category => {
+                const catLabel = document.createElement('div');
+                catLabel.style.cssText = 'color: var(--text-muted); font-size: 0.85rem; margin: 8px 0 4px 4px; font-weight: bold;';
+                catLabel.innerText = category;
+                container.appendChild(catLabel);
+                
+                const weeklyGrid = document.createElement('div');
+                weeklyGrid.className = 'selection-grid';
+                
+                WEEKLY_ACTIVITIES[category].forEach(activity => {
+                    const isSelected = tempSelectedDailies.weeklies.includes(activity);
+                    const card = document.createElement('div');
+                    card.className = `select-card ${isSelected ? 'selected' : ''}`;
+                    card.innerHTML = `
+                        <div class="select-card-left">
+                            <img class="boss-icon" src="${getActivityIcon(activity)}" onerror="this.src='Icons/default.png'">
+                            <span>${activity}</span>
+                        </div>
+                    `;
+                    card.onclick = () => {
+                        const idx = tempSelectedDailies.weeklies.indexOf(activity);
+                        if (idx !== -1) {
+                            tempSelectedDailies.weeklies.splice(idx, 1);
+                        } else {
+                            tempSelectedDailies.weeklies.push(activity);
+                        }
+                        renderDailySelectionGrid();
+                        renderSideSelectedDailies();
+                    };
+                    weeklyGrid.appendChild(card);
+                });
+                container.appendChild(weeklyGrid);
+            });
+        }
+
+        function renderSideSelectedDailies() {
+            const container = document.getElementById('side-selected-dailies-list');
+            container.innerHTML = '';
+            
+            const allSelected = [...tempSelectedDailies.dailies, ...tempSelectedDailies.weeklies];
+            
+            if (allSelected.length === 0) {
+                container.innerHTML = '<span style="color:var(--text-muted); font-style:italic; font-size:0.85rem;">No activities selected.</span>';
+                return;
+            }
+            
+            allSelected.forEach(activity => {
+                const isDaily = tempSelectedDailies.dailies.includes(activity);
+                const div = document.createElement('div');
+                div.className = 'side-selected-drop-item';
+                div.innerHTML = `
+                    <div class="side-drop-top">
+                        <div class="side-drop-title-left">
+                            <img class="boss-icon" src="${getActivityIcon(activity)}" onerror="this.src='Icons/default.png'">
+                            <span style="font-weight:bold; color:var(--light-blue);">${activity}</span>
+                        </div>
+                        <span style="font-size:0.7rem; color:var(--text-muted);">${isDaily ? 'Daily' : 'Weekly'}</span>
+                    </div>
+                `;
+                div.onclick = () => {
+                    const dailyIdx = tempSelectedDailies.dailies.indexOf(activity);
+                    if (dailyIdx !== -1) tempSelectedDailies.dailies.splice(dailyIdx, 1);
+                    const weeklyIdx = tempSelectedDailies.weeklies.indexOf(activity);
+                    if (weeklyIdx !== -1) tempSelectedDailies.weeklies.splice(weeklyIdx, 1);
+                    renderDailySelectionGrid();
+                    renderSideSelectedDailies();
+                };
+                div.title = 'Click to remove';
+                container.appendChild(div);
+            });
+        }
+
+        function saveDailyActivities() {
+            const name = document.getElementById('daily-modal-name').value.trim();
+            const level = parseInt(document.getElementById('daily-modal-level').value) || 220;
+            
+            if (!name) { alert("Please enter a character name."); return; }
+            if (tempSelectedDailies.dailies.length === 0 && tempSelectedDailies.weeklies.length === 0) {
+                alert("Please select at least one activity.");
+                return;
+            }
+            
+            if (dailyModalMode === 'edit' && dailyEditingIndex !== null) {
+                dailyCharacters[dailyEditingIndex].name = name;
+                dailyCharacters[dailyEditingIndex].level = level;
+                dailyCharacters[dailyEditingIndex].class = dailyClassValue;
+                dailyCharacters[dailyEditingIndex].image = dailyTempImage;
+                dailyCharacters[dailyEditingIndex].activities = tempSelectedDailies;
+            } else {
+                dailyCharacters.push({
+                    name: name,
+                    level: level,
+                    class: dailyClassValue,
+                    image: dailyTempImage,
+                    activities: tempSelectedDailies
+                });
+            }
+            
+            closeDailyModal();
+            saveDailyToStorage();
+        }
+
+        // ============================================================
+        // DAILY RENDER
+        // ============================================================
+        function renderDailyCharacters() {
+            const grid = document.getElementById('daily-characters-grid');
+            grid.innerHTML = '';
+            
+            dailyCharacters.forEach((char, index) => {
+                const clsSafe = char.class || 'Hero';
+                const lowCaseCls = clsSafe.toLowerCase();
+                const activities = char.activities || { dailies: [], weeklies: [] };
+                
+                // Count total and completed
+                let total = 0;
+                let completed = 0;
+                
+                const countActivities = (list) => {
+                    list.forEach(item => {
+                        total++;
+                        if (typeof item === 'string') {
+                        } else if (item.completed === true) {
+                            completed++;
+                        }
+                    });
+                };
+                
+                countActivities(activities.dailies || []);
+                countActivities(activities.weeklies || []);
+                
+                const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+                
+                let cardHTML = `
+                    <div class="char-card">
+                        <div>
+                            <div class="char-header">
+                                <img class="char-avatar" src="${char.image || `Icons/avatars/${lowCaseCls}.png`}" onerror="this.src='Icons/default.png'">
+                                <div class="char-info">
+                                    <h3>${char.name}</h3>
+                                    <p>Lv. ${char.level} | <img class="class-icon-inline" src="Icons/classes/${lowCaseCls}.png" onerror="this.style.display='none'"> ${clsSafe}</p>
+                                </div>
+                                <div class="char-actions-header" style="gap:5px;">
+                                    <button onclick="openDailyModal(${index})" style="padding: 4px 10px; font-size:0.9rem;">+</button>
+                                    <button class="btn-inline-action btn-inline-edit" style="font-size:1.1rem;" onclick="openDailyModal(${index})">✎</button>
+                                    <button class="btn-inline-action btn-inline-delete" style="font-size:1.1rem;" onclick="deleteCharacterCard('daily', ${index})">×</button>
+                                </div>
+                            </div>
+                            <div class="daily-list-container">
+                                ${renderDailyActivitiesList(activities, index)}
+                            </div>
+                        </div>
+                        <div class="char-footer" style="border-top:1px dashed var(--border-color); padding-top:10px;">
+                            <span style="font-size:0.85rem; color:var(--text-muted);">
+                                ${progress}% Complete (${completed}/${total})
+                            </span>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-success" style="padding: 4px 10px; font-size: 0.8rem;" onclick="markAllDailyComplete(${index})">Check All</button>
+                                <button class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="resetDailyActivities(${index})"> Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+        }
+
+        function renderDailyActivitiesList(activities, charIndex) {
+            const dailies = activities.dailies || [];
+            const weeklies = activities.weeklies || [];
+            const all = [...dailies, ...weeklies];
+            
+            if (all.length === 0) {
+                return `<div style="color:var(--text-muted); text-align:center; padding:20px 0; font-style:italic;">No activities added yet. Click '+' to add!</div>`;
+            }
+            
+            let html = '';
+            
+            dailies.forEach(activity => {
+                const isCompleted = typeof activity === 'string' ? false : (activity.completed === true);
+                const name = typeof activity === 'string' ? activity : activity.name;
+                html += `
+                    <div class="daily-activity-row ${isCompleted ? 'completed' : ''}">
+                        <input type="checkbox" ${isCompleted ? 'checked' : ''} 
+                               onchange="toggleDailyActivity(${charIndex}, '${name}', this.checked)">
+                        <img src="${getActivityIcon(name)}" class="daily-activity-icon" onerror="this.style.display='none'">
+                        <span class="activity-name">${name}</span>
+                        <span style="font-size:0.65rem; color:var(--text-muted); margin-left:auto;">Daily</span>
+                    </div>
+                `;
+            });
+            
+            weeklies.forEach(activity => {
+                const isCompleted = typeof activity === 'string' ? false : (activity.completed === true);
+                const name = typeof activity === 'string' ? activity : activity.name;
+                html += `
+                    <div class="daily-activity-row ${isCompleted ? 'completed' : ''}">
+                        <input type="checkbox" ${isCompleted ? 'checked' : ''} 
+                               onchange="toggleDailyActivity(${charIndex}, '${name}', this.checked)">
+                        <img src="${getActivityIcon(name)}" class="daily-activity-icon" onerror="this.style.display='none'">
+                        <span class="activity-name">${name}</span>
+                        <span style="font-size:0.65rem; color:var(--text-muted); margin-left:auto;">Weekly</span>
+                    </div>
+                `;
+            });
+            
+            return html;
+        }
+
+        function toggleDailyActivity(charIndex, activityName, checked) {
+            const char = dailyCharacters[charIndex];
+            if (!char || !char.activities) return;
+            
+            const toggleInList = (list) => {
+                for (let i = 0; i < list.length; i++) {
+                    const item = list[i];
+                    const name = typeof item === 'string' ? item : item.name;
+                    if (name === activityName) {
+                        if (typeof item === 'string') {
+                            list[i] = { name: activityName, completed: checked };
+                        } else {
+                            list[i].completed = checked;
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            };
+            
+            if (!toggleInList(char.activities.dailies)) {
+                toggleInList(char.activities.weeklies);
+            }
+            
+            saveDailyToStorage();
+        }
+
+        function markAllDailyComplete(index) {
+            const char = dailyCharacters[index];
+            if (!char || !char.activities) return;
+            
+            const markList = (list) => {
+                for (let i = 0; i < list.length; i++) {
+                    const item = list[i];
+                    if (typeof item === 'string') {
+                        list[i] = { name: item, completed: true };
+                    } else {
+                        list[i].completed = true;
+                    }
+                }
+            };
+            
+            markList(char.activities.dailies);
+            markList(char.activities.weeklies);
+            
+            saveDailyToStorage();
+        }
+
+        function resetDailyActivities(index) {
+            const char = dailyCharacters[index];
+            if (!char || !char.activities) return;
+            if (confirm(`Reset all activities for ${char.name}?`)) {
+                const resetList = (list) => {
+                    for (let i = 0; i < list.length; i++) {
+                        const item = list[i];
+                        if (typeof item !== 'string') {
+                            list[i] = item.name;
+                        }
+                    }
+                };
+                resetList(char.activities.dailies);
+                resetList(char.activities.weeklies);
+                saveDailyToStorage();
+            }
+        }
+
+        // ============================================================
+        // INVENTORY MANAGER (for Drop Characters)
+        // ============================================================
+        function openDropInventoryModal(index) {
+            currentInventoryCharIndex = index;
+            const char = dropCharacters[index];
+            if (!char) {
+                alert("Character not found!");
+                return;
+            }
+            if (!char.inventory) char.inventory = [];
+            
+            document.getElementById('inventory-char-name').innerText = char.name;
+            document.getElementById('inv-item-name').value = '';
+            document.getElementById('inv-item-qty').value = 1;
+            
+            // Set up suggestions dropdown with keyboard navigation
+            setupInventorySuggestions();
+            
+            renderDropInventoryGrid();
+            document.getElementById('inventory-modal').style.display = 'flex';
+        }
+
+        function closeInventoryModal() {
+            document.getElementById('inventory-modal').style.display = 'none';
+            saveDropToStorage();
+        }
+
+		function setupInventorySuggestions() {
+		    const input = document.getElementById('inv-item-name');
+		    const dropdown = document.getElementById('inv-suggestions-dropdown');
+		    
+		    // Remove old event listeners by cloning
+		    const newInput = input.cloneNode(true);
+		    input.parentNode.replaceChild(newInput, input);
+		    
+		    // State for keyboard navigation
+		    let selectedIndex = -1;
+		    let currentMatches = [];
+		    
+		    // Get all items for suggestions
+		    function getAllItems() {
+		        const items = [];
+		        
+		        KRONOS_DROPS_CATEGORIES.forEach(cat => {
+		            cat.items.forEach(item => {
+		                items.push({
+		                    name: item.name,
+		                    icon: `Icons/drops/${item.icon}`,
+		                    category: cat.name
+		                });
+		            });
+		        });
+		        
+		        const equipmentItems = [
+		            'Arcane Umbra Hat', 'Arcane Umbra Overall', 'Arcane Umbra Cape',
+		            'Arcane Umbra Glove', 'Arcane Umbra Shoe', 'Arcane Umbra Shoulder',
+		            'Eternal Hat', 'Eternal Top', 'Eternal Bottom', 'Eternal Shoulder',
+		            'Eternal Cape', 'Eternal Glove', 'Eternal Shoe'
+		        ];
+		        equipmentItems.forEach(name => {
+		            let icon = 'default.png';
+		            if (PIECES_ICON_MAP[name]) {
+		                icon = PIECES_ICON_MAP[name];
+		            }
+		            items.push({
+		                name: name,
+		                icon: `Icons/drops/${icon}`,
+		                category: 'Equipment'
+		            });
+		        });
+		        
+		        const pieceItems = [
+		            'Adversary Piece', 'Adversary Half Piece', 'Kalos Piece', 'Kalos Half Piece',
+		            'Kaling Piece', 'Kaling Half Piece', 'Malefic Star Piece', 'Limbo Piece',
+		            'Baldrix Piece', 'Jupiter Piece'
+		        ];
+		        pieceItems.forEach(name => {
+		            items.push({
+		                name: name,
+		                icon: `Icons/drops/${name}.png`,
+		                category: 'Pieces'
+		            });
+		        });
+		        
+		        return items;
+		    }
+		    
+		    const allItems = getAllItems();
+		    
+		    function updateSuggestions() {
+		        const query = newInput.value.toLowerCase().trim();
+		        selectedIndex = -1;
+		        
+		        if (!query) {
+		            dropdown.classList.remove('open');
+		            currentMatches = [];
+		            return;
+		        }
+		        
+		        currentMatches = allItems.filter(item => 
+		            item.name.toLowerCase().includes(query)
+		        );
+		        
+		        if (currentMatches.length === 0) {
+		            dropdown.classList.remove('open');
+		            return;
+		        }
+		        
+		        renderSuggestions(currentMatches.slice(0, 10));
+		        dropdown.classList.add('open');
+		    }
+		    
+		    function renderSuggestions(matches) {
+		        dropdown.innerHTML = '';
+		        matches.forEach((item, index) => {
+		            const div = document.createElement('div');
+		            div.className = 'inv-suggestion-item';
+		            if (index === selectedIndex) {
+		                div.style.background = 'var(--primary-blue)';
+		            }
+		            div.innerHTML = `
+		                <img src="${item.icon}" onerror="this.src='Icons/default.png'">
+		                <span class="suggestion-name">${item.name}</span>
+		                <span class="suggestion-category">${item.category}</span>
+		            `;
+		            div.addEventListener('click', function(e) {
+		                e.stopPropagation();
+		                // Solo autocompletar, NO añadir
+		                document.getElementById('inv-item-name').value = item.name;
+		                dropdown.classList.remove('open');
+		                selectedIndex = -1;
+		                currentMatches = [];
+		                // Enfocar el input para que el usuario pueda ajustar quantity
+		                document.getElementById('inv-item-name').focus();
+		            });
+		            div.addEventListener('mouseenter', function() {
+		                selectedIndex = index;
+		                renderSuggestions(currentMatches.slice(0, 10));
+		            });
+		            dropdown.appendChild(div);
+		        });
+		    }
+		    
+		    function selectSuggestion(name) {
+		        // Solo autocompletar, NO añadir
+		        document.getElementById('inv-item-name').value = name;
+		        dropdown.classList.remove('open');
+		        selectedIndex = -1;
+		        currentMatches = [];
+		        // Enfocar el input para que el usuario pueda ajustar quantity
+		        document.getElementById('inv-item-name').focus();
+		    }
+		    
+		    // Keyboard navigation
+		    newInput.addEventListener('keydown', function(e) {
+		        const visible = dropdown.classList.contains('open');
+		        const matches = currentMatches.slice(0, 10);
+		        
+		        if (e.key === 'ArrowDown') {
+		            e.preventDefault();
+		            if (!visible && newInput.value.length > 0) {
+		                updateSuggestions();
+		                return;
+		            }
+		            if (matches.length > 0) {
+		                selectedIndex = Math.min(selectedIndex + 1, matches.length - 1);
+		                renderSuggestions(matches);
+		                dropdown.classList.add('open');
+		            }
+		        } else if (e.key === 'ArrowUp') {
+		            e.preventDefault();
+		            if (visible && matches.length > 0) {
+		                selectedIndex = Math.max(selectedIndex - 1, 0);
+		                renderSuggestions(matches);
+		                dropdown.classList.add('open');
+		            }
+		        } else if (e.key === 'Enter') {
+		            e.preventDefault();
+		            if (visible && selectedIndex >= 0 && selectedIndex < matches.length) {
+		                // Autocompletar con la sugerencia seleccionada
+		                selectSuggestion(matches[selectedIndex].name);
+		                // NO añadir automáticamente, dejar que el usuario ajuste quantity
+		            }
+		            // Si no hay sugerencia seleccionada, NO hacer nada (el usuario puede escribir manualmente)
+		        } else if (e.key === 'Escape') {
+		            dropdown.classList.remove('open');
+		            selectedIndex = -1;
+		        }
+		    });
+		    
+		    newInput.addEventListener('input', updateSuggestions);
+		    
+		    newInput.addEventListener('focus', function() {
+		        if (this.value.length > 0) {
+		            updateSuggestions();
+		        }
+		    });
+		    
+		    newInput.addEventListener('blur', function() {
+		        setTimeout(() => {
+		            dropdown.classList.remove('open');
+		            selectedIndex = -1;
+		        }, 200);
+		    });
+		    
+		    // Close dropdown when clicking outside
+		    document.addEventListener('click', function(e) {
+		        const wrapper = document.querySelector('.inv-suggestions-wrapper');
+		        if (wrapper && !wrapper.contains(e.target)) {
+		            dropdown.classList.remove('open');
+		            selectedIndex = -1;
+		        }
+		    });
+		}
+
+        function renderDropInventoryGrid() {
+            const container = document.getElementById('inventory-grid-container');
+            const char = dropCharacters[currentInventoryCharIndex];
+            if (!char || !char.inventory || char.inventory.length === 0) {
+                container.innerHTML = `<div class="inventory-empty">No items in inventory. Add some below!</div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            char.inventory.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'inventory-item';
+                const iconUrl = getDropIcon(item.name);
+                div.innerHTML = `
+                    <img src="${iconUrl}" onerror="this.src='Icons/default.png'">
+                    <span class="item-count">${item.qty}</span>
+                    <span class="item-name">${item.name}</span>
+                    ${item.category ? `<span style="font-size:0.5rem; color:var(--text-muted); display:block;">${item.category}</span>` : ''}
+                    <span class="item-delete">✕</span>
+                `;
+                
+                // Left click: +1
+                div.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    item.qty += 1;
+                    renderDropInventoryGrid();
+                    saveDropToStorage();
+                });
+                
+                // Right click: -1 (remove if 0)
+                div.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (item.qty > 1) {
+                        item.qty -= 1;
+                        renderDropInventoryGrid();
+                        saveDropToStorage();
+                    } else {
+                        if (confirm(`Remove ${item.name} from inventory?`)) {
+                            char.inventory.splice(idx, 1);
+                            renderDropInventoryGrid();
+                            saveDropToStorage();
+                        }
+                    }
+                });
+                
+                // Delete button (hover)
+                const deleteBtn = div.querySelector('.item-delete');
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (confirm(`Remove ${item.name} from inventory?`)) {
+                        char.inventory.splice(idx, 1);
+                        renderDropInventoryGrid();
+                        saveDropToStorage();
+                    }
+                });
+                
+                container.appendChild(div);
+            });
+        }
+
+        function addInventoryItem() {
+            const name = document.getElementById('inv-item-name').value.trim();
+            const qty = parseInt(document.getElementById('inv-item-qty').value) || 1;
+
+            if (!name) { alert("Please enter an item name."); return; }
+            if (qty < 1) { alert("Quantity must be at least 1."); return; }
+
+            const char = dropCharacters[currentInventoryCharIndex];
+            if (!char) { alert("Character not found!"); return; }
+            if (!char.inventory) char.inventory = [];
+
+            const existing = char.inventory.find(item => item.name.toLowerCase() === name.toLowerCase());
+            if (existing) {
+                existing.qty += qty;
+            } else {
+                char.inventory.push({ name, qty, category: '' });
+            }
+
+            document.getElementById('inv-item-name').value = '';
+            document.getElementById('inv-item-qty').value = 1;
+            renderDropInventoryGrid();
+            saveDropToStorage();
+        }
+
+        function clearInventory() {
+            const char = dropCharacters[currentInventoryCharIndex];
+            if (!char || !char.inventory || char.inventory.length === 0) return;
+            
+            if (confirm(`Clear all items from ${char.name}'s inventory?`)) {
+                char.inventory = [];
+                renderDropInventoryGrid();
+                saveDropToStorage();
+            }
+        }
+
+        // ============================================================
+        // RENDER ALL
+        // ============================================================
+        function renderAll() {
+            if (currentView === 'boss') renderBossCharacters();
+            else if (currentView === 'drop') renderDropCharacters();
+            else if (currentView === 'daily') renderDailyCharacters();
+        }
+
+        // ============================================================
+        // EVENT LISTENERS
+        // ============================================================
+        document.getElementById('global-menu-panel').addEventListener('click', function(e) { e.stopPropagation(); });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                closeCharacterModal();
+                closeDropModal();
+                closeFullViewModal();
+                closeDailyModal();
+                closeInventoryModal();
+            }
+        });
 
         window.addEventListener('click', function(e) {
             const wrapper = document.getElementById('class-dropdown-wrapper');
@@ -1746,9 +2990,17 @@
                 const box = document.getElementById('dropdown-options-box');
                 if (box) box.classList.remove('open');
             }
+            const dailyWrapper = document.getElementById('daily-class-dropdown-wrapper');
+            if (dailyWrapper && !dailyWrapper.contains(e.target)) {
+                const box = document.getElementById('daily-dropdown-options-box');
+                if (box) box.classList.remove('open');
+            }
         });
 
-        renderCharacters();
+        // ============================================================
+        // INIT
+        // ============================================================
+        renderAll();
     </script>
 </body>
 </html>
