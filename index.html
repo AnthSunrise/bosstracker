@@ -18,6 +18,10 @@
             --border-color: #43748c;
             --highlight-green: rgba(67,116,140,0.15);
             --meso-color: #2ecc71;
+            --vmatrix-bg: #0b1a2b;
+            --vmatrix-card: rgba(18, 34, 48, 0.85);
+            --vmatrix-border: #4a5a6a;
+            --vmatrix-gold: #fadfbc;
         }
 
         * {
@@ -182,8 +186,21 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            cursor: grab;
+            transition: transform 0.2s, opacity 0.2s, border-color 0.2s;
+        }
+        .char-card:active {
+            cursor: grabbing;
         }
         .char-card:hover { border-color: var(--primary-blue); }
+        .char-card.drag-over {
+            border-color: var(--light-blue);
+            box-shadow: 0 0 15px rgba(129, 178, 209, 0.3);
+            transform: scale(1.02);
+        }
+        .char-card.dragging {
+            opacity: 0.5;
+        }
 
         .char-header {
             display: flex;
@@ -530,7 +547,6 @@
             margin-top: 6px;
         }
 
-        /* Inventory Suggestions Dropdown */
         .inv-suggestions-wrapper {
             position: relative;
             width: 100%;
@@ -607,6 +623,364 @@
             font-size: 1rem;
         }
 
+        /* ==========================================================
+           V MATRIX CALCULATOR STYLES (adapted to main UI)
+           ========================================================== */
+        .vmatrix-container {
+            padding: 10px 0;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .vmatrix-card {
+            background: rgba(18, 34, 48, 0.85);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 1.5rem;
+            padding: 1.5rem 1.8rem 2rem;
+            border: 1px solid var(--vmatrix-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            color: #f0e9e0;
+        }
+
+        .vmatrix-title {
+            font-weight: 400;
+            font-size: 1.3rem;
+            text-align: center;
+            color: var(--light-blue);
+            margin-bottom: 0.1rem;
+        }
+        .vmatrix-sub {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid var(--vmatrix-border);
+            padding-bottom: 0.6rem;
+        }
+
+        /* Nodestone grid */
+        .vmatrix-node-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .vmatrix-node {
+            background: #1f2d38;
+            border-radius: 10px;
+            border: 2px solid var(--vmatrix-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 4px;
+            cursor: pointer;
+            transition: 0.15s;
+            text-align: center;
+            user-select: none;
+        }
+        .vmatrix-node:hover {
+            filter: brightness(1.15);
+            border-color: var(--light-blue);
+        }
+        .vmatrix-node .icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .vmatrix-node .icon img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+        .vmatrix-node .label {
+            font-size: 0.6rem;
+            opacity: 0.8;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .vmatrix-node .amount {
+            font-weight: 600;
+            font-size: 0.8rem;
+            background: #0b1c28;
+            padding: 0 10px;
+            border-radius: 30px;
+            margin-top: 2px;
+            color: var(--vmatrix-gold);
+        }
+
+        /* V Points total */
+        .vmatrix-vpoints {
+            background: #1f2d38;
+            border-radius: 40px;
+            padding: 0.25rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--vmatrix-border);
+            margin-bottom: 1.2rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .vmatrix-vpoints .value {
+            font-weight: 600;
+            font-size: 1.2rem;
+            background: #0b1c28;
+            padding: 0 16px;
+            border-radius: 40px;
+            color: var(--vmatrix-gold);
+        }
+
+        /* Category boxes */
+        .vmatrix-category {
+            background: #1f2d38;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 0.8rem;
+            border: 1px solid var(--vmatrix-border);
+        }
+        .vmatrix-category-bar {
+            background: #15222e;
+            padding: 0.3rem 1rem;
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: var(--light-blue);
+            border-bottom: 1px solid var(--vmatrix-border);
+        }
+        .vmatrix-category-content {
+            padding: 0.6rem 0.6rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Core squares */
+        .vmatrix-core {
+            width: 58px;
+            height: 66px;
+            background: #303840;
+            border-radius: 10px;
+            border: 2px solid var(--vmatrix-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #e8e0d6;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: 0.15s;
+            text-align: center;
+            padding: 2px;
+            user-select: none;
+            flex-shrink: 0;
+        }
+        .vmatrix-core:hover {
+            filter: brightness(1.15);
+            border-color: var(--light-blue);
+        }
+        .vmatrix-core .icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .vmatrix-core .icon img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+        .vmatrix-core .label {
+            font-size: 0.5rem;
+            opacity: 0.8;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+        .vmatrix-core .level {
+            font-size: 0.55rem;
+            background: #0b1c28;
+            padding: 0 6px;
+            border-radius: 30px;
+            margin-top: 2px;
+            font-weight: 500;
+            color: var(--vmatrix-gold);
+        }
+
+        /* Total required */
+        .vmatrix-total {
+            background: #1f2d38;
+            border-radius: 40px;
+            padding: 0.25rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--vmatrix-border);
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .vmatrix-total .value {
+            font-weight: 600;
+            font-size: 1.2rem;
+            background: #0b1c28;
+            padding: 0 16px;
+            border-radius: 40px;
+            color: var(--vmatrix-gold);
+        }
+
+        .vmatrix-footer {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .vmatrix-reset-btn {
+            background: #3a2a2a;
+            border: 1px solid #5a4a4a;
+            border-radius: 40px;
+            padding: 0.4rem 1.6rem;
+            color: #f0e9e0;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .vmatrix-reset-btn:hover {
+            background: #4a3a3a;
+            border-color: var(--light-blue);
+        }
+
+        .vmatrix-footnote {
+            font-size: 0.55rem;
+            opacity: 0.4;
+            text-align: center;
+            margin-top: 0.6rem;
+            color: var(--text-muted);
+        }
+
+        /* V Matrix Modal */
+        .vmatrix-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(3px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.15s;
+        }
+        .vmatrix-modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .vmatrix-modal-box {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 1.8rem 2rem;
+            max-width: 300px;
+            width: 90%;
+            border: 1px solid var(--vmatrix-border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            color: var(--text-color);
+        }
+        .vmatrix-modal-box h3 {
+            font-weight: 400;
+            font-size: 1rem;
+            margin-bottom: 0.6rem;
+            text-align: center;
+            color: var(--light-blue);
+            border-bottom: 1px solid var(--vmatrix-border);
+            padding-bottom: 0.5rem;
+        }
+        .vmatrix-modal-box .modal-label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+        .vmatrix-modal-box input[type="number"] {
+            width: 100%;
+            background: #0b1c28;
+            border: 1px solid var(--vmatrix-border);
+            border-radius: 40px;
+            padding: 8px 14px;
+            color: var(--text-color);
+            font-size: 1rem;
+            font-weight: 500;
+            outline: none;
+            margin: 0.3rem 0 0.6rem 0;
+        }
+        .vmatrix-modal-box input[type="number"]:focus {
+            border-color: var(--light-blue);
+        }
+        .vmatrix-modal-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.6rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .vmatrix-modal-actions button {
+            background: #2b4a5a;
+            border: none;
+            border-radius: 40px;
+            padding: 0.4rem 1rem;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.15s;
+            border: 1px solid var(--vmatrix-border);
+            flex: 1 1 auto;
+        }
+        .vmatrix-modal-actions button:hover {
+            background: #3d6070;
+            border-color: var(--light-blue);
+        }
+        .vmatrix-modal-actions button.max-btn {
+            background: #4a3a5a;
+            border-color: #7a6a8a;
+        }
+        .vmatrix-modal-actions button.max-btn:hover {
+            background: #5a4a6a;
+        }
+        .vmatrix-modal-actions button.cancel-btn {
+            background: #3a2a2a;
+            border-color: #5a4a4a;
+        }
+        .vmatrix-modal-actions button.cancel-btn:hover {
+            background: #4a3a3a;
+        }
+        .vmatrix-modal-actions button.confirm-btn {
+            background: #2a5a4a;
+            border-color: #4a8a7a;
+        }
+        .vmatrix-modal-actions button.confirm-btn:hover {
+            background: #3a6a5a;
+        }
+
+        @media (max-width: 480px) {
+            .vmatrix-card { padding: 1rem; }
+            .vmatrix-node-grid { gap: 0.4rem; }
+            .vmatrix-core { width: 48px; height: 56px; }
+            .vmatrix-core .icon { width: 24px; height: 24px; }
+            .vmatrix-core .icon img { width: 22px; height: 22px; }
+            .vmatrix-node .icon { width: 28px; height: 28px; }
+            .vmatrix-node .icon img { width: 24px; height: 24px; }
+        }
+
         @media (max-width: 768px) {
             .characters-grid { grid-template-columns: 1fr; }
             .fullview-layout { grid-template-columns: 1fr; height: auto; }
@@ -631,14 +1005,16 @@
         </div>
 
         <div class="dropdown-menu-panel" id="global-menu-panel">
-            <button class="menu-panel-item active" id="menu-item-boss" onclick="switchView('boss')">Boss Tracker</button>
-            <button class="menu-panel-item" id="menu-item-drop" onclick="switchView('drop')">Drop Tracker</button>
-            <button class="menu-panel-item" id="menu-item-daily" onclick="switchView('daily')">Daily & Weekly</button>
+            <button class="menu-panel-item active" id="menu-item-boss" onclick="switchView('boss')">🗡️ Boss Tracker</button>
+            <button class="menu-panel-item" id="menu-item-drop" onclick="switchView('drop')">📦 Drop Tracker</button>
+            <button class="menu-panel-item" id="menu-item-daily" onclick="switchView('daily')">📅 Daily & Weekly</button>
+            <button class="menu-panel-item" id="menu-item-vmatrix" onclick="switchView('vmatrix')">🧪 V Matrix Calc</button>
         </div>
     </header>
 
     <div class="content-wrapper">
         <div class="main-container">
+            <!-- Boss Tracker -->
             <div id="view-boss-tracker" class="app-view active">
                 <div class="top-actions">
                     <button onclick="openCharacterModal('boss')">+ Add Character</button>
@@ -646,6 +1022,7 @@
                 <div class="characters-grid" id="boss-characters-grid"></div>
             </div>
 
+            <!-- Drop Tracker -->
             <div id="view-drop-tracker" class="app-view">
                 <div class="top-actions">
                     <button onclick="openCharacterModal('drop')">+ Add Character</button>
@@ -653,11 +1030,19 @@
                 <div class="characters-grid" id="drop-characters-grid"></div>
             </div>
 
+            <!-- Daily & Weekly Tracker -->
             <div id="view-daily-tracker" class="app-view">
                 <div class="top-actions">
                     <button onclick="openDailyModal()">+ Add Character</button>
                 </div>
                 <div class="characters-grid" id="daily-characters-grid"></div>
+            </div>
+
+            <!-- V Matrix Calculator -->
+            <div id="view-vmatrix" class="app-view">
+                <div class="vmatrix-container" id="vmatrix-app">
+                    <!-- El contenido se genera con JavaScript -->
+                </div>
             </div>
         </div>
     </div>
@@ -880,9 +1265,23 @@
         </div>
     </div>
 
+    <!-- V Matrix Modal -->
+    <div class="vmatrix-modal-overlay" id="vmatrix-modal">
+        <div class="vmatrix-modal-box">
+            <h3 id="vmatrixModalTitle">Set value</h3>
+            <div class="modal-label" id="vmatrixModalLabel">Value (0 – max)</div>
+            <input type="number" id="vmatrixModalInput" min="0" value="0" step="1">
+            <div class="vmatrix-modal-actions">
+                <button class="cancel-btn" id="vmatrixModalCancel">Cancel</button>
+                <button class="max-btn" id="vmatrixModalMax">Max</button>
+                <button class="confirm-btn" id="vmatrixModalConfirm">Set</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ============================================================
-        // DATA DEFINITIONS
+        // DATA DEFINITIONS (existing from original code)
         // ============================================================
         const PIECES_ICON_MAP = {
             "Eternal Hat": "eternal hat.png",
@@ -1078,14 +1477,14 @@
         };
 
         // ============================================================
-        // STORAGE
+        // STORAGE (existing)
         // ============================================================
         let bossCharacters = JSON.parse(localStorage.getItem('maple_boss_chars_v4')) || [];
         let dropCharacters = JSON.parse(localStorage.getItem('maple_drop_chars_v4')) || [];
         let dailyCharacters = JSON.parse(localStorage.getItem('maple_daily_chars_v2')) || [];
         
         // ============================================================
-        // STATE
+        // STATE (existing)
         // ============================================================
         let currentView = 'boss';
         let modalMode = 'boss'; 
@@ -1111,7 +1510,7 @@
         let dailyClassValue = MAPLE_CLASSES[0];
 
         // ============================================================
-        // UTILITY FUNCTIONS
+        // UTILITY FUNCTIONS (existing)
         // ============================================================
         function getBossIcon(fullBossName) {
             for (let key in BOSS_ICON_MAP) { if (fullBossName.includes(key)) return `Icons/${BOSS_ICON_MAP[key]}`; }
@@ -1182,7 +1581,7 @@
         }
 
         // ============================================================
-        // MENU
+        // MENU (modified to include vmatrix)
         // ============================================================
         function toggleMenuPanel(event) {
             event.stopPropagation();
@@ -1197,6 +1596,7 @@
             document.getElementById('view-boss-tracker').classList.remove('active');
             document.getElementById('view-drop-tracker').classList.remove('active');
             document.getElementById('view-daily-tracker').classList.remove('active');
+            document.getElementById('view-vmatrix').classList.remove('active');
 
             if (view === 'boss') {
                 document.getElementById('menu-item-boss').classList.add('active');
@@ -1216,11 +1616,17 @@
                 document.getElementById('view-title').innerText = "Daily & Weekly Tracker";
                 document.getElementById('global-boss-summary-box').style.display = 'none';
                 renderDailyCharacters();
+            } else if (view === 'vmatrix') {
+                document.getElementById('menu-item-vmatrix').classList.add('active');
+                document.getElementById('view-vmatrix').classList.add('active');
+                document.getElementById('view-title').innerText = "V Matrix Calculator";
+                document.getElementById('global-boss-summary-box').style.display = 'none';
+                renderVMatrix();
             }
         }
 
         // ============================================================
-        // SAVE FUNCTIONS
+        // SAVE FUNCTIONS (existing)
         // ============================================================
         function saveBossToStorage() {
             localStorage.setItem('maple_boss_chars_v4', JSON.stringify(bossCharacters));
@@ -1238,7 +1644,94 @@
         }
 
         // ============================================================
-        // CLASS DROPDOWN (Main Modal)
+        // DRAG & DROP (existing)
+        // ============================================================
+        function enableDragAndDrop(gridId) {
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+            
+            let dragItem = null;
+            
+            grid.addEventListener('dragstart', function(e) {
+                const card = e.target.closest('.char-card');
+                if (!card) return;
+                dragItem = card;
+                card.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', card.dataset.index || '');
+            });
+            
+            grid.addEventListener('dragend', function(e) {
+                const card = e.target.closest('.char-card');
+                if (card) {
+                    card.classList.remove('dragging');
+                }
+                document.querySelectorAll('.char-card.drag-over').forEach(el => {
+                    el.classList.remove('drag-over');
+                });
+                dragItem = null;
+            });
+            
+            grid.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                const targetCard = e.target.closest('.char-card');
+                if (!targetCard || targetCard === dragItem) return;
+                
+                document.querySelectorAll('.char-card.drag-over').forEach(el => {
+                    el.classList.remove('drag-over');
+                });
+                targetCard.classList.add('drag-over');
+            });
+            
+            grid.addEventListener('dragleave', function(e) {
+                const targetCard = e.target.closest('.char-card');
+                if (targetCard) targetCard.classList.remove('drag-over');
+            });
+            
+            grid.addEventListener('drop', function(e) {
+                e.preventDefault();
+                const targetCard = e.target.closest('.char-card');
+                if (!targetCard || !dragItem || targetCard === dragItem) {
+                    document.querySelectorAll('.char-card.drag-over').forEach(el => {
+                        el.classList.remove('drag-over');
+                    });
+                    return;
+                }
+                
+                document.querySelectorAll('.char-card.drag-over').forEach(el => {
+                    el.classList.remove('drag-over');
+                });
+                
+                const fromIndex = parseInt(dragItem.dataset.index);
+                const toIndex = parseInt(targetCard.dataset.index);
+                
+                if (isNaN(fromIndex) || isNaN(toIndex)) return;
+                
+                let dataArray;
+                if (gridId === 'boss-characters-grid') {
+                    dataArray = bossCharacters;
+                } else if (gridId === 'drop-characters-grid') {
+                    dataArray = dropCharacters;
+                } else if (gridId === 'daily-characters-grid') {
+                    dataArray = dailyCharacters;
+                } else {
+                    return;
+                }
+                
+                const [movedItem] = dataArray.splice(fromIndex, 1);
+                dataArray.splice(toIndex, 0, movedItem);
+                
+                if (gridId === 'boss-characters-grid') saveBossToStorage();
+                else if (gridId === 'drop-characters-grid') saveDropToStorage();
+                else if (gridId === 'daily-characters-grid') saveDailyToStorage();
+                
+                dragItem = null;
+            });
+        }
+
+        // ============================================================
+        // CLASS DROPDOWN (Main Modal - existing)
         // ============================================================
         function initCustomClassDropdown() {
             const optionsBox = document.getElementById('dropdown-options-box');
@@ -1271,7 +1764,7 @@
         }
 
         // ============================================================
-        // CLASS DROPDOWN (Daily Modal)
+        // CLASS DROPDOWN (Daily Modal - existing)
         // ============================================================
         function initDailyClassDropdown() {
             const optionsBox = document.getElementById('daily-dropdown-options-box');
@@ -1304,7 +1797,7 @@
         }
 
         // ============================================================
-        // CHARACTER MODAL (Boss & Drop)
+        // CHARACTER MODAL (Boss & Drop - existing)
         // ============================================================
         function openCharacterModal(mode, index = null) {
             modalMode = mode;
@@ -1531,7 +2024,7 @@
         }
 
         // ============================================================
-        // BOSS RENDER & MODAL
+        // BOSS RENDER & MODAL (existing)
         // ============================================================
         function renderBossCharacters() {
             const bossGrid = document.getElementById('boss-characters-grid');
@@ -1560,7 +2053,7 @@
                 }
 
                 let cardHTML = `
-                    <div class="char-card">
+                    <div class="char-card" draggable="true" data-index="${index}">
                         <div>
                             <div class="char-header">
                                 <img class="char-avatar" src="${char.image || `Icons/avatars/${lowCaseCls}.png`}" onerror="this.src='Icons/default.png'">
@@ -1615,6 +2108,8 @@
             const counterSpan = document.getElementById('global-boss-count');
             counterSpan.innerText = `${globalBossCount} / 180`;
             counterSpan.style.color = (globalBossCount > 180) ? 'var(--danger-color)' : 'var(--light-blue)';
+            
+            enableDragAndDrop('boss-characters-grid');
         }
 
         function calculateCharacterNetMeso(char) {
@@ -1707,7 +2202,7 @@
         }
 
         // ============================================================
-        // DROP RENDER & LOGS
+        // DROP RENDER & LOGS (existing - simplified for space)
         // ============================================================
         function renderDropCharacters() {
             const dropGrid = document.getElementById('drop-characters-grid');
@@ -1719,7 +2214,7 @@
                 const logs = char.logs || [];
 
                 let cardHTML = `
-                    <div class="char-card">
+                    <div class="char-card" draggable="true" data-index="${index}">
                         <div>
                             <div class="char-header">
                                 <img class="char-avatar" src="${char.image || `Icons/avatars/${lowCaseCls}.png`}" onerror="this.src='Icons/default.png'">
@@ -1767,6 +2262,8 @@
                     });
                 }
             });
+            
+            enableDragAndDrop('drop-characters-grid');
         }
 
         function createLogRenderRow(log, logIdx, isFullView = false, charIdx = null) {
@@ -1864,7 +2361,7 @@
             return tr;
         }
 
-        // --- DROP LOGS ---
+        // --- DROP LOGS (existing) ---
         function openDropModal(index) {
             currentDropCharIndex = index;
             const char = dropCharacters[index];
@@ -2108,7 +2605,7 @@
         }
 
         // ============================================================
-        // FULL VIEW
+        // FULL VIEW (existing)
         // ============================================================
         function openFullViewModal(index) {
             currentFullViewCharIndex = index;
@@ -2196,7 +2693,7 @@
         }
 
         // ============================================================
-        // DAILY MODAL
+        // DAILY MODAL (existing)
         // ============================================================
         function openDailyModal(index = null) {
             dailyModalMode = index !== null ? 'edit' : 'add';
@@ -2476,7 +2973,7 @@
         }
 
         // ============================================================
-        // DAILY RENDER
+        // DAILY RENDER (existing)
         // ============================================================
         function renderDailyCharacters() {
             const grid = document.getElementById('daily-characters-grid');
@@ -2507,7 +3004,7 @@
                 const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
                 
                 let cardHTML = `
-                    <div class="char-card">
+                    <div class="char-card" draggable="true" data-index="${index}">
                         <div>
                             <div class="char-header">
                                 <img class="char-avatar" src="${char.image || `Icons/avatars/${lowCaseCls}.png`}" onerror="this.src='Icons/default.png'">
@@ -2538,6 +3035,8 @@
                 `;
                 grid.innerHTML += cardHTML;
             });
+            
+            enableDragAndDrop('daily-characters-grid');
         }
 
         function renderDailyActivitiesList(activities, charIndex) {
@@ -2649,7 +3148,7 @@
         }
 
         // ============================================================
-        // INVENTORY MANAGER (for Drop Characters)
+        // INVENTORY MANAGER (for Drop Characters - existing)
         // ============================================================
         function openDropInventoryModal(index) {
             currentInventoryCharIndex = index;
@@ -2676,193 +3175,202 @@
             saveDropToStorage();
         }
 
-		function setupInventorySuggestions() {
-		    const input = document.getElementById('inv-item-name');
-		    const dropdown = document.getElementById('inv-suggestions-dropdown');
-		    
-		    // Remove old event listeners by cloning
-		    const newInput = input.cloneNode(true);
-		    input.parentNode.replaceChild(newInput, input);
-		    
-		    // State for keyboard navigation
-		    let selectedIndex = -1;
-		    let currentMatches = [];
-		    
-		    // Get all items for suggestions
-		    function getAllItems() {
-		        const items = [];
-		        
-		        KRONOS_DROPS_CATEGORIES.forEach(cat => {
-		            cat.items.forEach(item => {
-		                items.push({
-		                    name: item.name,
-		                    icon: `Icons/drops/${item.icon}`,
-		                    category: cat.name
-		                });
-		            });
-		        });
-		        
-		        const equipmentItems = [
-		            'Arcane Umbra Hat', 'Arcane Umbra Overall', 'Arcane Umbra Cape',
-		            'Arcane Umbra Glove', 'Arcane Umbra Shoe', 'Arcane Umbra Shoulder',
-		            'Eternal Hat', 'Eternal Top', 'Eternal Bottom', 'Eternal Shoulder',
-		            'Eternal Cape', 'Eternal Glove', 'Eternal Shoe'
-		        ];
-		        equipmentItems.forEach(name => {
-		            let icon = 'default.png';
-		            if (PIECES_ICON_MAP[name]) {
-		                icon = PIECES_ICON_MAP[name];
-		            }
-		            items.push({
-		                name: name,
-		                icon: `Icons/drops/${icon}`,
-		                category: 'Equipment'
-		            });
-		        });
-		        
-		        const pieceItems = [
-		            'Adversary Piece', 'Adversary Half Piece', 'Kalos Piece', 'Kalos Half Piece',
-		            'Kaling Piece', 'Kaling Half Piece', 'Malefic Star Piece', 'Limbo Piece',
-		            'Baldrix Piece', 'Jupiter Piece', 'Malefic Star Half Piece'
-		        ];
-		        pieceItems.forEach(name => {
-		            items.push({
-		                name: name,
-		                icon: `Icons/drops/${name}.png`,
-		                category: 'Pieces'
-		            });
-		        });
-		        
-		        return items;
-		    }
-		    
-		    const allItems = getAllItems();
-		    
-		    function updateSuggestions() {
-		        const query = newInput.value.toLowerCase().trim();
-		        selectedIndex = -1;
-		        
-		        if (!query) {
-		            dropdown.classList.remove('open');
-		            currentMatches = [];
-		            return;
-		        }
-		        
-		        currentMatches = allItems.filter(item => 
-		            item.name.toLowerCase().includes(query)
-		        );
-		        
-		        if (currentMatches.length === 0) {
-		            dropdown.classList.remove('open');
-		            return;
-		        }
-		        
-		        renderSuggestions(currentMatches.slice(0, 10));
-		        dropdown.classList.add('open');
-		    }
-		    
-		    function renderSuggestions(matches) {
-		        dropdown.innerHTML = '';
-		        matches.forEach((item, index) => {
-		            const div = document.createElement('div');
-		            div.className = 'inv-suggestion-item';
-		            if (index === selectedIndex) {
-		                div.style.background = 'var(--primary-blue)';
-		            }
-		            div.innerHTML = `
-		                <img src="${item.icon}" onerror="this.src='Icons/default.png'">
-		                <span class="suggestion-name">${item.name}</span>
-		                <span class="suggestion-category">${item.category}</span>
-		            `;
-		            div.addEventListener('click', function(e) {
-		                e.stopPropagation();
-		                // Solo autocompletar, NO añadir
-		                document.getElementById('inv-item-name').value = item.name;
-		                dropdown.classList.remove('open');
-		                selectedIndex = -1;
-		                currentMatches = [];
-		                // Enfocar el input para que el usuario pueda ajustar quantity
-		                document.getElementById('inv-item-name').focus();
-		            });
-		            div.addEventListener('mouseenter', function() {
-		                selectedIndex = index;
-		                renderSuggestions(currentMatches.slice(0, 10));
-		            });
-		            dropdown.appendChild(div);
-		        });
-		    }
-		    
-		    function selectSuggestion(name) {
-		        // Solo autocompletar, NO añadir
-		        document.getElementById('inv-item-name').value = name;
-		        dropdown.classList.remove('open');
-		        selectedIndex = -1;
-		        currentMatches = [];
-		        // Enfocar el input para que el usuario pueda ajustar quantity
-		        document.getElementById('inv-item-name').focus();
-		    }
-		    
-		    // Keyboard navigation
-		    newInput.addEventListener('keydown', function(e) {
-		        const visible = dropdown.classList.contains('open');
-		        const matches = currentMatches.slice(0, 10);
-		        
-		        if (e.key === 'ArrowDown') {
-		            e.preventDefault();
-		            if (!visible && newInput.value.length > 0) {
-		                updateSuggestions();
-		                return;
-		            }
-		            if (matches.length > 0) {
-		                selectedIndex = Math.min(selectedIndex + 1, matches.length - 1);
-		                renderSuggestions(matches);
-		                dropdown.classList.add('open');
-		            }
-		        } else if (e.key === 'ArrowUp') {
-		            e.preventDefault();
-		            if (visible && matches.length > 0) {
-		                selectedIndex = Math.max(selectedIndex - 1, 0);
-		                renderSuggestions(matches);
-		                dropdown.classList.add('open');
-		            }
-		        } else if (e.key === 'Enter') {
-		            e.preventDefault();
-		            if (visible && selectedIndex >= 0 && selectedIndex < matches.length) {
-		                // Autocompletar con la sugerencia seleccionada
-		                selectSuggestion(matches[selectedIndex].name);
-		                // NO añadir automáticamente, dejar que el usuario ajuste quantity
-		            }
-		            // Si no hay sugerencia seleccionada, NO hacer nada (el usuario puede escribir manualmente)
-		        } else if (e.key === 'Escape') {
-		            dropdown.classList.remove('open');
-		            selectedIndex = -1;
-		        }
-		    });
-		    
-		    newInput.addEventListener('input', updateSuggestions);
-		    
-		    newInput.addEventListener('focus', function() {
-		        if (this.value.length > 0) {
-		            updateSuggestions();
-		        }
-		    });
-		    
-		    newInput.addEventListener('blur', function() {
-		        setTimeout(() => {
-		            dropdown.classList.remove('open');
-		            selectedIndex = -1;
-		        }, 200);
-		    });
-		    
-		    // Close dropdown when clicking outside
-		    document.addEventListener('click', function(e) {
-		        const wrapper = document.querySelector('.inv-suggestions-wrapper');
-		        if (wrapper && !wrapper.contains(e.target)) {
-		            dropdown.classList.remove('open');
-		            selectedIndex = -1;
-		        }
-		    });
-		}
+        function setupInventorySuggestions() {
+            const input = document.getElementById('inv-item-name');
+            const dropdown = document.getElementById('inv-suggestions-dropdown');
+            
+            // Clonar para eliminar event listeners viejos
+            const newInput = input.cloneNode(true);
+            input.parentNode.replaceChild(newInput, input);
+            
+            let selectedIndex = -1;
+            let currentMatches = [];
+            const MAX_VISIBLE = 8;
+            
+            function getAllItems() {
+                const items = [];
+                
+                KRONOS_DROPS_CATEGORIES.forEach(cat => {
+                    cat.items.forEach(item => {
+                        items.push({
+                            name: item.name,
+                            icon: `Icons/drops/${item.icon}`,
+                            category: cat.name
+                        });
+                    });
+                });
+                
+                const equipmentItems = [
+                    'Arcane Umbra Hat', 'Arcane Umbra Overall', 'Arcane Umbra Cape',
+                    'Arcane Umbra Glove', 'Arcane Umbra Shoe', 'Arcane Umbra Shoulder',
+                    'Eternal Hat', 'Eternal Top', 'Eternal Bottom', 'Eternal Shoulder',
+                    'Eternal Cape', 'Eternal Glove', 'Eternal Shoe'
+                ];
+                equipmentItems.forEach(name => {
+                    let icon = 'default.png';
+                    if (PIECES_ICON_MAP[name]) {
+                        icon = PIECES_ICON_MAP[name];
+                    }
+                    items.push({
+                        name: name,
+                        icon: `Icons/drops/${icon}`,
+                        category: 'Equipment'
+                    });
+                });
+                
+                const pieceItems = [
+                    'Adversary Piece', 'Adversary Half Piece', 'Kalos Piece', 'Kalos Half Piece',
+                    'Kaling Piece', 'Kaling Half Piece', 'Malefic Star Piece', 'Limbo Piece',
+                    'Baldrix Piece', 'Jupiter Piece', 'Malefic Star Half Piece'
+                ];
+                pieceItems.forEach(name => {
+                    items.push({
+                        name: name,
+                        icon: `Icons/drops/${name}.png`,
+                        category: 'Pieces'
+                    });
+                });
+                
+                return items;
+            }
+            
+            const allItems = getAllItems();
+            
+            function closeDropdown() {
+                dropdown.classList.remove('open');
+                dropdown.innerHTML = '';
+                selectedIndex = -1;
+                currentMatches = [];
+            }
+            
+            function renderSuggestions(matches) {
+                dropdown.innerHTML = '';
+                const visibleItems = matches.slice(0, MAX_VISIBLE);
+                
+                visibleItems.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'inv-suggestion-item';
+                    if (index === selectedIndex) {
+                        div.style.background = 'var(--primary-blue)';
+                    }
+                    div.innerHTML = `
+                        <img src="${item.icon}" onerror="this.src='Icons/default.png'">
+                        <span class="suggestion-name">${item.name}</span>
+                        <span class="suggestion-category">${item.category}</span>
+                    `;
+                    div.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        newInput.value = item.name;
+                        closeDropdown();
+                        newInput.focus();
+                    });
+                    div.addEventListener('mouseenter', function() {
+                        selectedIndex = index;
+                        renderSuggestions(currentMatches.slice(0, MAX_VISIBLE));
+                        setTimeout(scrollToSelected, 10);
+                    });
+                    dropdown.appendChild(div);
+                });
+                
+                if (matches.length > MAX_VISIBLE) {
+                    const counter = document.createElement('div');
+                    counter.style.cssText = 'padding: 4px 10px; color: var(--text-muted); font-size: 0.7rem; text-align: center; border-top: 1px solid var(--border-color);';
+                    counter.textContent = `${matches.length} items available (scroll for more)`;
+                    dropdown.appendChild(counter);
+                }
+            }
+            
+            function scrollToSelected() {
+                if (selectedIndex < 0) return;
+                const items = dropdown.querySelectorAll('.inv-suggestion-item');
+                if (selectedIndex >= items.length) return;
+                
+                const selectedItem = items[selectedIndex];
+                const dropdownRect = dropdown.getBoundingClientRect();
+                const itemRect = selectedItem.getBoundingClientRect();
+                
+                if (itemRect.top < dropdownRect.top) {
+                    dropdown.scrollTop -= (dropdownRect.top - itemRect.top + 10);
+                } else if (itemRect.bottom > dropdownRect.bottom) {
+                    dropdown.scrollTop += (itemRect.bottom - dropdownRect.bottom + 10);
+                }
+            }
+            
+            function updateSuggestions() {
+                const query = newInput.value.toLowerCase().trim();
+                
+                if (!query) {
+                    closeDropdown();
+                    return;
+                }
+                
+                currentMatches = allItems.filter(item => 
+                    item.name.toLowerCase().includes(query)
+                );
+                
+                if (currentMatches.length === 0) {
+                    closeDropdown();
+                    return;
+                }
+                
+                if (currentMatches.length === 1 && currentMatches[0].name.toLowerCase() === query) {
+                    closeDropdown();
+                    return;
+                }
+                
+                selectedIndex = -1;
+                renderSuggestions(currentMatches.slice(0, MAX_VISIBLE));
+                dropdown.classList.add('open');
+                dropdown.scrollTop = 0;
+            }
+            
+            newInput.addEventListener('input', updateSuggestions);
+            
+            newInput.addEventListener('keydown', function(e) {
+                const matches = currentMatches.slice(0, MAX_VISIBLE);
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (matches.length === 0) {
+                        updateSuggestions();
+                        return;
+                    }
+                    selectedIndex = Math.min(selectedIndex + 1, matches.length - 1);
+                    renderSuggestions(matches);
+                    dropdown.classList.add('open');
+                    setTimeout(scrollToSelected, 10);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (matches.length === 0) return;
+                    selectedIndex = Math.max(selectedIndex - 1, 0);
+                    renderSuggestions(matches);
+                    dropdown.classList.add('open');
+                    setTimeout(scrollToSelected, 10);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (selectedIndex >= 0 && selectedIndex < matches.length) {
+                        newInput.value = matches[selectedIndex].name;
+                        closeDropdown();
+                        newInput.focus();
+                    }
+                } else if (e.key === 'Escape') {
+                    closeDropdown();
+                }
+            });
+            
+            newInput.addEventListener('focus', function() {
+                if (this.value.length > 0) {
+                    updateSuggestions();
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                const wrapper = document.querySelector('.inv-suggestions-wrapper');
+                if (wrapper && !wrapper.contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+        }
 
         function renderDropInventoryGrid() {
             const container = document.getElementById('inventory-grid-container');
@@ -2885,7 +3393,6 @@
                     <span class="item-delete">✕</span>
                 `;
                 
-                // Left click: +1
                 div.addEventListener('click', (e) => {
                     e.stopPropagation();
                     item.qty += 1;
@@ -2893,7 +3400,6 @@
                     saveDropToStorage();
                 });
                 
-                // Right click: -1 (remove if 0)
                 div.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -2910,7 +3416,6 @@
                     }
                 });
                 
-                // Delete button (hover)
                 const deleteBtn = div.querySelector('.item-delete');
                 deleteBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -2961,16 +3466,393 @@
         }
 
         // ============================================================
-        // RENDER ALL
+        // V MATRIX CALCULATOR
+        // ============================================================
+        const VMATRIX_STORAGE_KEY = 'maple_vmatrix_state';
+
+        // Core definitions
+        const VCLASS_CORES = [
+            { id: 'class1', label: ' ', maxLv: 30, baseLevel: 1 },
+            { id: 'class2', label: ' ', maxLv: 30, baseLevel: 1 },
+            { id: 'class3', label: ' ', maxLv: 30, baseLevel: 1 },
+            { id: 'class4', label: ' ', maxLv: 30, baseLevel: 1 }
+        ];
+
+        const VENHANCE_CORES = [
+            { id: 'boost1', label: ' ', maxLv: 60, baseLevel: 0 },
+            { id: 'boost2', label: ' ', maxLv: 60, baseLevel: 0 },
+            { id: 'boost3', label: ' ', maxLv: 60, baseLevel: 0 },
+            { id: 'boost4', label: ' ', maxLv: 60, baseLevel: 0 },
+            { id: 'boost5', label: ' ', maxLv: 60, baseLevel: 0 },
+            { id: 'boost6', label: ' ', maxLv: 60, baseLevel: 0 }
+        ];
+
+        const VCOMMON_CORES = Array.from({ length: 19 }, (_, i) => ({
+            id: `common${i+1}`,
+            label: ' ',
+            maxLv: 30,
+            baseLevel: 0
+        }));
+
+        // V Matrix State
+        let vNodeState = { nodestone: 0, expstone: 0, willstone: 0, serenstone: 0 };
+        let vCoreState = {};
+
+        // Cost functions
+        function vCostClassCommon(level) {
+            if (level <= 1) return 0;
+            let total = 0;
+            for (let i = 2; i <= level; i++) {
+                if (i >= 2 && i <= 10) total += 4;
+                else if (i >= 11 && i <= 20) total += 6;
+                else if (i >= 21 && i <= 30) total += 9;
+            }
+            return total;
+        }
+
+        function vCostEnhancement(level) {
+            if (level <= 0) return 0;
+            let total = 0;
+            for (let i = 1; i <= level; i++) {
+                total += (i <= 40) ? 1 : 2;
+            }
+            return total;
+        }
+
+        function vBuildCoreSquares(cores, container, color, costType) {
+            container.innerHTML = '';
+            cores.forEach(core => {
+                const div = document.createElement('div');
+                div.className = 'vmatrix-core';
+                div.style.background = color;
+                div.dataset.coreId = core.id;
+                div.dataset.maxLv = core.maxLv;
+                div.dataset.costType = costType;
+                div.dataset.baseLevel = core.baseLevel || 0;
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'icon';
+                const img = document.createElement('img');
+                img.src = `Icons/V Matrix/${core.id}.png`;
+                img.alt = core.label;
+                iconSpan.appendChild(img);
+
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'label';
+                labelSpan.textContent = core.label;
+
+                const levelSpan = document.createElement('span');
+                levelSpan.className = 'level';
+                const startLevel = core.baseLevel || 0;
+                levelSpan.textContent = `${startLevel}/${core.maxLv}`;
+
+                div.appendChild(iconSpan);
+                div.appendChild(labelSpan);
+                div.appendChild(levelSpan);
+                container.appendChild(div);
+
+                vCoreState[core.id] = startLevel;
+            });
+        }
+
+        function renderVMatrix() {
+            const container = document.getElementById('vmatrix-app');
+            
+            // Load saved state
+            const saved = localStorage.getItem(VMATRIX_STORAGE_KEY);
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    vNodeState = parsed.nodes || vNodeState;
+                    vCoreState = parsed.cores || vCoreState;
+                } catch(e) {}
+            }
+
+            container.innerHTML = `
+                <div class="vmatrix-card">
+                    <div class="vmatrix-title">🧪 V Matrix Calculator</div>
+                    <div class="vmatrix-sub">tap a square to set level / amount</div>
+
+                    <!-- Nodestones -->
+                    <div class="vmatrix-node-grid" id="vmatrix-node-grid">
+                        <div class="vmatrix-node" data-node="nodestone" data-max="9999">
+                            <span class="icon"><img src="Icons/V Matrix/Nodestone.png" alt="Nodestone"></span>
+                            <span class="label">Nodestone</span>
+                            <span class="amount" id="vnodeDisplay-nodestone">${vNodeState.nodestone}</span>
+                        </div>
+                        <div class="vmatrix-node" data-node="expstone" data-max="9999">
+                            <span class="icon"><img src="Icons/V Matrix/Experience Node.png" alt="Experience"></span>
+                            <span class="label">Experience</span>
+                            <span class="amount" id="vnodeDisplay-expstone">${vNodeState.expstone}</span>
+                        </div>
+                        <div class="vmatrix-node" data-node="willstone" data-max="9999">
+                            <span class="icon"><img src="Icons/V Matrix/Will Node.png" alt="Will"></span>
+                            <span class="label">Will</span>
+                            <span class="amount" id="vnodeDisplay-willstone">${vNodeState.willstone}</span>
+                        </div>
+                        <div class="vmatrix-node" data-node="serenstone" data-max="9999">
+                            <span class="icon"><img src="Icons/V Matrix/Seren Node.png" alt="Seren"></span>
+                            <span class="label">Seren</span>
+                            <span class="amount" id="vnodeDisplay-serenstone">${vNodeState.serenstone}</span>
+                        </div>
+                    </div>
+
+                    <!-- V Points -->
+                    <div class="vmatrix-vpoints">
+                        <span>🧪 V Points</span>
+                        <span class="value" id="vmatrix-vpoints-display">0</span>
+                    </div>
+
+                    <!-- Job Nodes -->
+                    <div class="vmatrix-category">
+                        <div class="vmatrix-category-bar">Job Nodes</div>
+                        <div class="vmatrix-category-content" id="vmatrix-class-container"></div>
+                    </div>
+
+                    <!-- Boost Nodes -->
+                    <div class="vmatrix-category">
+                        <div class="vmatrix-category-bar">Boost Nodes</div>
+                        <div class="vmatrix-category-content" id="vmatrix-enhance-container"></div>
+                    </div>
+
+                    <!-- Common Nodes -->
+                    <div class="vmatrix-category">
+                        <div class="vmatrix-category-bar">Common Nodes</div>
+                        <div class="vmatrix-category-content" id="vmatrix-common-container"></div>
+                    </div>
+
+                    <!-- Total Required -->
+                    <div class="vmatrix-total">
+                        <span>Total required</span>
+                        <span class="value" id="vmatrix-total-display">0</span>
+                    </div>
+
+                    <div class="vmatrix-footer">
+                        <button class="vmatrix-reset-btn" id="vmatrixResetBtn">🔄 Reset All</button>
+                    </div>
+
+                    <div class="vmatrix-footnote">Class/Common: Lv1=7, 2-10=4, 11-20=6, 21-30=9 · Boost: 1-40=1, 41-60=2</div>
+                </div>
+            `;
+
+            // Build core squares
+            const classContainer = document.getElementById('vmatrix-class-container');
+            const enhanceContainer = document.getElementById('vmatrix-enhance-container');
+            const commonContainer = document.getElementById('vmatrix-common-container');
+            
+            // Clear and rebuild with saved state
+            classContainer.innerHTML = '';
+            enhanceContainer.innerHTML = '';
+            commonContainer.innerHTML = '';
+
+            // Helper to build with existing state
+            function buildCores(cores, container, color, costType) {
+                cores.forEach(core => {
+                    const div = document.createElement('div');
+                    div.className = 'vmatrix-core';
+                    div.style.background = color;
+                    div.dataset.coreId = core.id;
+                    div.dataset.maxLv = core.maxLv;
+                    div.dataset.costType = costType;
+                    div.dataset.baseLevel = core.baseLevel || 0;
+
+                    const iconSpan = document.createElement('span');
+                    iconSpan.className = 'icon';
+                    const img = document.createElement('img');
+                    img.src = `Icons/V Matrix/${core.id}.png`;
+                    img.alt = core.label;
+                    iconSpan.appendChild(img);
+
+                    const labelSpan = document.createElement('span');
+                    labelSpan.className = 'label';
+                    labelSpan.textContent = core.label;
+
+                    const levelSpan = document.createElement('span');
+                    levelSpan.className = 'level';
+                    const startLevel = vCoreState[core.id] !== undefined ? vCoreState[core.id] : (core.baseLevel || 0);
+                    levelSpan.textContent = `${startLevel}/${core.maxLv}`;
+
+                    div.appendChild(iconSpan);
+                    div.appendChild(labelSpan);
+                    div.appendChild(levelSpan);
+                    container.appendChild(div);
+
+                    // Click handler
+                    div.addEventListener('click', function(e) {
+                        const id = this.dataset.coreId;
+                        const current = vCoreState[id] || 0;
+                        const max = parseInt(this.dataset.maxLv, 10) || 30;
+                        const label = this.querySelector('.label')?.textContent || 'Core';
+                        openVMatrixModal(this, 'core', max, label, current);
+                    });
+                });
+            }
+
+            buildCores(VCLASS_CORES, classContainer, '#3490ba', 'classCommon');
+            buildCores(VENHANCE_CORES, enhanceContainer, '#415e80', 'enhancement');
+            buildCores(VCOMMON_CORES, commonContainer, '#626b9d', 'classCommon');
+
+            // Node click handlers
+            document.querySelectorAll('.vmatrix-node').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    const key = this.dataset.node;
+                    const current = vNodeState[key] || 0;
+                    const max = parseInt(this.dataset.max, 10) || 9999;
+                    const label = this.querySelector('.label')?.textContent || 'Nodestone';
+                    openVMatrixModal(this, 'node', max, label, current);
+                });
+            });
+
+            // Reset button
+            document.getElementById('vmatrixResetBtn').addEventListener('click', vResetAll);
+
+            // Update displays
+            vUpdateAll();
+        }
+
+        // V Matrix Modal
+        let vActiveTarget = null;
+        let vActiveType = 'node';
+        let vActiveMax = 30;
+
+        function openVMatrixModal(target, type, max, label, currentVal) {
+            vActiveTarget = target;
+            vActiveType = type;
+            vActiveMax = max;
+            document.getElementById('vmatrixModalTitle').textContent = label;
+            document.getElementById('vmatrixModalLabel').textContent = `Value (0 – ${max})`;
+            const input = document.getElementById('vmatrixModalInput');
+            input.value = Math.min(currentVal, max);
+            input.max = max;
+            input.min = 0;
+            document.getElementById('vmatrix-modal').classList.add('active');
+            input.focus();
+            input.select();
+        }
+
+        function closeVMatrixModal() {
+            document.getElementById('vmatrix-modal').classList.remove('active');
+            vActiveTarget = null;
+        }
+
+        function applyVMatrixModalValue(val) {
+            if (vActiveTarget === null) return;
+            const clamped = Math.min(Math.max(val, 0), vActiveMax);
+            if (vActiveType === 'node') {
+                const key = vActiveTarget.dataset.node;
+                vNodeState[key] = clamped;
+                document.getElementById(`vnodeDisplay-${key}`).textContent = clamped;
+            } else if (vActiveType === 'core') {
+                const id = vActiveTarget.dataset.coreId;
+                vCoreState[id] = clamped;
+                const levelSpan = vActiveTarget.querySelector('.level');
+                const maxLv = parseInt(vActiveTarget.dataset.maxLv, 10);
+                levelSpan.textContent = `${clamped}/${maxLv}`;
+            }
+            vUpdateAll();
+            vSaveState();
+            closeVMatrixModal();
+        }
+
+        // V Matrix Modal event listeners
+        document.getElementById('vmatrixModalConfirm').addEventListener('click', function() {
+            const val = parseInt(document.getElementById('vmatrixModalInput').value, 10);
+            if (!isNaN(val)) applyVMatrixModalValue(val);
+        });
+
+        document.getElementById('vmatrixModalCancel').addEventListener('click', closeVMatrixModal);
+
+        document.getElementById('vmatrixModalMax').addEventListener('click', function() {
+            if (vActiveTarget) {
+                applyVMatrixModalValue(vActiveMax);
+            }
+        });
+
+        document.getElementById('vmatrixModalInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const val = parseInt(this.value, 10);
+                if (!isNaN(val)) applyVMatrixModalValue(val);
+            } else if (e.key === 'Escape') {
+                closeVMatrixModal();
+            }
+        });
+
+        document.getElementById('vmatrix-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeVMatrixModal();
+        });
+
+        // V Matrix calculations
+        function vComputeVPoints() {
+            return (vNodeState.nodestone * 1) + (vNodeState.expstone * 2) +
+                   (vNodeState.willstone * 5) + (vNodeState.serenstone * 15);
+        }
+
+        function vComputeTotalRequired() {
+            let total = 0;
+            document.querySelectorAll('.vmatrix-core').forEach(el => {
+                const id = el.dataset.coreId;
+                const val = vCoreState[id] || 0;
+                const costType = el.dataset.costType || 'classCommon';
+                if (costType === 'enhancement') {
+                    total += vCostEnhancement(val);
+                } else {
+                    total += vCostClassCommon(val);
+                }
+            });
+            return total;
+        }
+
+        function vUpdateAll() {
+            const vpoints = vComputeVPoints();
+            document.getElementById('vmatrix-vpoints-display').textContent = vpoints;
+
+            const required = vComputeTotalRequired();
+            const totalEl = document.getElementById('vmatrix-total-display');
+            totalEl.textContent = required;
+            totalEl.style.color = (required > vpoints) ? '#f6b0a0' : '#fadfbc';
+        }
+
+        function vResetAll() {
+            if (!confirm('Reset all V Matrix values?')) return;
+            
+            for (const key in vNodeState) {
+                vNodeState[key] = 0;
+                const display = document.getElementById(`vnodeDisplay-${key}`);
+                if (display) display.textContent = '0';
+            }
+
+            document.querySelectorAll('.vmatrix-core').forEach(el => {
+                const id = el.dataset.coreId;
+                const baseLevel = parseInt(el.dataset.baseLevel, 10) || 0;
+                vCoreState[id] = baseLevel;
+                const levelSpan = el.querySelector('.level');
+                const maxLv = parseInt(el.dataset.maxLv, 10);
+                levelSpan.textContent = `${baseLevel}/${maxLv}`;
+            });
+
+            vUpdateAll();
+            vSaveState();
+        }
+
+        function vSaveState() {
+            localStorage.setItem(VMATRIX_STORAGE_KEY, JSON.stringify({
+                nodes: vNodeState,
+                cores: vCoreState
+            }));
+        }
+
+        // ============================================================
+        // RENDER ALL (modified)
         // ============================================================
         function renderAll() {
             if (currentView === 'boss') renderBossCharacters();
             else if (currentView === 'drop') renderDropCharacters();
             else if (currentView === 'daily') renderDailyCharacters();
+            else if (currentView === 'vmatrix') renderVMatrix();
         }
 
         // ============================================================
-        // EVENT LISTENERS
+        // EVENT LISTENERS (existing)
         // ============================================================
         document.getElementById('global-menu-panel').addEventListener('click', function(e) { e.stopPropagation(); });
 
@@ -2981,6 +3863,7 @@
                 closeFullViewModal();
                 closeDailyModal();
                 closeInventoryModal();
+                closeVMatrixModal();
             }
         });
 
