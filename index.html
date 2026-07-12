@@ -244,6 +244,7 @@
         .boss-list-container { max-height: 220px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
         .drop-list-container { max-height: 305px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
         .daily-list-container { max-height: 305px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
+        .lib-list-container { max-height: 280px; overflow-y: auto; margin-bottom: 10px; padding-right: 5px; }
         
         .boss-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #43748c; }
         .boss-row-left { display: flex; align-items: center; gap: 10px; }
@@ -301,6 +302,68 @@
             height: 20px;
             object-fit: contain;
             background: transparent;
+            flex-shrink: 0;
+        }
+
+        /* Liberation Styles */
+        .lib-quest-select {
+            width: 100%;
+            background: #222;
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 2px;
+        }
+        .lib-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #1f2d38;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 3px 0;
+        }
+        .lib-progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+        .lib-progress-fill.liberation {
+            background: linear-gradient(90deg, var(--vmatrix-gold), #ff6b6b);
+        }
+        .lib-progress-fill.quest {
+            background: linear-gradient(90deg, var(--light-blue), #2ecc71);
+        }
+        .lib-traces-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 0;
+            font-size: 0.8rem;
+            border-bottom: 1px solid rgba(67,116,140,0.1);
+        }
+        .lib-traces-row .boss-name {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .lib-traces-row .traces-amount {
+            color: var(--vmatrix-gold);
+            font-weight: 500;
+        }
+        .lib-traces-row.cleared {
+            opacity: 0.5;
+        }
+        .lib-traces-row.cleared .traces-amount {
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+        .lib-cleared-check {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            accent-color: var(--success-color);
             flex-shrink: 0;
         }
 
@@ -623,9 +686,7 @@
             font-size: 1rem;
         }
 
-        /* ==========================================================
-           V MATRIX CALCULATOR STYLES (adapted to main UI)
-           ========================================================== */
+        /* V Matrix Styles */
         .vmatrix-container {
             padding: 10px 0;
             max-width: 700px;
@@ -660,7 +721,6 @@
             padding-bottom: 0.6rem;
         }
 
-        /* Nodestone grid */
         .vmatrix-node-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -714,7 +774,6 @@
             color: var(--vmatrix-gold);
         }
 
-        /* V Points total */
         .vmatrix-vpoints {
             background: #1f2d38;
             border-radius: 40px;
@@ -736,7 +795,6 @@
             color: var(--vmatrix-gold);
         }
 
-        /* Category boxes */
         .vmatrix-category {
             background: #1f2d38;
             border-radius: 14px;
@@ -761,7 +819,6 @@
             align-items: center;
         }
 
-        /* Core squares */
         .vmatrix-core {
             width: 58px;
             height: 66px;
@@ -813,7 +870,6 @@
             color: var(--vmatrix-gold);
         }
 
-        /* Total required */
         .vmatrix-total {
             background: #1f2d38;
             border-radius: 40px;
@@ -867,7 +923,6 @@
             color: var(--text-muted);
         }
 
-        /* V Matrix Modal */
         .vmatrix-modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -971,6 +1026,17 @@
             background: #3a6a5a;
         }
 
+        /* Liberation Quest Select */
+        .lib-quest-select {
+            width: 100%;
+            background: #222;
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 8px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
         @media (max-width: 480px) {
             .vmatrix-card { padding: 1rem; }
             .vmatrix-node-grid { gap: 0.4rem; }
@@ -1009,6 +1075,7 @@
             <button class="menu-panel-item" id="menu-item-drop" onclick="switchView('drop')">Drop Tracker</button>
             <button class="menu-panel-item" id="menu-item-daily" onclick="switchView('daily')">Daily & Weekly</button>
             <button class="menu-panel-item" id="menu-item-vmatrix" onclick="switchView('vmatrix')">V Matrix Calc</button>
+            <button class="menu-panel-item" id="menu-item-lib" onclick="switchView('lib')">Lib Tracker</button>
         </div>
     </header>
 
@@ -1040,9 +1107,15 @@
 
             <!-- V Matrix Calculator -->
             <div id="view-vmatrix" class="app-view">
-                <div class="vmatrix-container" id="vmatrix-app">
-                    <!-- El contenido se genera con JavaScript -->
+                <div class="vmatrix-container" id="vmatrix-app"></div>
+            </div>
+
+            <!-- Liberation Tracker -->
+            <div id="view-lib" class="app-view">
+                <div class="top-actions">
+                    <button onclick="openLibModal()">+ Add Character</button>
                 </div>
+                <div class="characters-grid" id="lib-characters-grid"></div>
             </div>
         </div>
     </div>
@@ -1176,7 +1249,6 @@
                         <img id="daily-modal-preview-img" src="" alt="Preview">
                     </div>
                     
-                    <!-- Import from Boss Tracker -->
                     <div id="daily-import-section"></div>
                     
                     <h3 style="margin-top:10px;">Selected Activities</h3>
@@ -1186,6 +1258,75 @@
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="closeDailyModal()">Cancel</button>
                 <button onclick="saveDailyActivities()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liberation Modal -->
+    <div class="modal-overlay" id="lib-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="lib-modal-title">Add Liberation Character</h2>
+                <button class="btn-delete" style="padding: 5px 10px; font-size: 0.8rem;" onclick="closeLibModal()">X</button>
+            </div>
+            <div class="modal-body" style="grid-template-columns: 1fr 360px;">
+                <div class="modal-main-section">
+                    <div class="modal-selection-scroll-area" id="modal-lib-bosses-container"></div>
+                </div>
+                <div class="modal-side-section">
+                    <h3 id="lib-modal-char-name">Character Data</h3>
+                    <div class="modal-form-group">
+                        <label>Name</label>
+                        <input type="text" id="lib-modal-name" placeholder="e.g., Balthir">
+                    </div>
+                    <div class="modal-grid-row">
+                        <div class="modal-form-group">
+                            <label>Level</label>
+                            <input type="number" id="lib-modal-level" value="220" min="1" max="300">
+                        </div>
+                        <div class="modal-form-group">
+                            <label>Class</label>
+                            <div class="custom-dropdown" id="lib-class-dropdown-wrapper">
+                                <div class="custom-dropdown-selected" id="lib-dropdown-selected-trigger" onclick="toggleLibDropdownOptions()">
+                                    <span>Select Class</span>
+                                </div>
+                                <div class="custom-dropdown-options" id="lib-dropdown-options-box"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="image-upload-box" onclick="document.getElementById('lib-modal-image-file').click()">
+                        <span id="lib-upload-text" style="font-size:0.85rem; color:var(--text-muted);">📁 Click to upload custom img.</span>
+                        <input type="file" id="lib-modal-image-file" accept="image/*" style="display:none;" onchange="handleLibImageUpload(this)">
+                        <img id="lib-modal-preview-img" src="" alt="Preview">
+                    </div>
+                    
+                    <div id="lib-import-section"></div>
+                    
+                    <div class="modal-form-group" style="margin-top:8px;">
+                        <label>Current Traces of Darkness</label>
+                        <input type="number" id="lib-current-traces" value="0" min="0" max="9999">
+                    </div>
+                    <div class="modal-form-group">
+                        <label>Current Quest</label>
+                        <select id="lib-current-quest" class="lib-quest-select">
+                            <option value="Von Leon">Von Leon (500)</option>
+                            <option value="Arkarium">Arkarium (500)</option>
+                            <option value="Magnus">Magnus (500)</option>
+                            <option value="Lotus">Lotus (1000)</option>
+                            <option value="Damien">Damien (1000)</option>
+                            <option value="Will">Will (1000)</option>
+                            <option value="Lucid">Lucid (1000)</option>
+                            <option value="Verus Hilla">Verus Hilla (1000)</option>
+                        </select>
+                    </div>
+                    
+                    <h3 style="margin-top:10px;">Selected Bosses</h3>
+                    <div id="side-selected-lib-bosses"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeLibModal()">Cancel</button>
+                <button onclick="saveLibCharacter()">Save</button>
             </div>
         </div>
     </div>
@@ -1281,7 +1422,7 @@
 
     <script>
         // ============================================================
-        // DATA DEFINITIONS (existing from original code)
+        // DATA DEFINITIONS
         // ============================================================
         const PIECES_ICON_MAP = {
             "Eternal Hat": "eternal hat.png",
@@ -1299,7 +1440,7 @@
             "Arcane Umbra Shoulder": "arcane shoulder.png"
         };
 
-        // DAILY & WEEKLY ACTIVITIES - WITH SUB-CATEGORIES
+        // DAILY & WEEKLY ACTIVITIES
         const DAILY_ACTIVITIES = {
             "Grandis Symbols": ["Cernium", "Hotel Arcus", "Odium", "Shangri-la", "Arteria", "Carcion", "Tallahart", "Geardrak"],
             "Arcane Symbol Quests": ["Vanishing Journey", "Chu Chu Island", "Lachelein", "Morass", "Esfera"],
@@ -1317,6 +1458,47 @@
         const ALL_DAILY_NAMES = Object.values(DAILY_ACTIVITIES).flat();
         const ALL_WEEKLY_NAMES = Object.values(WEEKLY_ACTIVITIES).flat();
 
+        // LIBERATION DATA
+        const LIB_QUEST_ORDER = [
+            { name: "Von Leon", traces: 500 },
+            { name: "Arkarium", traces: 500 },
+            { name: "Magnus", traces: 500 },
+            { name: "Lotus", traces: 1000 },
+            { name: "Damien", traces: 1000 },
+            { name: "Will", traces: 1000 },
+            { name: "Lucid", traces: 1000 },
+            { name: "Verus Hilla", traces: 1000 }
+        ];
+        const TOTAL_TRACES_NEEDED = 6500;
+
+        const LIB_BOSSES = {
+            "Black Mage": { baseTraces: 600, weekly: false },
+            "Hard Verus Hilla": { baseTraces: 90, weekly: true },
+            "Normal Verus Hilla": { baseTraces: 45, weekly: true },
+            "Hard Darknell": { baseTraces: 75, weekly: true },
+            "Normal Darknell": { baseTraces: 25, weekly: true },
+            "Chaos Gloom": { baseTraces: 65, weekly: true },
+            "Normal Gloom": { baseTraces: 20, weekly: true },
+            "Hard Will": { baseTraces: 75, weekly: true },
+            "Normal Will": { baseTraces: 25, weekly: true },
+            "Easy Will": { baseTraces: 15, weekly: true },
+            "Hard Lucid": { baseTraces: 65, weekly: true },
+            "Normal Lucid": { baseTraces: 20, weekly: true },
+            "Easy Lucid": { baseTraces: 15, weekly: true },
+            "Hard Damien": { baseTraces: 50, weekly: true },
+            "Normal Damien": { baseTraces: 10, weekly: true },
+            "Hard Lotus": { baseTraces: 50, weekly: true },
+            "Normal Lotus": { baseTraces: 10, weekly: true }
+        };
+
+        const LIB_BOSS_CATEGORIES = [
+            { name: "Black Mage", baseBosses: ["Black Mage"] },
+            { name: "Tenebris (Hard)", baseBosses: ["Hard Verus Hilla", "Hard Darknell", "Chaos Gloom", "Hard Will", "Hard Lucid"] },
+            { name: "Tenebris (Normal/Easy)", baseBosses: ["Normal Verus Hilla", "Normal Darknell", "Normal Gloom", "Normal Will", "Easy Will", "Normal Lucid", "Easy Lucid"] },
+            { name: "Lotus & Damien", baseBosses: ["Hard Damien", "Normal Damien", "Hard Lotus", "Normal Lotus"] }
+        ];
+
+        // BOSS DATA (existing)
         const KRONOS_BOSS_DATA = {
             "Hard Jupiter": 5925000000, "Normal Jupiter": 2970000000, "Extreme Kaling": 6026000000, "Extreme First Adversary": 5880000000,
             "Extreme Kalos": 5200000000, "Extreme Seren": 4235000000, "Hard Baldrix": 4200000000, "Hard Limbo": 3745000000,
@@ -1354,7 +1536,7 @@
         };
 
         const BOSS_ICON_MAP = {
-            "Kaling": "kaling.png", "Baldrix": "baldrix.png", "First Adversary": "adversary.png", "Malefic Star": "malefic.png", "Jupiter": "jupiter.png",
+            "Kaling": "kaling.png", "Baldrix": "baldrix.png", "First Adversary": "adversary.png", "Malefic Star": "malefic.png", "Jupiter": "jupiter.png", "Black Mage": "bm.png",
             "Kalos": "kalos.png", "Seren": "seren.png", "Darknell": "darknell.png", "Will": "will.png", "Lucid": "lucid.png", "Limbo": "limbo.png",
             "Extreme Lotus": "xlotus.png", "Lotus": "lotus.png", "Slime": "slime.png", "Verus Hilla": "vhilla.png", "Gloom": "gloom.png",
             "Damien": "damien.png", "Cygnus": "cygnus.png", "Akechi": "akechi.png", "Chaos Papulatus": "papulatus.png", "Chaos Vellum": "vellum.png",
@@ -1477,14 +1659,15 @@
         };
 
         // ============================================================
-        // STORAGE (existing)
+        // STORAGE
         // ============================================================
         let bossCharacters = JSON.parse(localStorage.getItem('maple_boss_chars_v4')) || [];
         let dropCharacters = JSON.parse(localStorage.getItem('maple_drop_chars_v4')) || [];
         let dailyCharacters = JSON.parse(localStorage.getItem('maple_daily_chars_v2')) || [];
+        let libCharacters = JSON.parse(localStorage.getItem('maple_lib_chars_v1')) || [];
         
         // ============================================================
-        // STATE (existing)
+        // STATE
         // ============================================================
         let currentView = 'boss';
         let modalMode = 'boss'; 
@@ -1509,8 +1692,18 @@
         let dailyTempImage = '';
         let dailyClassValue = MAPLE_CLASSES[0];
 
+        // Liberation Modal State
+        let libModalMode = 'add';
+        let libEditingIndex = null;
+        let tempLibBosses = [];
+        let libTempName = '';
+        let libTempLevel = 220;
+        let libTempClass = MAPLE_CLASSES[0];
+        let libTempImage = '';
+        let libClassValue = MAPLE_CLASSES[0];
+
         // ============================================================
-        // UTILITY FUNCTIONS (existing)
+        // UTILITY FUNCTIONS
         // ============================================================
         function getBossIcon(fullBossName) {
             for (let key in BOSS_ICON_MAP) { if (fullBossName.includes(key)) return `Icons/${BOSS_ICON_MAP[key]}`; }
@@ -1580,8 +1773,27 @@
             return `Icons/activities/${fallback}`;
         }
 
+        function getQuestIndex(questName) {
+            return LIB_QUEST_ORDER.findIndex(q => q.name === questName);
+        }
+
+        function getTracesForQuest(questName) {
+            const quest = LIB_QUEST_ORDER.find(q => q.name === questName);
+            return quest ? quest.traces : 500;
+        }
+
+        function getAccumulatedTracesForQuest(questName) {
+            const index = getQuestIndex(questName);
+            if (index === -1) return 0;
+            let total = 0;
+            for (let i = 0; i < index; i++) {
+                total += LIB_QUEST_ORDER[i].traces;
+            }
+            return total;
+        }
+
         // ============================================================
-        // MENU (modified to include vmatrix)
+        // MENU
         // ============================================================
         function toggleMenuPanel(event) {
             event.stopPropagation();
@@ -1597,6 +1809,7 @@
             document.getElementById('view-drop-tracker').classList.remove('active');
             document.getElementById('view-daily-tracker').classList.remove('active');
             document.getElementById('view-vmatrix').classList.remove('active');
+            document.getElementById('view-lib').classList.remove('active');
 
             if (view === 'boss') {
                 document.getElementById('menu-item-boss').classList.add('active');
@@ -1622,11 +1835,17 @@
                 document.getElementById('view-title').innerText = "V Matrix Calculator";
                 document.getElementById('global-boss-summary-box').style.display = 'none';
                 renderVMatrix();
+            } else if (view === 'lib') {
+                document.getElementById('menu-item-lib').classList.add('active');
+                document.getElementById('view-lib').classList.add('active');
+                document.getElementById('view-title').innerText = "Liberation Tracker";
+                document.getElementById('global-boss-summary-box').style.display = 'none';
+                renderLibCharacters();
             }
         }
 
         // ============================================================
-        // SAVE FUNCTIONS (existing)
+        // SAVE FUNCTIONS
         // ============================================================
         function saveBossToStorage() {
             localStorage.setItem('maple_boss_chars_v4', JSON.stringify(bossCharacters));
@@ -1643,8 +1862,13 @@
             renderDailyCharacters();
         }
 
+        function saveLibToStorage() {
+            localStorage.setItem('maple_lib_chars_v1', JSON.stringify(libCharacters));
+            renderLibCharacters();
+        }
+
         // ============================================================
-        // DRAG & DROP (existing)
+        // DRAG & DROP
         // ============================================================
         function enableDragAndDrop(gridId) {
             const grid = document.getElementById(gridId);
@@ -1715,6 +1939,8 @@
                     dataArray = dropCharacters;
                 } else if (gridId === 'daily-characters-grid') {
                     dataArray = dailyCharacters;
+                } else if (gridId === 'lib-characters-grid') {
+                    dataArray = libCharacters;
                 } else {
                     return;
                 }
@@ -1725,13 +1951,14 @@
                 if (gridId === 'boss-characters-grid') saveBossToStorage();
                 else if (gridId === 'drop-characters-grid') saveDropToStorage();
                 else if (gridId === 'daily-characters-grid') saveDailyToStorage();
+                else if (gridId === 'lib-characters-grid') saveLibToStorage();
                 
                 dragItem = null;
             });
         }
 
         // ============================================================
-        // CLASS DROPDOWN (Main Modal - existing)
+        // CLASS DROPDOWN (Main Modal)
         // ============================================================
         function initCustomClassDropdown() {
             const optionsBox = document.getElementById('dropdown-options-box');
@@ -1764,7 +1991,7 @@
         }
 
         // ============================================================
-        // CLASS DROPDOWN (Daily Modal - existing)
+        // CLASS DROPDOWN (Daily Modal)
         // ============================================================
         function initDailyClassDropdown() {
             const optionsBox = document.getElementById('daily-dropdown-options-box');
@@ -1797,7 +2024,40 @@
         }
 
         // ============================================================
-        // CHARACTER MODAL (Boss & Drop - existing)
+        // CLASS DROPDOWN (Liberation Modal)
+        // ============================================================
+        function initLibClassDropdown() {
+            const optionsBox = document.getElementById('lib-dropdown-options-box');
+            optionsBox.innerHTML = '';
+            MAPLE_CLASSES.forEach(cls => {
+                const item = document.createElement('div');
+                item.className = 'custom-dropdown-item';
+                const lowCaseCls = cls.toLowerCase();
+                item.innerHTML = `
+                    <img class="dropdown-class-icon" src="Icons/classes/${lowCaseCls}.png" onerror="this.src='Icons/default.png'">
+                    <span>${cls}</span>
+                `;
+                item.onclick = (e) => { e.stopPropagation(); selectLibDropdownClass(cls); };
+                optionsBox.appendChild(item);
+            });
+        }
+
+        function toggleLibDropdownOptions() { document.getElementById('lib-dropdown-options-box').classList.toggle('open'); }
+        
+        function selectLibDropdownClass(cls) {
+            libClassValue = cls;
+            const trigger = document.getElementById('lib-dropdown-selected-trigger');
+            const lowCaseCls = cls.toLowerCase();
+            trigger.innerHTML = `
+                <img class="dropdown-class-icon" src="Icons/classes/${lowCaseCls}.png" onerror="this.src='Icons/default.png'">
+                <span>${cls}</span>
+            `;
+            document.getElementById('lib-dropdown-options-box').classList.remove('open');
+            if (!libTempImage) updateLibImagePreview();
+        }
+
+        // ============================================================
+        // CHARACTER MODAL (Boss & Drop)
         // ============================================================
         function openCharacterModal(mode, index = null) {
             modalMode = mode;
@@ -2020,11 +2280,18 @@
                     dailyCharacters.splice(index, 1);
                     saveDailyToStorage();
                 }
+            } else if (mode === 'lib') {
+                charName = libCharacters[index].name;
+                confirmMsg = `Are you sure you want to delete ${charName} from Liberation Tracker?`;
+                if (confirm(confirmMsg)) {
+                    libCharacters.splice(index, 1);
+                    saveLibToStorage();
+                }
             }
         }
 
         // ============================================================
-        // BOSS RENDER & MODAL (existing)
+        // BOSS RENDER & MODAL
         // ============================================================
         function renderBossCharacters() {
             const bossGrid = document.getElementById('boss-characters-grid');
@@ -2202,7 +2469,7 @@
         }
 
         // ============================================================
-        // DROP RENDER & LOGS (existing - simplified for space)
+        // DROP RENDER & LOGS
         // ============================================================
         function renderDropCharacters() {
             const dropGrid = document.getElementById('drop-characters-grid');
@@ -2361,7 +2628,7 @@
             return tr;
         }
 
-        // --- DROP LOGS (existing) ---
+        // --- DROP LOGS ---
         function openDropModal(index) {
             currentDropCharIndex = index;
             const char = dropCharacters[index];
@@ -2605,7 +2872,7 @@
         }
 
         // ============================================================
-        // FULL VIEW (existing)
+        // FULL VIEW
         // ============================================================
         function openFullViewModal(index) {
             currentFullViewCharIndex = index;
@@ -2693,7 +2960,7 @@
         }
 
         // ============================================================
-        // DAILY MODAL (existing)
+        // DAILY MODAL
         // ============================================================
         function openDailyModal(index = null) {
             dailyModalMode = index !== null ? 'edit' : 'add';
@@ -2973,7 +3240,7 @@
         }
 
         // ============================================================
-        // DAILY RENDER (existing)
+        // DAILY RENDER
         // ============================================================
         function renderDailyCharacters() {
             const grid = document.getElementById('daily-characters-grid');
@@ -2984,7 +3251,6 @@
                 const lowCaseCls = clsSafe.toLowerCase();
                 const activities = char.activities || { dailies: [], weeklies: [] };
                 
-                // Count total and completed
                 let total = 0;
                 let completed = 0;
                 
@@ -3028,7 +3294,7 @@
                             </span>
                             <div style="display:flex; gap:8px;">
                                 <button class="btn-success" style="padding: 4px 10px; font-size: 0.8rem;" onclick="markAllDailyComplete(${index})">Check All</button>
-                                <button class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="resetDailyActivities(${index})"> Reset</button>
+                                <button class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="resetDailyActivities(${index})">Reset</button>
                             </div>
                         </div>
                     </div>
@@ -3148,7 +3414,7 @@
         }
 
         // ============================================================
-        // INVENTORY MANAGER (for Drop Characters - existing)
+        // INVENTORY MANAGER
         // ============================================================
         function openDropInventoryModal(index) {
             currentInventoryCharIndex = index;
@@ -3163,7 +3429,6 @@
             document.getElementById('inv-item-name').value = '';
             document.getElementById('inv-item-qty').value = 1;
             
-            // Set up suggestions dropdown with keyboard navigation
             setupInventorySuggestions();
             
             renderDropInventoryGrid();
@@ -3179,7 +3444,6 @@
             const input = document.getElementById('inv-item-name');
             const dropdown = document.getElementById('inv-suggestions-dropdown');
             
-            // Clonar para eliminar event listeners viejos
             const newInput = input.cloneNode(true);
             input.parentNode.replaceChild(newInput, input);
             
@@ -3470,7 +3734,6 @@
         // ============================================================
         const VMATRIX_STORAGE_KEY = 'maple_vmatrix_state';
 
-        // Core definitions
         const VCLASS_CORES = [
             { id: 'class1', label: ' ', maxLv: 30, baseLevel: 1 },
             { id: 'class2', label: ' ', maxLv: 30, baseLevel: 1 },
@@ -3494,11 +3757,9 @@
             baseLevel: 0
         }));
 
-        // V Matrix State
         let vNodeState = { nodestone: 0, expstone: 0, willstone: 0, serenstone: 0 };
         let vCoreState = {};
 
-        // Cost functions
         function vCostClassCommon(level) {
             if (level <= 1) return 0;
             let total = 0;
@@ -3519,46 +3780,9 @@
             return total;
         }
 
-        function vBuildCoreSquares(cores, container, color, costType) {
-            container.innerHTML = '';
-            cores.forEach(core => {
-                const div = document.createElement('div');
-                div.className = 'vmatrix-core';
-                div.style.background = color;
-                div.dataset.coreId = core.id;
-                div.dataset.maxLv = core.maxLv;
-                div.dataset.costType = costType;
-                div.dataset.baseLevel = core.baseLevel || 0;
-
-                const iconSpan = document.createElement('span');
-                iconSpan.className = 'icon';
-                const img = document.createElement('img');
-                img.src = `Icons/V_Matrix/${core.id}.png`;
-                img.alt = core.label;
-                iconSpan.appendChild(img);
-
-                const labelSpan = document.createElement('span');
-                labelSpan.className = 'label';
-                labelSpan.textContent = core.label;
-
-                const levelSpan = document.createElement('span');
-                levelSpan.className = 'level';
-                const startLevel = core.baseLevel || 0;
-                levelSpan.textContent = `${startLevel}/${core.maxLv}`;
-
-                div.appendChild(iconSpan);
-                div.appendChild(labelSpan);
-                div.appendChild(levelSpan);
-                container.appendChild(div);
-
-                vCoreState[core.id] = startLevel;
-            });
-        }
-
         function renderVMatrix() {
             const container = document.getElementById('vmatrix-app');
             
-            // Load saved state
             const saved = localStorage.getItem(VMATRIX_STORAGE_KEY);
             if (saved) {
                 try {
@@ -3573,7 +3797,6 @@
                     <div class="vmatrix-title">V Matrix Calculator</div>
                     <div class="vmatrix-sub">tap a square to set level / amount</div>
 
-                    <!-- Nodestones -->
                     <div class="vmatrix-node-grid" id="vmatrix-node-grid">
                         <div class="vmatrix-node" data-node="nodestone" data-max="9999">
                             <span class="icon"><img src="Icons/V_Matrix/nodestone.png" alt="Nodestone"></span>
@@ -3597,34 +3820,29 @@
                         </div>
                     </div>
 
-                    <!-- V Points -->
                     <div class="vmatrix-vpoints">
-                    <span style="display:flex; align-items:center; gap:8px;">
-                        <img src="Icons/V_Matrix/v points.png" alt="V Points" style="width:24px; height:24px; object-fit:contain; background:transparent;" onerror="this.style.display='none'">
-                        V Points
-                    </span>
-                    <span class="value" id="vmatrix-vpoints-display">0</span>
-                </div>
+                        <span style="display:flex; align-items:center; gap:8px;">
+                            <img src="Icons/V_Matrix/v points.png" alt="V Points" style="width:24px; height:24px; object-fit:contain; background:transparent;" onerror="this.style.display='none'">
+                            V Points
+                        </span>
+                        <span class="value" id="vmatrix-vpoints-display">0</span>
+                    </div>
 
-                    <!-- Job Nodes -->
                     <div class="vmatrix-category">
                         <div class="vmatrix-category-bar">Job Nodes</div>
                         <div class="vmatrix-category-content" id="vmatrix-class-container"></div>
                     </div>
 
-                    <!-- Boost Nodes -->
                     <div class="vmatrix-category">
                         <div class="vmatrix-category-bar">Boost Nodes</div>
                         <div class="vmatrix-category-content" id="vmatrix-enhance-container"></div>
                     </div>
 
-                    <!-- Common Nodes -->
                     <div class="vmatrix-category">
                         <div class="vmatrix-category-bar">Common Nodes</div>
                         <div class="vmatrix-category-content" id="vmatrix-common-container"></div>
                     </div>
 
-                    <!-- Total Required -->
                     <div class="vmatrix-total">
                         <span>Total required</span>
                         <span class="value" id="vmatrix-total-display">0</span>
@@ -3638,17 +3856,14 @@
                 </div>
             `;
 
-            // Build core squares
             const classContainer = document.getElementById('vmatrix-class-container');
             const enhanceContainer = document.getElementById('vmatrix-enhance-container');
             const commonContainer = document.getElementById('vmatrix-common-container');
             
-            // Clear and rebuild with saved state
             classContainer.innerHTML = '';
             enhanceContainer.innerHTML = '';
             commonContainer.innerHTML = '';
 
-            // Helper to build with existing state
             function buildCores(cores, container, color, costType) {
                 cores.forEach(core => {
                     const div = document.createElement('div');
@@ -3680,7 +3895,6 @@
                     div.appendChild(levelSpan);
                     container.appendChild(div);
 
-                    // Click handler
                     div.addEventListener('click', function(e) {
                         const id = this.dataset.coreId;
                         const current = vCoreState[id] || 0;
@@ -3695,7 +3909,6 @@
             buildCores(VENHANCE_CORES, enhanceContainer, '#415e80', 'enhancement');
             buildCores(VCOMMON_CORES, commonContainer, '#626b9d', 'classCommon');
 
-            // Node click handlers
             document.querySelectorAll('.vmatrix-node').forEach(el => {
                 el.addEventListener('click', function(e) {
                     const key = this.dataset.node;
@@ -3706,10 +3919,7 @@
                 });
             });
 
-            // Reset button
             document.getElementById('vmatrixResetBtn').addEventListener('click', vResetAll);
-
-            // Update displays
             vUpdateAll();
         }
 
@@ -3757,7 +3967,6 @@
             closeVMatrixModal();
         }
 
-        // V Matrix Modal event listeners
         document.getElementById('vmatrixModalConfirm').addEventListener('click', function() {
             const val = parseInt(document.getElementById('vmatrixModalInput').value, 10);
             if (!isNaN(val)) applyVMatrixModalValue(val);
@@ -3784,7 +3993,6 @@
             if (e.target === this) closeVMatrixModal();
         });
 
-        // V Matrix calculations
         function vComputeVPoints() {
             return (vNodeState.nodestone * 1) + (vNodeState.expstone * 2) +
                    (vNodeState.willstone * 5) + (vNodeState.serenstone * 15);
@@ -3845,17 +4053,496 @@
         }
 
         // ============================================================
-        // RENDER ALL (modified)
+        // LIBERATION TRACKER
+        // ============================================================
+        function openLibModal(index = null) {
+            libModalMode = index !== null ? 'edit' : 'add';
+            libEditingIndex = index;
+            
+            const modal = document.getElementById('lib-modal');
+            
+            initLibClassDropdown();
+            
+            const nameInput = document.getElementById('lib-modal-name');
+            const levelInput = document.getElementById('lib-modal-level');
+            const titleEl = document.getElementById('lib-modal-title');
+            const charNameSpan = document.getElementById('lib-modal-char-name');
+            
+            tempLibBosses = [];
+            
+            if (index !== null) {
+                const char = libCharacters[index];
+                charNameSpan.innerText = char.name;
+                nameInput.value = char.name;
+                levelInput.value = char.level;
+                selectLibDropdownClass(char.class || MAPLE_CLASSES[0]);
+                libTempImage = char.image || '';
+                tempLibBosses = JSON.parse(JSON.stringify(char.bosses || []));
+                document.getElementById('lib-current-traces').value = char.currentTraces || 0;
+                document.getElementById('lib-current-quest').value = char.currentQuest || 'Von Leon';
+                titleEl.innerText = `Edit Liberation Character: ${char.name}`;
+            } else {
+                charNameSpan.innerText = 'New Character';
+                nameInput.value = '';
+                levelInput.value = '220';
+                selectLibDropdownClass(MAPLE_CLASSES[0]);
+                libTempImage = '';
+                document.getElementById('lib-current-traces').value = 0;
+                document.getElementById('lib-current-quest').value = 'Von Leon';
+                titleEl.innerText = 'Add Liberation Character';
+            }
+            
+            updateLibImagePreview();
+            renderLibImportSection();
+            renderLibBossGrid();
+            renderSideSelectedLibBosses();
+            modal.style.display = 'flex';
+        }
+
+        function closeLibModal() {
+            document.getElementById('lib-modal').style.display = 'none';
+        }
+
+        function updateLibImagePreview() {
+            const img = document.getElementById('lib-modal-preview-img');
+            const txt = document.getElementById('lib-upload-text');
+            if (libTempImage) {
+                img.src = libTempImage; 
+                img.style.display = "inline-block"; 
+                txt.style.display = "none";
+            } else {
+                const lowCaseAvatar = libClassValue.toLowerCase();
+                img.src = `Icons/avatars/${lowCaseAvatar}.png`; 
+                img.style.display = "inline-block"; 
+                txt.style.display = "none";
+            }
+        }
+
+        function handleLibImageUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) { 
+                    libTempImage = e.target.result; 
+                    updateLibImagePreview(); 
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderLibImportSection() {
+            const container = document.getElementById('lib-import-section');
+            if (bossCharacters.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let optionsHTML = '<option value="" selected>-- Import from Boss Tracker --</option>';
+            bossCharacters.forEach((bc, idx) => {
+                const alreadyExists = libCharacters.some(lc => lc.name.toLowerCase() === bc.name.toLowerCase());
+                if (!alreadyExists) {
+                    optionsHTML += `<option value="${idx}">${bc.name} (${bc.class})</option>`;
+                }
+            });
+
+            container.innerHTML = `
+                <div class="routing-box">
+                    <label style="font-size:0.85rem; color:var(--text-muted);">Import character data:</label>
+                    <select id="lib-import-dropdown" onchange="handleLibImportSelection(this.value)" style="background:#222; color:white; border:1px solid var(--border-color); padding:8px; border-radius:4px; width:100%; margin-top:5px;">
+                        ${optionsHTML}
+                    </select>
+                </div>
+            `;
+        }
+
+        function handleLibImportSelection(bossCharIdx) {
+            if (bossCharIdx === "") {
+                document.getElementById('lib-modal-name').value = "";
+                document.getElementById('lib-modal-level').value = "220";
+                selectLibDropdownClass(MAPLE_CLASSES[0]);
+                libTempImage = "";
+                updateLibImagePreview();
+                return;
+            }
+            const sourceChar = bossCharacters[parseInt(bossCharIdx)];
+            document.getElementById('lib-modal-name').value = sourceChar.name;
+            document.getElementById('lib-modal-level').value = sourceChar.level;
+            selectLibDropdownClass(sourceChar.class || MAPLE_CLASSES[0]);
+            libTempImage = sourceChar.image || "";
+            updateLibImagePreview();
+        }
+
+        function renderLibBossGrid() {
+            const container = document.getElementById('modal-lib-bosses-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            LIB_BOSS_CATEGORIES.forEach(category => {
+                const title = document.createElement('div');
+                title.className = 'category-title';
+                title.innerText = category.name;
+                
+                const hr = document.createElement('hr');
+                hr.className = 'category-separator';
+                
+                const grid = document.createElement('div');
+                grid.className = 'selection-grid';
+
+                let hasBosses = false;
+
+                category.baseBosses.forEach(bossName => {
+                    if (LIB_BOSSES[bossName]) {
+                        hasBosses = true;
+                        const activeBossIndex = tempLibBosses.findIndex(b => b.name === bossName);
+                        const isSelected = activeBossIndex !== -1;
+                        const card = document.createElement('div');
+                        card.className = `select-card ${isSelected ? 'selected' : ''}`;
+                        
+                        let partyControlsHTML = '';
+                        if (isSelected) {
+                            const currentPartySize = tempLibBosses[activeBossIndex].partySize || 1;
+                            partyControlsHTML = `
+                                <select class="party-select" onclick="event.stopPropagation()" onchange="changeLibBossParty('${bossName}', this.value)">
+                                    ${[1,2,3,4,5,6].map(num => `<option value="${num}" ${currentPartySize === num ? 'selected' : ''}>PT:${num}</option>`).join('')}
+                                </select>
+                            `;
+                        }
+                        const traces = LIB_BOSSES[bossName].baseTraces;
+                        card.innerHTML = `
+                            <div class="select-card-left">
+                                <img class="boss-icon" src="${getBossIcon(bossName)}">
+                                <span title="${bossName}">${bossName} (${traces})</span>
+                            </div>
+                            ${partyControlsHTML}
+                        `;
+                        card.onclick = () => {
+                            if (activeBossIndex !== -1) { 
+                                tempLibBosses.splice(activeBossIndex, 1); 
+                            } else {
+                                tempLibBosses.push({ name: bossName, partySize: 1, cleared: false });
+                            }
+                            renderLibBossGrid();
+                            renderSideSelectedLibBosses();
+                        };
+                        grid.appendChild(card);
+                    }
+                });
+
+                if (hasBosses) {
+                    container.appendChild(title);
+                    container.appendChild(hr);
+                    container.appendChild(grid);
+                }
+            });
+        }
+
+        function changeLibBossParty(bossName, size) {
+            const index = tempLibBosses.findIndex(b => b.name === bossName);
+            if (index !== -1) tempLibBosses[index].partySize = parseInt(size);
+        }
+
+        function renderSideSelectedLibBosses() {
+            const container = document.getElementById('side-selected-lib-bosses');
+            container.innerHTML = '';
+            
+            if (tempLibBosses.length === 0) {
+                container.innerHTML = '<span style="color:var(--text-muted); font-style:italic; font-size:0.85rem;">No bosses selected.</span>';
+                return;
+            }
+            
+            tempLibBosses.forEach((boss, index) => {
+                const bossData = LIB_BOSSES[boss.name];
+                const tracesPerPerson = Math.floor(bossData.baseTraces / boss.partySize);
+                const div = document.createElement('div');
+                div.className = 'side-selected-drop-item';
+                div.innerHTML = `
+                    <div class="side-drop-top">
+                        <div class="side-drop-title-left">
+                            <img class="boss-icon" src="${getBossIcon(boss.name)}" onerror="this.src='Icons/default.png'">
+                            <span style="font-weight:bold; color:var(--light-blue);">${boss.name}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:0.7rem; color:var(--text-muted);">PT:${boss.partySize}</span>
+                            <span style="font-size:0.7rem; color:var(--vmatrix-gold);">${tracesPerPerson} traces</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                        <input type="checkbox" class="lib-cleared-check" ${boss.cleared ? 'checked' : ''} 
+                               onchange="toggleLibBossCleared(${index}, this.checked)">
+                        <span style="font-size:0.75rem; color:var(--text-muted);">Cleared this week</span>
+                    </div>
+                `;
+                div.onclick = (e) => {
+                    if (e.target.type !== 'checkbox') {
+                        const idx = tempLibBosses.indexOf(boss);
+                        if (idx !== -1) {
+                            tempLibBosses.splice(idx, 1);
+                            renderLibBossGrid();
+                            renderSideSelectedLibBosses();
+                        }
+                    }
+                };
+                div.title = 'Click to remove boss';
+                container.appendChild(div);
+            });
+        }
+
+        function toggleLibBossCleared(index, checked) {
+            if (tempLibBosses[index]) {
+                tempLibBosses[index].cleared = checked;
+                renderSideSelectedLibBosses();
+            }
+        }
+
+        function saveLibCharacter() {
+            const name = document.getElementById('lib-modal-name').value.trim();
+            const level = parseInt(document.getElementById('lib-modal-level').value) || 220;
+            const currentTraces = parseInt(document.getElementById('lib-current-traces').value) || 0;
+            const currentQuest = document.getElementById('lib-current-quest').value;
+            
+            if (!name) { alert("Please enter a character name."); return; }
+            if (tempLibBosses.length === 0) { alert("Please select at least one boss."); return; }
+            
+            // Calcular traces acumulados de misiones anteriores
+            const accumulatedTraces = getAccumulatedTracesForQuest(currentQuest);
+            const totalTraces = accumulatedTraces + currentTraces;
+            
+            if (libModalMode === 'edit' && libEditingIndex !== null) {
+                libCharacters[libEditingIndex].name = name;
+                libCharacters[libEditingIndex].level = level;
+                libCharacters[libEditingIndex].class = libClassValue;
+                libCharacters[libEditingIndex].image = libTempImage;
+                libCharacters[libEditingIndex].bosses = tempLibBosses;
+                libCharacters[libEditingIndex].currentTraces = currentTraces;
+                libCharacters[libEditingIndex].currentQuest = currentQuest;
+                libCharacters[libEditingIndex].totalTraces = totalTraces;
+            } else {
+                libCharacters.push({
+                    name: name,
+                    level: level,
+                    class: libClassValue,
+                    image: libTempImage,
+                    bosses: tempLibBosses,
+                    currentTraces: currentTraces,
+                    currentQuest: currentQuest,
+                    totalTraces: totalTraces
+                });
+            }
+            
+            closeLibModal();
+            saveLibToStorage();
+        }
+
+        function renderLibCharacters() {
+			const grid = document.getElementById('lib-characters-grid');
+			grid.innerHTML = '';
+			
+			libCharacters.forEach((char, index) => {
+				const clsSafe = char.class || 'Hero';
+				const lowCaseCls = clsSafe.toLowerCase();
+				const bosses = char.bosses || [];
+				const totalTraces = char.totalTraces || 0;
+				const currentQuest = char.currentQuest || 'Von Leon';
+				const currentTraces = char.currentTraces || 0;
+				const accumulatedTraces = getAccumulatedTracesForQuest(currentQuest);
+				
+				// ============================================================
+				// CALCULAR TRACES SEMANALES TOTALES (para estimación de fecha)
+				// Se usan TODOS los bosses, independientemente de si están cleared
+				// ============================================================
+				let weeklyTracesTotal = 0;
+				let bmTracesTotal = 0;
+				
+				bosses.forEach(boss => {
+					const bossData = LIB_BOSSES[boss.name];
+					if (!bossData) return;
+					const traces = Math.floor(bossData.baseTraces / boss.partySize);
+					if (bossData.weekly) {
+						weeklyTracesTotal += traces;
+					} else {
+						bmTracesTotal += traces;
+					}
+				});
+				
+				// ============================================================
+				// CALCULAR TRACES QUE YA SE OBTUVIERON ESTA SEMANA
+				// Solo los bosses marcados como "cleared" ya se hicieron
+				// ============================================================
+				let weeklyTracesThisWeek = 0;
+				let bmTracesThisMonth = 0;
+				const now = new Date();
+				const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+				
+				bosses.forEach(boss => {
+					const bossData = LIB_BOSSES[boss.name];
+					if (!bossData) return;
+					const traces = Math.floor(bossData.baseTraces / boss.partySize);
+					if (bossData.weekly) {
+						if (boss.cleared) {
+							weeklyTracesThisWeek += traces;
+						}
+					} else {
+						if (boss.cleared && now >= firstOfMonth) {
+							bmTracesThisMonth += traces;
+						}
+					}
+				});
+				
+				// Progreso de la misión actual
+				const questTraces = getTracesForQuest(currentQuest);
+				const questProgress = Math.min(100, Math.round((currentTraces / questTraces) * 100));
+				
+				// Progreso total de liberación
+				const totalNeeded = TOTAL_TRACES_NEEDED;
+				const totalProgress = Math.min(100, Math.round((totalTraces / totalNeeded) * 100));
+				
+				// ============================================================
+				// CALCULAR FECHA ESTIMADA DE LIBERACIÓN
+				// Usamos TODOS los bosses para la estimación (semanal + mensual)
+				// ============================================================
+				let estimatedDate = null;
+				let weeksNeeded = 0;
+				if (totalTraces < totalNeeded) {
+					const tracesRemaining = totalNeeded - totalTraces;
+					// Usar weeklyTracesTotal (todos los bosses) para la estimación
+					let weeklyGain = weeklyTracesTotal;
+					
+					if (weeklyGain > 0) {
+						let remaining = tracesRemaining;
+						let weeks = 0;
+						let currentDate = new Date(now);
+						// Ajustar al próximo jueves (día de reset semanal)
+						while (currentDate.getDay() !== 4) {
+							currentDate.setDate(currentDate.getDate() + 1);
+						}
+						
+						// Si hoy es jueves o después, ya pasó el reset de esta semana
+						// La primera semana de ganancia comienza el próximo jueves
+						let firstWeekGain = weeklyGain;
+						
+						// Si ya pasó el jueves esta semana, restar los traces que ya obtuvimos
+						if (now.getDay() >= 4 || (now.getDay() === 4 && now.getHours() >= 0)) {
+							// Esta semana ya pasó, empezamos la próxima semana
+						}
+						
+						while (remaining > 0 && weeks < 100) {
+							weeks++;
+							
+							// Si es la primera semana y ya pasó el jueves, no contar esta semana
+							if (weeks === 1 && now.getDay() >= 4) {
+								// No sumamos esta semana, pasamos a la siguiente
+								continue;
+							}
+							
+							remaining -= weeklyGain;
+							
+							// Verificar si este mes tiene Black Mage
+							const simDate = new Date(now);
+							simDate.setDate(simDate.getDate() + (weeks * 7));
+							const simMonth = simDate.getMonth();
+							const simYear = simDate.getFullYear();
+							const firstOfSimMonth = new Date(simYear, simMonth, 1);
+							
+							// BM se aplica el primer día del mes, si la fecha simulada es después del primero
+							if (simDate >= firstOfSimMonth && bmTracesTotal > 0) {
+								// Verificar si ya aplicamos BM este mes en la simulación
+								const weeksSinceFirst = Math.floor((simDate - firstOfSimMonth) / (7 * 24 * 60 * 60 * 1000));
+								if (weeksSinceFirst >= 0) {
+									remaining -= bmTracesTotal;
+								}
+							}
+						}
+						weeksNeeded = weeks;
+						
+						const estDate = new Date(now);
+						estDate.setDate(estDate.getDate() + (weeksNeeded * 7));
+						estimatedDate = estDate;
+					}
+				}
+				
+				const totalDisplay = accumulatedTraces + currentTraces;
+				
+				let cardHTML = `
+					<div class="char-card" draggable="true" data-index="${index}">
+						<div>
+							<div class="char-header">
+								<img class="char-avatar" src="${char.image || `Icons/avatars/${lowCaseCls}.png`}" onerror="this.src='Icons/default.png'">
+								<div class="char-info">
+									<h3>${char.name}</h3>
+									<p>Lv. ${char.level} | <img class="class-icon-inline" src="Icons/classes/${lowCaseCls}.png" onerror="this.style.display='none'"> ${clsSafe}</p>
+								</div>
+								<div class="char-actions-header" style="gap:5px;">
+									<button onclick="openLibModal(${index})" style="padding: 4px 10px; font-size:0.9rem;">+</button>
+									<button class="btn-inline-action btn-inline-edit" style="font-size:1.1rem;" onclick="openLibModal(${index})">✎</button>
+									<button class="btn-inline-action btn-inline-delete" style="font-size:1.1rem;" onclick="deleteCharacterCard('lib', ${index})">×</button>
+								</div>
+							</div>
+							<div class="lib-list-container">
+								<div style="margin-bottom:6px;">
+									<div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-muted);">
+										<span>Mission: ${currentQuest} (${currentTraces}/${questTraces})</span>
+										<span>Total: ${totalDisplay}/${totalNeeded}</span>
+									</div>
+									<div class="lib-progress-bar">
+										<div class="lib-progress-fill liberation" style="width:${totalProgress}%;"></div>
+									</div>
+									<div style="font-size:0.7rem; color:var(--text-muted); text-align:right; margin-top:2px;">
+										${totalProgress}% Liberation Progress
+									</div>
+								</div>
+								${bosses.map(boss => {
+									const bossData = LIB_BOSSES[boss.name];
+									if (!bossData) return '';
+									const traces = Math.floor(bossData.baseTraces / boss.partySize);
+									const isBm = !bossData.weekly;
+									return `
+										<div class="lib-traces-row">
+											<div class="boss-name">
+												<img class="boss-icon" src="${getBossIcon(boss.name)}" onerror="this.src='Icons/default.png'">
+												<span>${boss.name}</span>
+												${boss.partySize > 1 ? `<span style="font-size:0.7rem; color:var(--text-muted);">(PT:${boss.partySize})</span>` : ''}
+												${isBm ? `<span style="font-size:0.6rem; color:var(--vmatrix-gold);">(Monthly)</span>` : ''}
+												${boss.cleared ? `<span style="font-size:0.6rem; color:var(--text-muted);">✓ Done</span>` : ''}
+											</div>
+											<span class="traces-amount">+${traces}</span>
+										</div>
+									`;
+								}).join('')}
+							</div>
+						</div>
+						<div class="char-footer" style="border-top:1px dashed var(--border-color); padding-top:10px; flex-wrap:wrap;">
+							<div style="display:flex; gap:12px; flex-wrap:wrap; width:100%; justify-content:space-between;">
+								<span style="font-size:0.8rem; color:var(--text-muted);">
+									Weekly: +${weeklyTracesTotal} traces
+									${bmTracesTotal > 0 ? ` | Monthly: +${bmTracesTotal}` : ''}
+								</span>
+								<span style="font-size:0.8rem; color:${totalTraces >= totalNeeded ? 'var(--success-color)' : 'var(--vmatrix-gold)'}; font-weight:500;">
+									${totalTraces >= totalNeeded ? '✅ Liberation Complete!' : 
+									  (estimatedDate ? `Est. completion: ${estimatedDate.toLocaleDateString()} (${weeksNeeded} weeks)` : 'Add weekly bosses to estimate')}
+								</span>
+							</div>
+						</div>
+					</div>
+				`;
+				grid.innerHTML += cardHTML;
+			});
+			
+			enableDragAndDrop('lib-characters-grid');
+		}
+
+        // ============================================================
+        // RENDER ALL
         // ============================================================
         function renderAll() {
             if (currentView === 'boss') renderBossCharacters();
             else if (currentView === 'drop') renderDropCharacters();
             else if (currentView === 'daily') renderDailyCharacters();
             else if (currentView === 'vmatrix') renderVMatrix();
+            else if (currentView === 'lib') renderLibCharacters();
         }
 
         // ============================================================
-        // EVENT LISTENERS (existing)
+        // EVENT LISTENERS
         // ============================================================
         document.getElementById('global-menu-panel').addEventListener('click', function(e) { e.stopPropagation(); });
 
@@ -3867,6 +4554,7 @@
                 closeDailyModal();
                 closeInventoryModal();
                 closeVMatrixModal();
+                closeLibModal();
             }
         });
 
@@ -3879,6 +4567,11 @@
             const dailyWrapper = document.getElementById('daily-class-dropdown-wrapper');
             if (dailyWrapper && !dailyWrapper.contains(e.target)) {
                 const box = document.getElementById('daily-dropdown-options-box');
+                if (box) box.classList.remove('open');
+            }
+            const libWrapper = document.getElementById('lib-class-dropdown-wrapper');
+            if (libWrapper && !libWrapper.contains(e.target)) {
+                const box = document.getElementById('lib-dropdown-options-box');
                 if (box) box.classList.remove('open');
             }
         });
